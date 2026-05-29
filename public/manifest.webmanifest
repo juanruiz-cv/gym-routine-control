@@ -1,7 +1,7 @@
 {
   "name": "Gym Routine Control",
   "short_name": "GymTracker",
-  "description": "Track your workouts, manage routines, and monitor your progress at the gym.",
+  "description": "Controla tus entrenamientos, gestiona rutinas y monitorea tu progreso en el gimnasio.",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
   "scope": "./",

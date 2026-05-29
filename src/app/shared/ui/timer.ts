@@ -1,12 +1,13 @@
 import { Component, input, output, signal, computed, inject } from '@angular/core';
 import { UiButton } from './button';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { NotificationService } from '@core/services/notification.service';
 import { LucidePlay, LucidePause, LucideRotateCcw } from '@lucide/angular';
 
 @Component({
   selector: 'app-ui-timer',
   standalone: true,
-  imports: [UiButton, LucidePlay, LucidePause, LucideRotateCcw],
+  imports: [UiButton, TranslatePipe, LucidePlay, LucidePause, LucideRotateCcw],
   template: `
     <div class="flex flex-col items-center gap-4">
       <div class="relative w-40 h-40 sm:w-48 sm:h-48">
@@ -22,10 +23,10 @@ import { LucidePlay, LucidePause, LucideRotateCcw } from '@lucide/angular';
         <div class="absolute inset-0 flex flex-col items-center justify-center">
           <span class="text-4xl sm:text-5xl font-bold tabular-nums text-on-surface">{{ displayTime() }}</span>
           <span class="text-xs text-on-surface-muted mt-1">
-            @if (state() === 'idle') { Ready }
-            @else if (state() === 'running') { Resting }
-            @else if (state() === 'paused') { Paused }
-            @else { Done! }
+            @if (state() === 'idle') { {{ 'timer.ready' | translate }} }
+            @else if (state() === 'running') { {{ 'timer.resting' | translate }} }
+            @else if (state() === 'paused') { {{ 'timer.paused' | translate }} }
+            @else { {{ 'timer.done' | translate }} }
           </span>
         </div>
       </div>
@@ -33,25 +34,25 @@ import { LucidePlay, LucidePause, LucideRotateCcw } from '@lucide/angular';
       <div class="flex items-center gap-3">
         @if (state() === 'running') {
           <button ui-button variant="secondary" size="md" (clicked)="pause()">
-            <svg lucidePause class="w-[18px] h-[18px]" strokeWidth="2"></svg> Pause
+            <svg lucidePause class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.pause' | translate }}
           </button>
           <button ui-button variant="ghost" size="md" (clicked)="reset()">
-            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2"></svg> Reset
+            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.reset' | translate }}
           </button>
         } @else if (state() === 'paused') {
           <button ui-button variant="primary" size="md" (clicked)="resume()">
-            <svg lucidePlay class="w-[18px] h-[18px]" strokeWidth="2"></svg> Resume
+            <svg lucidePlay class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.resume' | translate }}
           </button>
           <button ui-button variant="ghost" size="md" (clicked)="reset()">
-            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2"></svg> Reset
+            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.reset' | translate }}
           </button>
         } @else if (state() === 'idle') {
           <button ui-button variant="primary" size="md" (clicked)="start()">
-            <svg lucidePlay class="w-[18px] h-[18px]" strokeWidth="2"></svg> Start Timer
+            <svg lucidePlay class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.start' | translate }}
           </button>
         } @else {
           <button ui-button variant="primary" size="md" (clicked)="reset()">
-            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2"></svg> Reset
+            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.reset' | translate }}
           </button>
         }
       </div>

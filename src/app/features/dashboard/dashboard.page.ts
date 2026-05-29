@@ -3,8 +3,10 @@ import { RouterLink } from '@angular/router';
 import { SlicePipe } from '@angular/common';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
-import { UiSkeleton } from '@shared/ui/skeleton';
+import { UiSkeletonStatsGrid, UiSkeletonListItem } from '@shared/ui';
 import { UiBadge } from '@shared/ui/badge';
+import { I18nService } from '@shared/i18n/i18n.service';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { MetricsService, type VolumeDataPoint } from '@core/services/metrics.service';
 import { WorkoutService } from '@core/services/workout.service';
 import { DurationPipe } from '@shared/pipes/duration';
@@ -17,86 +19,79 @@ import type { WorkoutSession } from '@shared/models';
   standalone: true,
   imports: [
     RouterLink, SlicePipe,
-    UiCard, UiButton, UiSkeleton, UiBadge,
-    DurationPipe, RelativeDatePipe,
+    UiCard, UiButton, UiSkeletonStatsGrid, UiSkeletonListItem, UiBadge,
+    DurationPipe, RelativeDatePipe, TranslatePipe,
     LucideDumbbell, LucideFlame, LucideCalendar, LucideArrowRight,
     LucideTrendingUp, LucidePlay, LucideClock, LucideListOrdered,
   ],
   template: `
-    <div class="p-4 space-y-5 max-w-lg mx-auto">
+    <div class="p-4 flex flex-col gap-8 max-w-lg mx-auto">
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-xl font-bold">Dashboard</h1>
+          <h1 class="text-xl font-bold">{{ 'dashboard.title' | translate }}</h1>
           <p class="text-sm text-on-surface-muted">{{ greeting() }}</p>
         </div>
       </div>
 
       <!-- Stats Grid -->
       @if (loading()) {
-        <div class="grid grid-cols-2 gap-3">
-          @for (item of [1,2,3,4]; track item) {
-            <app-ui-card variant="glass" [padding]="true">
-              <app-ui-skeleton variant="text" width="60%" height="16px" class="mb-2" />
-              <app-ui-skeleton variant="rectangular" width="40%" height="32px" />
-            </app-ui-card>
-          }
-        </div>
+        <app-ui-skeleton-stats-grid />
       } @else if (stats(); as s) {
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-4">
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-brand mb-1">
               <svg lucideDumbbell class="w-4 h-4" strokeWidth="2"></svg>
-              <span class="text-xs font-medium text-on-surface-muted">Workouts</span>
+              <span class="text-xs font-medium text-on-surface-muted">{{ 'dashboard.workouts' | translate }}</span>
             </div>
             <p class="text-2xl font-bold">{{ s.completedWorkouts }}</p>
-            <p class="text-xs text-on-surface-muted mt-0.5">Total completed</p>
+            <p class="text-xs text-on-surface-muted mt-0.5">{{ 'dashboard.totalCompleted' | translate }}</p>
           </app-ui-card>
 
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-orange-400 mb-1">
               <svg lucideFlame class="w-4 h-4" strokeWidth="2"></svg>
-              <span class="text-xs font-medium text-on-surface-muted">Streak</span>
+              <span class="text-xs font-medium text-on-surface-muted">{{ 'dashboard.streak' | translate }}</span>
             </div>
             <p class="text-2xl font-bold">{{ s.currentStreak }}</p>
-            <p class="text-xs text-on-surface-muted mt-0.5">Days in a row</p>
+            <p class="text-xs text-on-surface-muted mt-0.5">{{ 'dashboard.streakDesc' | translate }}</p>
           </app-ui-card>
 
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-info mb-1">
               <svg lucideTrendingUp class="w-4 h-4" strokeWidth="2"></svg>
-              <span class="text-xs font-medium text-on-surface-muted">Volume</span>
+              <span class="text-xs font-medium text-on-surface-muted">{{ 'dashboard.volume' | translate }}</span>
             </div>
             <p class="text-2xl font-bold">{{ formatVolume(s.totalVolume) }}</p>
-            <p class="text-xs text-on-surface-muted mt-0.5">Total kg lifted</p>
+            <p class="text-xs text-on-surface-muted mt-0.5">{{ 'dashboard.volumeDesc' | translate }}</p>
           </app-ui-card>
 
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-success mb-1">
               <svg lucideCalendar class="w-4 h-4" strokeWidth="2"></svg>
-              <span class="text-xs font-medium text-on-surface-muted">This Week</span>
+              <span class="text-xs font-medium text-on-surface-muted">{{ 'dashboard.thisWeek' | translate }}</span>
             </div>
             <p class="text-2xl font-bold">{{ s.weeklyWorkouts }}</p>
-            <p class="text-xs text-on-surface-muted mt-0.5">Workouts</p>
+            <p class="text-xs text-on-surface-muted mt-0.5">{{ 'dashboard.thisWeekDesc' | translate }}</p>
           </app-ui-card>
         </div>
       }
 
       <!-- Quick Actions -->
       <div>
-        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">Quick Actions</h2>
-        <div class="grid grid-cols-3 gap-3">
+        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'dashboard.quickActions' | translate }}</h2>
+        <div class="grid grid-cols-3 gap-4">
           <a ui-button variant="secondary" size="sm" class="flex-col gap-2 h-auto py-4" routerLink="/workout">
             <svg lucidePlay class="w-6 h-6" strokeWidth="1.5"></svg>
-            <span class="text-xs">Start Workout</span>
+            <span class="text-xs">{{ 'dashboard.startWorkout' | translate }}</span>
           </a>
           <a ui-button variant="secondary" size="sm" class="flex-col gap-2 h-auto py-4" routerLink="/routines">
             <svg lucideListOrdered class="w-6 h-6" strokeWidth="1.5"></svg>
-            <span class="text-xs">Routines</span>
+            <span class="text-xs">{{ 'nav.routines' | translate }}</span>
           </a>
           <a ui-button variant="secondary" size="sm" class="flex-col gap-2 h-auto py-4" routerLink="/exercises">
             <svg lucideDumbbell class="w-6 h-6" strokeWidth="1.5"></svg>
-            <span class="text-xs">Exercises</span>
+            <span class="text-xs">{{ 'nav.exercises' | translate }}</span>
           </a>
         </div>
       </div>
@@ -104,30 +99,30 @@ import type { WorkoutSession } from '@shared/models';
       <!-- Recent Activity -->
       <div>
         <div class="flex items-center justify-between mb-3">
-          <h2 class="text-sm font-semibold text-on-surface-secondary">Recent Activity</h2>
+          <h2 class="text-sm font-semibold text-on-surface-secondary">{{ 'dashboard.recentActivity' | translate }}</h2>
           <a routerLink="/workout" class="text-xs text-brand font-medium flex items-center gap-1">
-            View all <svg lucideArrowRight class="w-3 h-3" strokeWidth="2"></svg>
+            {{ 'dashboard.viewAll' | translate }} <svg lucideArrowRight class="w-3 h-3" strokeWidth="2"></svg>
           </a>
         </div>
 
         @if (loadingSessions()) {
-          <div class="space-y-2">
+          <div class="flex flex-col gap-3">
             @for (item of [1,2,3]; track item) {
-              <app-ui-skeleton variant="card" height="56px" />
+              <app-ui-skeleton-list-item height="72px" />
             }
           </div>
         } @else if (recentSessions().length === 0) {
           <app-ui-card variant="glass">
             <div class="text-center py-6">
               <svg lucideDumbbell class="w-10 h-10 text-on-surface-muted mx-auto mb-2" strokeWidth="1.5"></svg>
-              <p class="text-sm text-on-surface-muted">No workouts yet</p>
+              <p class="text-sm text-on-surface-muted">{{ 'dashboard.noWorkouts' | translate }}</p>
               <a ui-button variant="primary" size="sm" class="mt-3" routerLink="/workout">
-                Start your first workout
+                {{ 'dashboard.startFirst' | translate }}
               </a>
             </div>
           </app-ui-card>
         } @else {
-          <div class="space-y-2">
+          <div class="flex flex-col gap-3">
             @for (session of recentSessions(); track session.id) {
               <app-ui-card variant="glass" [padding]="true">
                 <a routerLink="/workout/{{ session.id }}" class="flex items-center gap-3">
@@ -135,7 +130,7 @@ import type { WorkoutSession } from '@shared/models';
                     <svg lucideDumbbell class="w-5 h-5 text-brand" strokeWidth="1.5"></svg>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium truncate">{{ session.routine?.name ?? 'Workout' }}</p>
+                    <p class="text-sm font-medium truncate">{{ session.routine?.name ?? ('dashboard.workout' | translate) }}</p>
                     <div class="flex items-center gap-2 text-xs text-on-surface-muted">
                       <span>{{ session.completed_at | relativeDate }}</span>
                       @if (session.duration) {
@@ -147,7 +142,7 @@ import type { WorkoutSession } from '@shared/models';
                       }
                     </div>
                   </div>
-                  <app-ui-badge variant="success" size="sm">Done</app-ui-badge>
+                  <app-ui-badge variant="success" size="sm">{{ 'dashboard.done' | translate }}</app-ui-badge>
                 </a>
               </app-ui-card>
             }
@@ -158,7 +153,7 @@ import type { WorkoutSession } from '@shared/models';
       <!-- Volume Chart -->
       @if (volumeData().length > 0) {
         <div>
-          <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">Volume Trend</h2>
+          <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'dashboard.volumeTrend' | translate }}</h2>
           <app-ui-card variant="glass">
             <div class="flex items-end gap-1.5 h-32">
               @for (point of volumeData(); track point.date) {
@@ -184,12 +179,13 @@ import type { WorkoutSession } from '@shared/models';
 export class DashboardPage implements OnInit {
   private readonly _metrics = inject(MetricsService);
   private readonly _workout = inject(WorkoutService);
+  private readonly _i18n = inject(I18nService);
 
   readonly greeting = computed(() => {
     const h = new Date().getHours();
-    if (h < 12) return 'Good morning';
-    if (h < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (h < 12) return this._i18n.t('dashboard.greetingMorning');
+    if (h < 18) return this._i18n.t('dashboard.greetingAfternoon');
+    return this._i18n.t('dashboard.greetingEvening');
   });
 
   readonly stats = this._metrics.stats;

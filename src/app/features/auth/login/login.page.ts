@@ -2,25 +2,26 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn } from '@lucide/angular';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn],
+  imports: [FormsModule, RouterLink, TranslatePipe, LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn],
   template: `
     <div class="flex flex-col gap-6 animate-fade-in">
       <div class="text-center">
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 mb-4">
           <svg lucideDumbbell class="w-8 h-8 text-brand" strokeWidth="1.5"></svg>
         </div>
-        <h1 class="text-2xl font-bold">Welcome Back</h1>
-        <p class="text-on-surface-muted mt-1 text-sm">Sign in to continue your fitness journey</p>
+        <h1 class="text-2xl font-bold">{{ 'auth.welcomeBack' | translate }}</h1>
+        <p class="text-on-surface-muted mt-1 text-sm">{{ 'auth.subtitle' | translate }}</p>
       </div>
 
       <form (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
         <div>
-          <label for="email" class="block text-sm font-medium mb-1.5">Email</label>
+          <label for="email" class="block text-sm font-medium mb-1.5">{{ 'auth.email' | translate }}</label>
           <input
             id="email"
             type="email"
@@ -28,13 +29,13 @@ import { LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn } from '@lucide/an
             name="email"
             required
             autocomplete="email"
-            placeholder="you@example.com"
+            [placeholder]="'auth.emailPlaceholder' | translate"
             class="w-full px-4 py-3 rounded-xl bg-surface-input border border-white/10 text-on-surface placeholder:text-on-surface-muted/50 focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
           />
         </div>
 
         <div>
-          <label for="password" class="block text-sm font-medium mb-1.5">Password</label>
+          <label for="password" class="block text-sm font-medium mb-1.5">{{ 'auth.password' | translate }}</label>
           <div class="relative">
             <input
               id="password"
@@ -43,14 +44,14 @@ import { LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn } from '@lucide/an
               name="password"
               required
               autocomplete="current-password"
-              placeholder="Your password"
+              [placeholder]="'auth.passwordPlaceholder' | translate"
               class="w-full px-4 py-3 pr-12 rounded-xl bg-surface-input border border-white/10 text-on-surface placeholder:text-on-surface-muted/50 focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
             />
             <button
               type="button"
               (click)="togglePassword()"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-muted hover:text-on-surface transition-colors p-1"
-              [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+              [attr.aria-label]="showPassword() ? ('auth.hidePassword' | translate) : ('auth.showPassword' | translate)"
             >
               @if (showPassword()) {
                 <svg lucideEyeOff class="w-5 h-5"></svg>
@@ -77,7 +78,7 @@ import { LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn } from '@lucide/an
           } @else {
             <svg lucideLogIn class="w-[18px] h-[18px]" strokeWidth="2"></svg>
           }
-          <span>{{ isLoading() ? 'Signing in...' : 'Sign In' }}</span>
+          <span>{{ isLoading() ? ('auth.signingIn' | translate) : ('auth.signIn' | translate) }}</span>
         </button>
       </form>
 
@@ -86,7 +87,7 @@ import { LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn } from '@lucide/an
           <div class="w-full border-t border-white/10"></div>
         </div>
         <div class="relative flex justify-center">
-          <span class="px-3 text-xs text-on-surface-muted bg-surface">or continue with</span>
+          <span class="px-3 text-xs text-on-surface-muted bg-surface">{{ 'auth.orContinueWith' | translate }}</span>
         </div>
       </div>
 
@@ -101,19 +102,19 @@ import { LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn } from '@lucide/an
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
         </svg>
-        <span>Sign in with Google</span>
+        <span>{{ 'auth.signInGoogle' | translate }}</span>
       </button>
 
       <div class="text-center text-sm">
         <a routerLink="/auth/forgot-password" class="text-brand hover:text-brand-light transition-colors">
-          Forgot password?
+          {{ 'auth.forgotPassword' | translate }}
         </a>
       </div>
 
       <div class="text-center text-sm text-on-surface-muted">
-        Don't have an account?
+        {{ 'auth.noAccount' | translate }}
         <a routerLink="/auth/register" class="text-brand hover:text-brand-light transition-colors font-medium">
-          Sign Up
+          {{ 'auth.signUp' | translate }}
         </a>
       </div>
     </div>

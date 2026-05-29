@@ -3,7 +3,8 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
-import { UiSkeleton } from '@shared/ui/skeleton';
+import { UiSkeletonCard } from '@shared/ui';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { WorkoutService } from '@core/services/workout.service';
 import { DurationPipe } from '@shared/pipes/duration';
 import {
@@ -16,18 +17,18 @@ import type { WorkoutSession } from '@shared/models';
   selector: 'app-workout-summary-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiSkeleton,
-    DurationPipe,
+    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard,
+    DurationPipe, TranslatePipe,
     LucideCheckCircle2, LucideDumbbell, LucideFlame, LucideClock, LucideBarChart3,
     LucideHome, LucideRotateCcw,
   ],
   template: `
     <div class="p-4 space-y-4 max-w-lg mx-auto">
       @if (loading()) {
-        <div class="space-y-4">
-          <app-ui-skeleton variant="card" height="120px" />
-          <app-ui-skeleton variant="card" height="80px" />
-          <app-ui-skeleton variant="card" height="200px" />
+        <div class="flex flex-col gap-4">
+          @for (i of [1,2,3]; track i) {
+            <app-ui-skeleton-card height="120px" />
+          }
         </div>
       }
 
@@ -37,8 +38,8 @@ import type { WorkoutSession } from '@shared/models';
           <div class="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-3">
             <svg lucideCheckCircle2 class="w-8 h-8 text-success" strokeWidth="1.5"></svg>
           </div>
-          <h1 class="text-xl font-bold">Workout Complete!</h1>
-          <p class="text-sm text-on-surface-muted mt-1">Great job!</p>
+          <h1 class="text-xl font-bold">{{ 'workoutSummary.title' | translate }}</h1>
+          <p class="text-sm text-on-surface-muted mt-1">{{ 'workoutSummary.subtitle' | translate }}</p>
         </div>
 
         <!-- Stats Grid -->
@@ -46,7 +47,7 @@ import type { WorkoutSession } from '@shared/models';
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-brand mb-1">
               <svg lucideDumbbell class="w-4 h-4" strokeWidth="2"></svg>
-              <span class="text-xs text-on-surface-muted">Exercises</span>
+              <span class="text-xs text-on-surface-muted">{{ 'workoutSummary.exercises' | translate }}</span>
             </div>
             <p class="text-xl font-bold">{{ exerciseCount() }}</p>
           </app-ui-card>
@@ -54,7 +55,7 @@ import type { WorkoutSession } from '@shared/models';
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-info mb-1">
               <svg lucideClock class="w-4 h-4" strokeWidth="2"></svg>
-              <span class="text-xs text-on-surface-muted">Duration</span>
+              <span class="text-xs text-on-surface-muted">{{ 'workoutSummary.duration' | translate }}</span>
             </div>
             <p class="text-xl font-bold">{{ s.duration | duration }}</p>
           </app-ui-card>
@@ -62,7 +63,7 @@ import type { WorkoutSession } from '@shared/models';
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-warning mb-1">
               <svg lucideBarChart3 class="w-4 h-4" strokeWidth="2"></svg>
-              <span class="text-xs text-on-surface-muted">Volume</span>
+              <span class="text-xs text-on-surface-muted">{{ 'workoutSummary.volume' | translate }}</span>
             </div>
             <p class="text-xl font-bold">{{ totalVolume() }} kg</p>
           </app-ui-card>
@@ -70,7 +71,7 @@ import type { WorkoutSession } from '@shared/models';
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-success mb-1">
               <svg lucideFlame class="w-4 h-4" strokeWidth="2"></svg>
-              <span class="text-xs text-on-surface-muted">Sets</span>
+              <span class="text-xs text-on-surface-muted">{{ 'workoutSummary.sets' | translate }}</span>
             </div>
             <p class="text-xl font-bold">{{ completedSets() }}</p>
           </app-ui-card>
@@ -78,8 +79,8 @@ import type { WorkoutSession } from '@shared/models';
 
         <!-- Exercise Breakdown -->
         <div>
-          <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">Exercise Breakdown</h2>
-          <div class="space-y-2">
+          <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'workoutSummary.breakdown' | translate }}</h2>
+          <div class="flex flex-col gap-2">
             @for (ex of exerciseBreakdown(); track ex.id) {
               <app-ui-card variant="glass" [padding]="true">
                 <div class="flex items-start gap-3">
@@ -89,7 +90,7 @@ import type { WorkoutSession } from '@shared/models';
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium">{{ ex.name }}</p>
                     <div class="flex items-center gap-2 mt-1">
-                      <span class="text-xs text-on-surface-muted">{{ ex.completed }}/{{ ex.total }} sets</span>
+                      <span class="text-xs text-on-surface-muted">{{ ex.completed }}/{{ ex.total }} {{ 'workoutSummary.sets' | translate }}</span>
                       @if (ex.volume > 0) {
                         <span class="text-xs text-on-surface-muted">· {{ ex.volume }} kg</span>
                       }
@@ -108,11 +109,11 @@ import type { WorkoutSession } from '@shared/models';
         <div class="flex gap-3 pt-2">
           <a ui-button variant="secondary" size="md" class="flex-1" routerLink="/dashboard">
             <svg lucideHome class="w-4 h-4" strokeWidth="2"></svg>
-            Dashboard
+            {{ 'workoutSummary.dashboard' | translate }}
           </a>
           <a ui-button variant="primary" size="md" class="flex-1" routerLink="/routines">
             <svg lucideRotateCcw class="w-4 h-4" strokeWidth="2"></svg>
-            New Workout
+            {{ 'workoutSummary.newWorkout' | translate }}
           </a>
         </div>
       }

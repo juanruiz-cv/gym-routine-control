@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { UiCard } from '@shared/ui/card';
-import { UiSkeleton } from '@shared/ui/skeleton';
+import { UiSkeletonCard, UiSkeletonStatsGrid } from '@shared/ui';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { MetricsService, type WeeklyActivity, type MuscleDistribution } from '@core/services/metrics.service';
 import type { PersonalRecord } from '@shared/models';
 import { RelativeDatePipe } from '@shared/pipes/relative-date';
@@ -10,47 +11,43 @@ import { LucideTrophy } from '@lucide/angular';
   selector: 'app-metrics-page',
   standalone: true,
   imports: [
-    UiCard, UiSkeleton,
-    RelativeDatePipe,
+    UiCard, UiSkeletonCard, UiSkeletonStatsGrid,
+    RelativeDatePipe, TranslatePipe,
     LucideTrophy,
   ],
   template: `
-    <div class="p-4 space-y-5 max-w-lg mx-auto">
-      <h1 class="text-xl font-bold">Metrics</h1>
+    <div class="p-4 flex flex-col gap-5 max-w-lg mx-auto">
+      <h1 class="text-xl font-bold">{{ 'metrics.title' | translate }}</h1>
 
       <!-- Stats Overview -->
       @if (loading()) {
-        <div class="grid grid-cols-2 gap-3">
-          @for (i of [1,2,3,4]; track i) {
-            <app-ui-skeleton variant="card" height="80px" />
-          }
-        </div>
+        <app-ui-skeleton-stats-grid />
       } @else if (stats(); as s) {
         <div class="grid grid-cols-2 gap-3">
           <app-ui-card variant="glass" [padding]="true">
             <div class="text-2xl font-bold text-brand">{{ s.completedWorkouts }}</div>
-            <div class="text-xs text-on-surface-muted mt-1">Total Workouts</div>
+            <div class="text-xs text-on-surface-muted mt-1">{{ 'metrics.totalWorkouts' | translate }}</div>
           </app-ui-card>
           <app-ui-card variant="glass" [padding]="true">
             <div class="text-2xl font-bold text-orange-400">{{ s.currentStreak }}</div>
-            <div class="text-xs text-on-surface-muted mt-1">Day Streak</div>
+            <div class="text-xs text-on-surface-muted mt-1">{{ 'metrics.dayStreak' | translate }}</div>
           </app-ui-card>
           <app-ui-card variant="glass" [padding]="true">
             <div class="text-2xl font-bold text-info">{{ formatVolume(s.totalVolume) }}</div>
-            <div class="text-xs text-on-surface-muted mt-1">Total Volume</div>
+            <div class="text-xs text-on-surface-muted mt-1">{{ 'metrics.totalVolume' | translate }}</div>
           </app-ui-card>
           <app-ui-card variant="glass" [padding]="true">
             <div class="text-2xl font-bold text-success">{{ s.totalTimeMinutes }}m</div>
-            <div class="text-xs text-on-surface-muted mt-1">Total Time</div>
+            <div class="text-xs text-on-surface-muted mt-1">{{ 'metrics.totalTime' | translate }}</div>
           </app-ui-card>
         </div>
       }
 
       <!-- Weekly Activity -->
       <div>
-        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">Weekly Activity</h2>
+        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'metrics.weeklyActivity' | translate }}</h2>
         @if (loadingActivity()) {
-          <app-ui-skeleton variant="card" height="120px" />
+          <app-ui-skeleton-card height="120px" />
         } @else if (weeklyActivity().length > 0) {
           <app-ui-card variant="glass">
             <div class="flex items-end gap-1.5 h-28">
@@ -69,16 +66,16 @@ import { LucideTrophy } from '@lucide/angular';
           </app-ui-card>
         } @else {
           <app-ui-card variant="glass">
-            <p class="text-sm text-on-surface-muted text-center py-6">No activity data yet</p>
+            <p class="text-sm text-on-surface-muted text-center py-6">{{ 'metrics.noActivity' | translate }}</p>
           </app-ui-card>
         }
       </div>
 
       <!-- Muscle Distribution -->
       <div>
-        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">Muscle Distribution</h2>
+        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'metrics.muscleDistribution' | translate }}</h2>
         @if (loadingMuscles()) {
-          <app-ui-skeleton variant="card" height="160px" />
+          <app-ui-skeleton-card height="160px" />
         } @else if (muscleDistribution().length > 0) {
           <app-ui-card variant="glass">
             <div class="space-y-3">
@@ -104,18 +101,18 @@ import { LucideTrophy } from '@lucide/angular';
           </app-ui-card>
         } @else {
           <app-ui-card variant="glass">
-            <p class="text-sm text-on-surface-muted text-center py-6">Complete workouts to see distribution</p>
+            <p class="text-sm text-on-surface-muted text-center py-6">{{ 'metrics.noMuscleData' | translate }}</p>
           </app-ui-card>
         }
       </div>
 
       <!-- Personal Records -->
       <div>
-        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">Personal Records</h2>
+        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'metrics.personalRecords' | translate }}</h2>
         @if (loadingPRs()) {
-          <app-ui-skeleton variant="card" height="120px" />
+          <app-ui-skeleton-card height="120px" />
         } @else if (personalRecords().length > 0) {
-          <div class="space-y-2">
+          <div class="flex flex-col gap-2">
             @for (pr of personalRecords(); track pr.id) {
               <app-ui-card variant="glass" [padding]="true">
                 <div class="flex items-center gap-3">
@@ -123,7 +120,7 @@ import { LucideTrophy } from '@lucide/angular';
                     <svg lucideTrophy class="w-5 h-5 text-warning" strokeWidth="1.5"></svg>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium truncate">{{ pr.exercise?.name ?? 'Exercise' }}</p>
+                    <p class="text-sm font-medium truncate">{{ pr.exercise?.name ?? ('metrics.exercise' | translate) }}</p>
                     <div class="flex items-center gap-2 text-xs text-on-surface-muted">
                       <span>{{ pr.weight }} kg × {{ pr.reps }} reps</span>
                       @if (pr.estimated_one_rm) {
@@ -140,8 +137,8 @@ import { LucideTrophy } from '@lucide/angular';
           <app-ui-card variant="glass">
             <div class="text-center py-6">
               <svg lucideTrophy class="w-10 h-10 text-on-surface-muted mx-auto mb-2" strokeWidth="1.5"></svg>
-              <p class="text-sm text-on-surface-muted">No records yet</p>
-              <p class="text-xs text-on-surface-muted mt-1">Set a new PR during your workouts!</p>
+              <p class="text-sm text-on-surface-muted">{{ 'metrics.noRecords' | translate }}</p>
+              <p class="text-xs text-on-surface-muted mt-1">{{ 'metrics.noRecordsDesc' | translate }}</p>
             </div>
           </app-ui-card>
         }

@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UiButton } from '@shared/ui/button';
 import { UiInput } from '@shared/ui/input';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { ExerciseService } from '@core/services/exercise.service';
 import { LucideArrowLeft } from '@lucide/angular';
 import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
@@ -9,7 +10,7 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
 @Component({
   selector: 'app-exercise-form-page',
   standalone: true,
-  imports: [UiButton, UiInput, LucideArrowLeft],
+  imports: [UiButton, UiInput, TranslatePipe, LucideArrowLeft],
   template: `
     <div class="p-4 space-y-4 max-w-lg mx-auto">
       <!-- Header -->
@@ -17,22 +18,22 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
         <button (click)="goBack()" class="p-2 rounded-xl hover:bg-surface-hover transition-colors">
           <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2"></svg>
         </button>
-        <h1 class="text-xl font-bold">{{ isEdit() ? 'Edit Exercise' : 'New Exercise' }}</h1>
+        <h1 class="text-xl font-bold">{{ isEdit() ? ('exercises.editExercise' | translate) : ('exercises.newExercise' | translate) }}</h1>
       </div>
 
       <!-- Form -->
       <div class="space-y-4">
-        <app-ui-input label="Name" [value]="name()" (valueChange)="name.set($event)" placeholder="e.g., Bench Press" />
+        <app-ui-input [label]="'exercises.name' | translate" [value]="name()" (valueChange)="name.set($event)" [placeholder]="'exercises.namePlaceholder' | translate" />
 
         <div class="flex flex-col gap-1.5">
-          <label for="muscleGroup" class="text-sm font-medium text-on-surface">Muscle Group</label>
+          <label for="muscleGroup" class="text-sm font-medium text-on-surface">{{ 'exercises.muscleGroup' | translate }}</label>
           <select
             id="muscleGroup"
             [value]="muscleGroup()"
             (change)="muscleGroup.set(($any($event.target)).value)"
             class="w-full px-4 py-3 rounded-xl bg-surface-input border border-white/10 text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
           >
-            <option value="" disabled>Select muscle group...</option>
+            <option value="" disabled>{{ 'exercises.muscleGroupPlaceholder' | translate }}</option>
             @for (mg of muscleGroups; track mg) {
               <option [value]="mg">{{ mg }}</option>
             }
@@ -40,42 +41,42 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label for="equipment" class="text-sm font-medium text-on-surface">Equipment (optional)</label>
+          <label for="equipment" class="text-sm font-medium text-on-surface">{{ 'exercises.equipment' | translate }}</label>
           <select
             id="equipment"
             [value]="equipment()"
             (change)="equipment.set(($any($event.target)).value)"
             class="w-full px-4 py-3 rounded-xl bg-surface-input border border-white/10 text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
           >
-            <option value="">None</option>
+            <option value="">{{ 'exercises.equipmentNone' | translate }}</option>
             @for (eq of equipmentTypes; track eq) {
               <option [value]="eq">{{ eq }}</option>
             }
           </select>
         </div>
 
-        <app-ui-input label="Category (optional)" [value]="category()" (valueChange)="category.set($event)" placeholder="e.g., Strength, Hypertrophy" />
+        <app-ui-input [label]="'exercises.category' | translate" [value]="category()" (valueChange)="category.set($event)" [placeholder]="'exercises.categoryPlaceholder' | translate" />
 
         <div class="flex flex-col gap-1.5">
-          <label for="instructions" class="text-sm font-medium text-on-surface">Instructions (optional)</label>
+          <label for="instructions" class="text-sm font-medium text-on-surface">{{ 'exercises.instructionsLabel' | translate }}</label>
           <textarea
             id="instructions"
             [value]="instructions()"
             (input)="instructions.set(($any($event.target)).value)"
             rows="4"
             class="w-full px-4 py-3 rounded-xl bg-surface-input border border-white/10 text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand resize-none"
-            placeholder="Describe how to perform this exercise..."
+            [placeholder]="'exercises.instructionsPlaceholder' | translate"
           ></textarea>
         </div>
 
         <div class="flex gap-3 pt-2">
-          <button ui-button variant="ghost" size="md" class="flex-1" (click)="goBack()">Cancel</button>
+          <button ui-button variant="ghost" size="md" class="flex-1" (click)="goBack()">{{ 'common.cancel' | translate }}</button>
           <button
             ui-button variant="primary" size="md" class="flex-1"
             [disabled]="saving() || !name() || !muscleGroup()"
             (click)="save()"
           >
-            {{ saving() ? 'Saving...' : isEdit() ? 'Update' : 'Create' }}
+            {{ saving() ? ('common.saving' | translate) : isEdit() ? ('common.save' | translate) : ('exercises.create' | translate) }}
           </button>
         </div>
       </div>

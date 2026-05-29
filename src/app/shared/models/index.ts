@@ -12,6 +12,7 @@ export interface UserPreferences {
   rest_timer: number;
   sound_enabled: boolean;
   vibration_enabled: boolean;
+  language?: 'es' | 'en';
 }
 
 export interface Routine {

@@ -3,9 +3,10 @@ import { RouterLink } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
-import { UiSkeleton } from '@shared/ui/skeleton';
+import { UiSkeletonListItem } from '@shared/ui';
 import { UiInput } from '@shared/ui/input';
 import { UiEmptyState } from '@shared/ui/empty-state';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { ExerciseService } from '@core/services/exercise.service';
 import { LucidePlus, LucideDumbbell, LucideSearch } from '@lucide/angular';
 import { MUSCLE_GROUPS } from '@shared/models';
@@ -14,23 +15,23 @@ import { MUSCLE_GROUPS } from '@shared/models';
   selector: 'app-exercises-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiSkeleton, UiInput, UiEmptyState,
+    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonListItem, UiInput, UiEmptyState, TranslatePipe,
     LucidePlus, LucideDumbbell, LucideSearch,
   ],
   template: `
-    <div class="p-4 space-y-4 max-w-lg mx-auto">
+    <div class="p-4 flex flex-col gap-4 max-w-lg mx-auto">
       <!-- Header -->
       <div class="flex items-center justify-between">
-        <h1 class="text-xl font-bold">Exercises</h1>
+        <h1 class="text-xl font-bold">{{ 'exercises.title' | translate }}</h1>
         <a ui-button variant="primary" size="sm" routerLink="/exercises/new">
           <svg lucidePlus class="w-4 h-4" strokeWidth="2.5"></svg>
-          New
+          {{ 'exercises.new' | translate }}
         </a>
       </div>
 
       <!-- Search -->
       <app-ui-input
-        placeholder="Search exercises..."
+        [placeholder]="'exercises.search' | translate"
         [value]="searchQuery()"
         (valueChange)="searchQuery.set($event)"
         [hasIcon]="true"
@@ -43,7 +44,7 @@ import { MUSCLE_GROUPS } from '@shared/models';
         <button
           ui-button [variant]="selectedMuscle() === '' ? 'primary' : 'secondary'" size="sm"
           class="shrink-0" (click)="selectedMuscle.set('')"
-        >All</button>
+        >{{ 'exercises.all' | translate }}</button>
         @for (mg of muscleGroups; track mg) {
           <button
             ui-button [variant]="selectedMuscle() === mg ? 'primary' : 'secondary'" size="sm"
@@ -54,30 +55,30 @@ import { MUSCLE_GROUPS } from '@shared/models';
 
       <!-- Loading -->
       @if (loading()) {
-        <div class="space-y-3">
+        <div class="flex flex-col gap-3">
           @for (i of [1,2,3,4]; track i) {
-            <app-ui-skeleton variant="card" height="72px" />
+            <app-ui-skeleton-list-item height="72px" />
           }
         </div>
       }
 
       <!-- Empty -->
       @if (!loading() && filteredExercises().length === 0 && !searchQuery() && !selectedMuscle()) {
-        <app-ui-empty-state title="No exercises yet" message="Create your first exercise to start building your library.">
+        <app-ui-empty-state title="{{ 'exercises.empty' | translate }}" message="{{ 'exercises.emptyDesc' | translate }}">
           <a ui-button variant="primary" routerLink="/exercises/new">
             <svg lucidePlus class="w-4 h-4" strokeWidth="2.5"></svg>
-            Create Exercise
+            {{ 'exercises.create' | translate }}
           </a>
         </app-ui-empty-state>
       }
 
       <!-- No Results -->
       @if (!loading() && filteredExercises().length === 0 && (searchQuery() || selectedMuscle())) {
-        <app-ui-empty-state title="No results" message="Try a different search or filter." />
+        <app-ui-empty-state title="{{ 'exercises.noResults' | translate }}" message="{{ 'exercises.noResultsDesc' | translate }}" />
       }
 
       <!-- Exercise List -->
-      <div class="space-y-2">
+      <div class="flex flex-col gap-2">
         @for (ex of filteredExercises(); track ex.id) {
           <a routerLink="/exercises/{{ ex.id }}">
             <app-ui-card variant="glass" [padding]="true">

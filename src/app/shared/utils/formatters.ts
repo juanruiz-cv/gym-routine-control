@@ -17,14 +17,14 @@ export function calculateOneRM(weight: number, reps: number): number {
   return Math.round(weight * (1 + reps / 30));
 }
 
-export function formatDateShort(date: string | Date): string {
+export function formatDateShort(date: string | Date, locale = 'es'): string {
   const d = new Date(date);
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  return d.toLocaleDateString(locale === 'en' ? 'en-US' : 'es-ES', { month: 'short', day: 'numeric' });
 }
 
-export function formatDateFull(date: string | Date): string {
+export function formatDateFull(date: string | Date, locale = 'es'): string {
   const d = new Date(date);
-  return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  return d.toLocaleDateString(locale === 'en' ? 'en-US' : 'es-ES', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 export function getStreakEmoji(streak: number): string {

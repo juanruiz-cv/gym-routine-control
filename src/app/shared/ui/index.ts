@@ -8,4 +8,7 @@ export { UiProgressRing } from './progress-ring';
 export { UiTimer } from './timer';
 export { UiEmptyState } from './empty-state';
 export { UiSkeleton } from './skeleton';
+export { UiSkeletonCard } from './skeleton-card';
+export { UiSkeletonStatsGrid } from './skeleton-stats-grid';
+export { UiSkeletonListItem } from './skeleton-list-item';
 export { UiToast } from './toast';

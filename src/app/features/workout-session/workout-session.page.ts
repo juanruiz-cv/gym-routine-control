@@ -3,8 +3,10 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
+import { UiSkeletonCard } from '@shared/ui';
 import { UiTimer } from '@shared/ui/timer';
 import { UiModal } from '@shared/ui/modal';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { WorkoutService } from '@core/services/workout.service';
 import { NotificationService } from '@core/services/notification.service';
 import {
@@ -16,7 +18,7 @@ import {
   selector: 'app-workout-session-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiTimer, UiModal,
+    RouterLink, UiCard, UiButton, UiBadge, UiTimer, UiModal, UiSkeletonCard, TranslatePipe,
     LucideCheck, LucideX, LucideDumbbell,
     LucideChevronLeft, LucideChevronRight, LucideTimer, LucideCheckCircle,
   ],
@@ -34,7 +36,7 @@ import {
               <svg lucideX class="w-5 h-5" strokeWidth="2"></svg>
             </button>
             <div class="text-center">
-              <p class="text-sm font-medium">{{ session.routine?.name ?? 'Workout' }}</p>
+              <p class="text-sm font-medium">{{ session.routine?.name ?? ('workout.title' | translate) }}</p>
               <p class="text-xs text-on-surface-muted">{{ elapsedTime() }}</p>
             </div>
             <div class="w-9"></div>
@@ -59,18 +61,18 @@ import {
             <div>
               <div class="flex items-center justify-between mb-1">
                 <span class="text-xs text-on-surface-muted">
-                  Exercise {{ w.currentExerciseIndex + 1 }} of {{ routineExs.length }}
+                  {{ 'workout.exerciseOf' | translate:{ current: w.currentExerciseIndex + 1, total: routineExs.length } }}
                 </span>
-                <span class="text-xs text-on-surface-muted">{{ completedSets }}/{{ totalSets }} sets</span>
+                <span class="text-xs text-on-surface-muted">{{ 'workout.setsProgress' | translate:{ current: completedSets, total: totalSets } }}</span>
               </div>
-              <h2 class="text-xl font-bold">{{ currentEx.exercise?.name ?? 'Exercise' }}</h2>
+              <h2 class="text-xl font-bold">{{ currentEx.exercise?.name ?? ('workout.title' | translate) }}</h2>
               @if (currentEx.exercise?.muscle_group) {
                 <app-ui-badge variant="brand" size="sm" class="mt-1">{{ currentEx.exercise!.muscle_group }}</app-ui-badge>
               }
             </div>
 
             <!-- Sets List -->
-            <div class="space-y-2">
+            <div class="flex flex-col gap-2">
               @for (set of exSets; track set.id; let i = $index) {
                 <app-ui-card variant="glass" [padding]="true" [class.ring-1]="i === w.currentSetIndex && !set.is_completed"
                   [class.ring-brand]="i === w.currentSetIndex && !set.is_completed">
@@ -95,7 +97,7 @@ import {
                             [value]="set.weight ?? ''"
                             (input)="updateWeight(set.id, +weightInput.value)"
                             class="w-20 px-3 py-2 rounded-lg bg-surface-input border border-white/10 text-sm text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                            placeholder="kg"
+                            [placeholder]="'workout.lbs' | translate"
                             step="0.5"
                             min="0"
                           />
@@ -106,7 +108,7 @@ import {
                             [value]="set.reps ?? ''"
                             (input)="updateReps(set.id, +repsInput.value)"
                             class="w-16 px-3 py-2 rounded-lg bg-surface-input border border-white/10 text-sm text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                            placeholder="reps"
+                            [placeholder]="'routines.reps' | translate"
                             min="1"
                           />
                           <button
@@ -129,7 +131,7 @@ import {
               <app-ui-card variant="glass">
                 <div class="flex items-center gap-3 mb-3">
                   <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5"></svg>
-                  <span class="text-sm font-medium">Rest Timer</span>
+                  <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
                 </div>
                 <app-ui-timer [duration]="currentEx.rest_time || 90" />
               </app-ui-card>
@@ -143,7 +145,7 @@ import {
                 (click)="prevExercise()"
               >
                 <svg lucideChevronLeft class="w-4 h-4" strokeWidth="2"></svg>
-                Previous
+                {{ 'workout.previous' | translate }}
               </button>
 
               @if (w.currentExerciseIndex < routineExs.length - 1) {
@@ -151,7 +153,7 @@ import {
                   ui-button variant="primary" size="md" class="flex-1"
                   (click)="nextExercise()"
                 >
-                  Next
+                  {{ 'workout.next' | translate }}
                   <svg lucideChevronRight class="w-4 h-4" strokeWidth="2"></svg>
                 </button>
               } @else {
@@ -160,7 +162,7 @@ import {
                   (click)="finishWorkout()"
                 >
                   <svg lucideCheck class="w-4 h-4" strokeWidth="2.5"></svg>
-                  Finish Workout
+                  {{ 'workout.finish' | translate }}
                 </button>
               }
             </div>
@@ -170,26 +172,30 @@ import {
           <div class="flex-1 flex items-center justify-center p-4">
             <div class="text-center">
               <svg lucideDumbbell class="w-12 h-12 text-on-surface-muted mx-auto mb-3" strokeWidth="1.5"></svg>
-              <p class="text-on-surface-muted">No exercises in this workout</p>
-              <button ui-button variant="primary" size="md" class="mt-4" routerLink="/routines">Browse Routines</button>
+              <p class="text-on-surface-muted">{{ 'workout.noExercises' | translate }}</p>
+              <button ui-button variant="primary" size="md" class="mt-4" routerLink="/routines">{{ 'workout.browseRoutines' | translate }}</button>
             </div>
           </div>
         }
       } @else {
         <!-- Loading state -->
         <div class="flex-1 flex items-center justify-center">
-          <p class="text-on-surface-muted">Loading workout...</p>
+          <div class="flex flex-col gap-4 w-full max-w-lg mx-auto p-4">
+            @for (i of [1,2,3,4]; track i) {
+              <app-ui-skeleton-card height="80px" />
+            }
+          </div>
         </div>
       }
 
       <!-- Cancel Confirmation -->
-      <app-ui-modal [isOpen]="confirmCancel()" title="Cancel Workout" (closed)="confirmCancel.set(false)">
+      <app-ui-modal [isOpen]="confirmCancel()" [title]="'workout.cancelTitle' | translate" (closed)="confirmCancel.set(false)">
         <p class="text-sm text-on-surface-muted mb-4">
-          Are you sure you want to cancel this workout? Your progress will be lost.
+          {{ 'workout.cancelConfirm' | translate }}
         </p>
         <div class="flex gap-3">
-          <button ui-button variant="ghost" size="md" class="flex-1" (click)="confirmCancel.set(false)">Keep Going</button>
-          <button ui-button variant="danger" size="md" class="flex-1" (click)="cancelWorkout()">Cancel</button>
+          <button ui-button variant="ghost" size="md" class="flex-1" (click)="confirmCancel.set(false)">{{ 'workout.keepGoing' | translate }}</button>
+          <button ui-button variant="danger" size="md" class="flex-1" (click)="cancelWorkout()">{{ 'workout.cancel' | translate }}</button>
         </div>
       </app-ui-modal>
     </div>

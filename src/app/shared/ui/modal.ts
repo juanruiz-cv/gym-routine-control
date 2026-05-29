@@ -1,8 +1,10 @@
 import { Component, input, output } from '@angular/core';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 
 @Component({
   selector: 'app-ui-modal',
   standalone: true,
+  imports: [TranslatePipe],
   template: `
     @if (isOpen()) {
       <div class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" role="dialog" aria-modal="true" (keydown.escape)="close()">
@@ -30,7 +32,7 @@ import { Component, input, output } from '@angular/core';
               <button
                 (click)="close()"
                 class="p-1.5 rounded-lg text-on-surface-muted hover:text-on-surface hover:bg-surface-hover transition-colors"
-                aria-label="Close modal"
+                [attr.aria-label]="'modal.closeLabel' | translate"
               >
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -46,7 +48,7 @@ import { Component, input, output } from '@angular/core';
               (click)="close()"
               class="mt-4 w-full py-2.5 rounded-xl border border-white/10 text-on-surface font-medium hover:bg-surface-hover transition-colors"
             >
-              Close
+              {{ 'modal.close' | translate }}
             </button>
           }
         </div>

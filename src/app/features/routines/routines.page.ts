@@ -3,10 +3,11 @@ import { RouterLink } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
-import { UiSkeleton } from '@shared/ui/skeleton';
+import { UiSkeletonListItem } from '@shared/ui';
 import { UiInput } from '@shared/ui/input';
 import { UiEmptyState } from '@shared/ui/empty-state';
 import { DifficultyPipe } from '@shared/pipes/difficulty';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { RoutineService } from '@core/services/routine.service';
 import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '@lucide/angular';
 
@@ -14,24 +15,24 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '
   selector: 'app-routines-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiSkeleton, UiInput, UiEmptyState,
-    DifficultyPipe,
+    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonListItem, UiInput, UiEmptyState,
+    DifficultyPipe, TranslatePipe,
     LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar,
   ],
   template: `
-    <div class="p-4 space-y-4 max-w-lg mx-auto">
+    <div class="p-4 flex flex-col gap-4 max-w-lg mx-auto">
       <!-- Header -->
       <div class="flex items-center justify-between">
-        <h1 class="text-xl font-bold">Routines</h1>
+        <h1 class="text-xl font-bold">{{ 'routines.title' | translate }}</h1>
         <a ui-button variant="primary" size="sm" routerLink="/routines/new">
           <svg lucidePlus class="w-4 h-4" strokeWidth="2.5"></svg>
-          New
+          {{ 'routines.new' | translate }}
         </a>
       </div>
 
       <!-- Search -->
       <app-ui-input
-        placeholder="Search routines..."
+        [placeholder]="'routines.search' | translate"
         [value]="searchQuery()"
         (valueChange)="searchQuery.set($event)"
         [hasIcon]="true"
@@ -41,26 +42,26 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '
 
       <!-- Loading -->
       @if (loading()) {
-        <div class="space-y-3">
+        <div class="flex flex-col gap-3">
           @for (i of [1,2,3]; track i) {
-            <app-ui-skeleton variant="card" height="88px" />
+            <app-ui-skeleton-list-item height="88px" />
           }
         </div>
       }
 
       <!-- Empty -->
       @if (!loading() && filteredRoutines().length === 0 && !searchQuery()) {
-        <app-ui-empty-state title="No routines yet" message="Create your first workout routine to get started.">
+        <app-ui-empty-state title="{{ 'routines.empty' | translate }}" message="{{ 'routines.emptyDesc' | translate }}">
           <a ui-button variant="primary" routerLink="/routines/new">
             <svg lucidePlus class="w-4 h-4" strokeWidth="2.5"></svg>
-            Create Routine
+            {{ 'routines.create' | translate }}
           </a>
         </app-ui-empty-state>
       }
 
       <!-- No results -->
       @if (!loading() && filteredRoutines().length === 0 && searchQuery()) {
-        <app-ui-empty-state title="No results" message="No routines match your search." />
+        <app-ui-empty-state title="{{ 'routines.noResults' | translate }}" message="{{ 'routines.noResultsDesc' | translate }}" />
       }
 
       <!-- Routine List -->
@@ -85,7 +86,7 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '
                     </app-ui-badge>
                     @let exCount = routine.routine_exercises?.length ?? 0;
                     @if (exCount > 0) {
-                      <span class="text-xs text-on-surface-muted">{{ exCount }} exercises</span>
+                      <span class="text-xs text-on-surface-muted">{{ exCount }} {{ 'routines.exercises' | translate }}</span>
                     }
                     @if (routine.estimated_duration) {
                       <span class="text-xs text-on-surface-muted flex items-center gap-1">

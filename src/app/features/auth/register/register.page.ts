@@ -2,25 +2,27 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
+import { I18nService } from '@shared/i18n/i18n.service';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { LucideDumbbell, LucideEye, LucideEyeOff, LucideUserPlus } from '@lucide/angular';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, LucideDumbbell, LucideEye, LucideEyeOff, LucideUserPlus],
+  imports: [FormsModule, RouterLink, TranslatePipe, LucideDumbbell, LucideEye, LucideEyeOff, LucideUserPlus],
   template: `
     <div class="flex flex-col gap-6 animate-fade-in">
       <div class="text-center">
         <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 mb-4">
           <svg lucideDumbbell class="w-8 h-8 text-brand" strokeWidth="1.5"></svg>
         </div>
-        <h1 class="text-2xl font-bold">Create Account</h1>
-        <p class="text-on-surface-muted mt-1 text-sm">Start your fitness journey today</p>
+        <h1 class="text-2xl font-bold">{{ 'auth.createAccount' | translate }}</h1>
+        <p class="text-on-surface-muted mt-1 text-sm">{{ 'auth.startJourney' | translate }}</p>
       </div>
 
       <form (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
         <div>
-          <label for="email" class="block text-sm font-medium mb-1.5">Email</label>
+          <label for="email" class="block text-sm font-medium mb-1.5">{{ 'auth.email' | translate }}</label>
           <input
             id="email"
             type="email"
@@ -28,13 +30,13 @@ import { LucideDumbbell, LucideEye, LucideEyeOff, LucideUserPlus } from '@lucide
             name="email"
             required
             autocomplete="email"
-            placeholder="you@example.com"
+            [placeholder]="'auth.emailPlaceholder' | translate"
             class="w-full px-4 py-3 rounded-xl bg-surface-input border border-white/10 text-on-surface placeholder:text-on-surface-muted/50 focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
           />
         </div>
 
         <div>
-          <label for="password" class="block text-sm font-medium mb-1.5">Password</label>
+          <label for="password" class="block text-sm font-medium mb-1.5">{{ 'auth.password' | translate }}</label>
           <div class="relative">
             <input
               id="password"
@@ -43,7 +45,7 @@ import { LucideDumbbell, LucideEye, LucideEyeOff, LucideUserPlus } from '@lucide
               name="password"
               required
               autocomplete="new-password"
-              placeholder="At least 6 characters"
+              [placeholder]="'auth.passwordPlaceholderShort' | translate"
               class="w-full px-4 py-3 pr-12 rounded-xl bg-surface-input border border-white/10 text-on-surface placeholder:text-on-surface-muted/50 focus:border-brand focus:ring-1 focus:ring-brand transition-colors"
             />
             <button
@@ -77,14 +79,14 @@ import { LucideDumbbell, LucideEye, LucideEyeOff, LucideUserPlus } from '@lucide
           } @else {
             <svg lucideUserPlus class="w-[18px] h-[18px]" strokeWidth="2"></svg>
           }
-          <span>{{ isLoading() ? 'Creating account...' : 'Create Account' }}</span>
+          <span>{{ isLoading() ? ('auth.creatingAccount' | translate) : ('auth.createAccount' | translate) }}</span>
         </button>
       </form>
 
       <div class="relative">
         <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
         <div class="relative flex justify-center">
-          <span class="px-3 text-xs text-on-surface-muted bg-surface">or continue with</span>
+          <span class="px-3 text-xs text-on-surface-muted bg-surface">{{ 'auth.orContinueWith' | translate }}</span>
         </div>
       </div>
 
@@ -95,18 +97,19 @@ import { LucideDumbbell, LucideEye, LucideEyeOff, LucideUserPlus } from '@lucide
           <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
         </svg>
-        <span>Sign up with Google</span>
+        <span>{{ 'auth.signUpGoogle' | translate }}</span>
       </button>
 
       <div class="text-center text-sm text-on-surface-muted">
-        Already have an account?
-        <a routerLink="/auth/login" class="text-brand hover:text-brand-light transition-colors font-medium">Sign In</a>
+        {{ 'auth.hasAccount' | translate }}
+        <a routerLink="/auth/login" class="text-brand hover:text-brand-light transition-colors font-medium">{{ 'auth.signIn' | translate }}</a>
       </div>
     </div>
   `,
 })
 export class RegisterPage {
   private readonly _auth = inject(AuthService);
+  private readonly _i18n = inject(I18nService);
   protected email = '';
   protected password = '';
   protected showPassword = signal(false);
@@ -120,7 +123,7 @@ export class RegisterPage {
     this.isLoading.set(true); this.error.set(null); this.successMessage.set(null);
     const { error } = await this._auth.signUp(this.email, this.password);
     if (error) this.error.set(error.message);
-    else this.successMessage.set('Account created! Check your email to confirm.');
+    else this.successMessage.set(this._i18n.t('auth.accountCreated'));
     this.isLoading.set(false);
   }
   protected async onGoogleSignIn(): Promise<void> { await this._auth.signInWithGoogle(); }

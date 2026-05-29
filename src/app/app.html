@@ -5,10 +5,10 @@
     <div class="bg-surface-elevated rounded-2xl p-4 shadow-2xl border border-white/10">
       <div class="flex items-center gap-3">
         <div class="flex-1">
-          <p class="text-sm font-medium text-on-surface">New version available</p>
-          <p class="text-xs text-on-surface-muted mt-0.5">Refresh to get the latest features.</p>
+          <p class="text-sm font-medium text-on-surface">{{ 'app.updateAvailable' | translate }}</p>
+          <p class="text-xs text-on-surface-muted mt-0.5">{{ 'app.updateDescription' | translate }}</p>
         </div>
-        <button ui-button variant="primary" size="sm" (click)="activateUpdate()">Update</button>
+        <button ui-button variant="primary" size="sm" (click)="activateUpdate()">{{ 'app.update' | translate }}</button>
       </div>
     </div>
   </div>

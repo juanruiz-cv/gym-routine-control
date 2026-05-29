@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiInput } from '@shared/ui/input';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { RoutineService } from '@core/services/routine.service';
 import { ExerciseService } from '@core/services/exercise.service';
 import { SupabaseService } from '@core/services/supabase.service';
@@ -22,26 +23,26 @@ interface ExerciseEntry {
   selector: 'app-routine-form-page',
   standalone: true,
   imports: [
-    UiCard, UiButton, UiInput,
+    UiCard, UiButton, UiInput, TranslatePipe,
     LucideArrowLeft, LucidePlus, LucideTrash2,
   ],
   template: `
-    <div class="p-4 space-y-4 max-w-lg mx-auto">
+    <div class="p-4 flex flex-col gap-4 max-w-lg mx-auto">
       <!-- Header -->
       <div class="flex items-center gap-3">
         <button (click)="goBack()" class="p-2 rounded-xl hover:bg-surface-hover transition-colors">
           <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2"></svg>
         </button>
-        <h1 class="text-xl font-bold">{{ isEdit() ? 'Edit Routine' : 'New Routine' }}</h1>
+        <h1 class="text-xl font-bold">{{ isEdit() ? ('routines.editRoutine' | translate) : ('routines.newRoutine' | translate) }}</h1>
       </div>
 
       <!-- Basic Info Card -->
-      <app-ui-card variant="glass" title="Basic Info">
-        <div class="space-y-4">
-          <app-ui-input label="Name" [value]="name()" (valueChange)="name.set($event)" placeholder="e.g., Push Day" />
-          <app-ui-input label="Description (optional)" [value]="description()" (valueChange)="description.set($event)" placeholder="Chest, shoulders, triceps" />
+      <app-ui-card variant="glass" [title]="'routines.basicInfo' | translate">
+        <div class="flex flex-col gap-4">
+          <app-ui-input [label]="'routines.name' | translate" [value]="name()" (valueChange)="name.set($event)" [placeholder]="'routines.namePlaceholder' | translate" />
+          <app-ui-input [label]="'routines.description' | translate" [value]="description()" (valueChange)="description.set($event)" [placeholder]="'routines.descriptionPlaceholder' | translate" />
           <fieldset class="flex flex-col gap-1.5 border-0 p-0 m-0">
-            <legend class="text-sm font-medium text-on-surface">Difficulty</legend>
+            <legend class="text-sm font-medium text-on-surface">{{ 'routines.difficulty' | translate }}</legend>
             <div class="flex gap-2">
               @for (diff of difficulties; track diff) {
                 <button
@@ -50,20 +51,20 @@ interface ExerciseEntry {
                   size="sm"
                   (click)="difficulty.set(diff)"
                 >
-                  {{ diff }}
+                  {{ diff | translate }}
                 </button>
               }
             </div>
           </fieldset>
-          <app-ui-input label="Estimated duration (min)" type="number" [value]="duration()" (valueChange)="duration.set($event)" placeholder="45" />
+          <app-ui-input [label]="'routines.estimatedDuration' | translate" type="number" [value]="duration()" (valueChange)="duration.set($event)" placeholder="45" />
         </div>
       </app-ui-card>
 
       <!-- Exercises Card -->
-      <app-ui-card variant="glass" title="Exercises">
+      <app-ui-card variant="glass" [title]="'routines.exercisesForm' | translate">
         <div class="space-y-3">
           @if (exercises().length === 0) {
-            <p class="text-sm text-on-surface-muted py-4 text-center">No exercises added yet. Pick from your list.</p>
+            <p class="text-sm text-on-surface-muted py-4 text-center">{{ 'routines.noExercisesAdded' | translate }}</p>
           }
 
           @for (ex of exercises(); track ex; let i = $index) {
@@ -74,42 +75,42 @@ interface ExerciseEntry {
                   <input
                     type="number"
                     [value]="ex.sets"
-                    (input)="updateExercise(i, 'sets', +$event.target.value)"
+                    (input)="updateExercise(i, 'sets', +$any($event.target).value)"
                     class="w-14 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                    placeholder="Sets"
+                    [placeholder]="'routines.sets' | translate"
                     min="1"
                   />
                   <input
                     type="number"
                     [value]="ex.reps"
-                    (input)="updateExercise(i, 'reps', +$event.target.value)"
+                    (input)="updateExercise(i, 'reps', +$any($event.target).value)"
                     class="w-14 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                    placeholder="Reps"
+                    [placeholder]="'routines.reps' | translate"
                     min="1"
                   />
                   <input
                     type="number"
                     [value]="ex.weight"
-                    (input)="updateExercise(i, 'weight', +$event.target.value)"
+                    (input)="updateExercise(i, 'weight', +$any($event.target).value)"
                     class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                    placeholder="Kg"
+                    [placeholder]="'routines.kg' | translate"
                     min="0"
                     step="0.5"
                   />
                   <input
                     type="number"
                     [value]="ex.restTime"
-                    (input)="updateExercise(i, 'restTime', +$event.target.value)"
+                    (input)="updateExercise(i, 'restTime', +$any($event.target).value)"
                     class="w-14 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                    placeholder="Rest"
+                    [placeholder]="'common.cancel' | translate"
                     min="0"
                   />
                 </div>
                 <div class="flex items-center gap-2 mt-1.5 text-[10px] text-on-surface-muted">
-                  <span>Sets</span>
-                  <span>Reps</span>
-                  <span>Weight</span>
-                  <span>Rest(s)</span>
+                  <span>{{ 'routines.sets' | translate }}</span>
+                  <span>{{ 'routines.reps' | translate }}</span>
+                  <span>{{ 'routines.kg' | translate }}</span>
+                  <span>{{ 'common.cancel' | translate }}</span>
                 </div>
               </div>
               <button (click)="removeExercise(i)" class="p-1.5 rounded-lg text-error hover:bg-error/10 transition-colors shrink-0">
@@ -124,7 +125,7 @@ interface ExerciseEntry {
               #exerciseSelect
               class="flex-1 px-3 py-2 rounded-xl bg-surface-input border border-white/10 text-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
             >
-              <option value="" disabled selected>Select exercise...</option>
+              <option value="" disabled selected>{{ 'routines.selectExercise' | translate }}</option>
               @for (ex of availableExercises(); track ex.id) {
                 <option [value]="ex.id">{{ ex.name }} ({{ ex.muscle_group }})</option>
               }
@@ -142,13 +143,13 @@ interface ExerciseEntry {
 
       <!-- Action Buttons -->
       <div class="flex gap-3">
-        <button ui-button variant="ghost" size="md" class="flex-1" (click)="goBack()">Cancel</button>
+        <button ui-button variant="ghost" size="md" class="flex-1" (click)="goBack()">{{ 'routines.cancel' | translate }}</button>
         <button
           ui-button variant="primary" size="md" class="flex-1"
           [disabled]="saving() || !name()"
           (click)="save()"
         >
-          {{ saving() ? 'Saving...' : isEdit() ? 'Update' : 'Create' }}
+          {{ saving() ? ('routines.saving' | translate) : isEdit() ? ('routines.update' | translate) : ('routines.create_' | translate) }}
         </button>
       </div>
     </div>

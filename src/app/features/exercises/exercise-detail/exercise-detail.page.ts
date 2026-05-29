@@ -3,8 +3,9 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
-import { UiSkeleton } from '@shared/ui/skeleton';
+import { UiSkeletonCard } from '@shared/ui';
 import { UiModal } from '@shared/ui/modal';
+import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { MetricsService } from '@core/services/metrics.service';
 import { ExerciseService } from '@core/services/exercise.service';
 import { LucideArrowLeft, LucidePencil, LucideTrash2, LucideTrophy } from '@lucide/angular';
@@ -15,18 +16,18 @@ import type { Exercise, PersonalRecord } from '@shared/models';
   selector: 'app-exercise-detail-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiSkeleton, UiModal,
-    RelativeDatePipe,
+    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiModal,
+    RelativeDatePipe, TranslatePipe,
     LucideArrowLeft, LucidePencil, LucideTrash2, LucideTrophy,
   ],
   template: `
-    <div class="p-4 space-y-4 max-w-lg mx-auto">
+    <div class="p-4 flex flex-col gap-4 max-w-lg mx-auto">
       <!-- Loading -->
       @if (loading()) {
-        <div class="space-y-4">
-          <app-ui-skeleton variant="card" height="48px" />
-          <app-ui-skeleton variant="card" height="120px" />
-          <app-ui-skeleton variant="card" height="80px" />
+        <div class="flex flex-col gap-4">
+          @for (i of [1,2,3]; track i) {
+            <app-ui-skeleton-card height="80px" />
+          }
         </div>
       }
 
@@ -56,36 +57,36 @@ import type { Exercise, PersonalRecord } from '@shared/models';
         <div class="flex gap-2">
           <button ui-button variant="secondary" size="sm" class="flex-1" routerLink="/exercises/{{ ex.id }}/edit">
             <svg lucidePencil class="w-4 h-4" strokeWidth="2"></svg>
-            Edit
+            {{ 'common.edit' | translate }}
           </button>
           <button ui-button variant="danger" size="sm" class="flex-1" (click)="showDeleteModal.set(true)">
             <svg lucideTrash2 class="w-4 h-4" strokeWidth="2"></svg>
-            Delete
+            {{ 'common.delete' | translate }}
           </button>
         </div>
 
         <!-- Instructions -->
         @if (ex.instructions) {
-          <app-ui-card variant="glass" title="Instructions">
+          <app-ui-card variant="glass" [title]="'exercises.instructions' | translate">
             <p class="text-sm text-on-surface-secondary whitespace-pre-line">{{ ex.instructions }}</p>
           </app-ui-card>
         }
 
         <!-- Personal Records -->
         <div>
-          <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">Personal Records</h2>
+          <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'exercises.personalRecords' | translate }}</h2>
           @if (loadingPRs()) {
-            <app-ui-skeleton variant="card" height="120px" />
+            <app-ui-skeleton-card height="120px" />
           } @else if (personalRecords().length === 0) {
             <app-ui-card variant="glass">
               <div class="flex flex-col items-center py-6 text-center">
                 <svg lucideTrophy class="w-10 h-10 text-on-surface-muted mb-2" strokeWidth="1.5"></svg>
-                <p class="text-sm text-on-surface-muted">No records yet</p>
-                <p class="text-xs text-on-surface-muted mt-1">Complete this exercise in a workout to set a record.</p>
+                <p class="text-sm text-on-surface-muted">{{ 'exercises.noRecords' | translate }}</p>
+                <p class="text-xs text-on-surface-muted mt-1">{{ 'exercises.noRecordsDesc' | translate }}</p>
               </div>
             </app-ui-card>
           } @else {
-            <div class="space-y-2">
+            <div class="flex flex-col gap-2">
               @for (pr of personalRecords(); track pr.id) {
                 <app-ui-card variant="glass" [padding]="true">
                   <div class="flex items-center gap-3">
@@ -99,7 +100,7 @@ import type { Exercise, PersonalRecord } from '@shared/models';
                         <span class="text-sm">{{ pr.reps }} reps</span>
                       </div>
                       @if (pr.estimated_one_rm) {
-                        <p class="text-xs text-on-surface-muted mt-0.5">e1RM: {{ pr.estimated_one_rm }} kg</p>
+                        <p class="text-xs text-on-surface-muted mt-0.5">{{ 'exercises.e1rm' | translate }} {{ pr.estimated_one_rm }} kg</p>
                       }
                     </div>
                     <span class="text-xs text-on-surface-muted">{{ pr.achieved_at | relativeDate }}</span>
@@ -112,13 +113,13 @@ import type { Exercise, PersonalRecord } from '@shared/models';
       }
 
       <!-- Delete Modal -->
-      <app-ui-modal [isOpen]="showDeleteModal()" title="Delete Exercise" (closed)="showDeleteModal.set(false)">
+      <app-ui-modal [isOpen]="showDeleteModal()" [title]="'exercises.deleteTitle' | translate" (closed)="showDeleteModal.set(false)">
         <p class="text-sm text-on-surface-muted mb-4">
-          Are you sure you want to delete "{{ exercise()?.name }}"? This will remove it from all routines.
+          {{ 'exercises.deleteConfirm' | translate }}
         </p>
         <div class="flex gap-3">
-          <button ui-button variant="ghost" size="md" class="flex-1" (click)="showDeleteModal.set(false)">Cancel</button>
-          <button ui-button variant="danger" size="md" class="flex-1" (click)="deleteExercise()">Delete</button>
+          <button ui-button variant="ghost" size="md" class="flex-1" (click)="showDeleteModal.set(false)">{{ 'common.cancel' | translate }}</button>
+          <button ui-button variant="danger" size="md" class="flex-1" (click)="deleteExercise()">{{ 'common.delete' | translate }}</button>
         </div>
       </app-ui-modal>
     </div>
