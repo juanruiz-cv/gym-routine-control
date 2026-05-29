@@ -5,6 +5,7 @@ import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
 import { UiSkeletonCard } from '@shared/ui';
 import { UiModal } from '@shared/ui/modal';
+import { UiEmptyState } from '@shared/ui/empty-state';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { MetricsService } from '@core/services/metrics.service';
 import { ExerciseService } from '@core/services/exercise.service';
@@ -16,7 +17,7 @@ import type { Exercise, PersonalRecord } from '@shared/models';
   selector: 'app-exercise-detail-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiModal,
+    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiModal, UiEmptyState,
     RelativeDatePipe, TranslatePipe,
     LucideArrowLeft, LucidePencil, LucideTrash2, LucideTrophy,
   ],
@@ -78,13 +79,7 @@ import type { Exercise, PersonalRecord } from '@shared/models';
           @if (loadingPRs()) {
             <app-ui-skeleton-card height="120px" />
           } @else if (personalRecords().length === 0) {
-            <app-ui-card variant="glass">
-              <div class="flex flex-col items-center py-6 text-center">
-                <svg lucideTrophy class="w-10 h-10 text-on-surface-muted mb-2" strokeWidth="1.5"></svg>
-                <p class="text-sm text-on-surface-muted">{{ 'exercises.noRecords' | translate }}</p>
-                <p class="text-xs text-on-surface-muted mt-1">{{ 'exercises.noRecordsDesc' | translate }}</p>
-              </div>
-            </app-ui-card>
+            <app-ui-empty-state variant="exercise" title="{{ 'exercises.noRecords' | translate }}" message="{{ 'exercises.noRecordsDesc' | translate }}" />
           } @else {
             <div class="flex flex-col gap-2">
               @for (pr of personalRecords(); track pr.id) {

@@ -3,9 +3,9 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
-import { UiSkeletonCard } from '@shared/ui';
-import { UiTimer } from '@shared/ui/timer';
+import { UiSkeletonCard, UiTimer } from '@shared/ui';
 import { UiModal } from '@shared/ui/modal';
+import { UiEmptyState } from '@shared/ui/empty-state';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { WorkoutService } from '@core/services/workout.service';
 import { NotificationService } from '@core/services/notification.service';
@@ -18,9 +18,10 @@ import {
   selector: 'app-workout-session-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiTimer, UiModal, UiSkeletonCard, TranslatePipe,
-    LucideCheck, LucideX, LucideDumbbell,
-    LucideChevronLeft, LucideChevronRight, LucideTimer, LucideCheckCircle,
+    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiTimer, UiModal, UiEmptyState,
+    TranslatePipe,
+    LucideTimer, LucideCheck, LucideCheckCircle, LucideChevronLeft, LucideChevronRight,
+    LucideX, LucideDumbbell,
   ],
   template: `
     <div class="flex flex-col min-h-dvh">
@@ -170,11 +171,11 @@ import {
         } @else {
           <!-- No exercises in this routine -->
           <div class="flex-1 flex items-center justify-center p-4">
-            <div class="text-center">
-              <svg lucideDumbbell class="w-12 h-12 text-on-surface-muted mx-auto mb-3" strokeWidth="1.5"></svg>
-              <p class="text-on-surface-muted">{{ 'workout.noExercises' | translate }}</p>
-              <button ui-button variant="primary" size="md" class="mt-4" routerLink="/routines">{{ 'workout.browseRoutines' | translate }}</button>
-            </div>
+            <app-ui-empty-state
+              variant="workout"
+              title="{{ 'workout.noExercises' | translate }}"
+              [primaryAction]="{ label: ('workout.browseRoutines' | translate), routerLink: '/routines', variant: 'primary' }"
+            />
           </div>
         }
       } @else {

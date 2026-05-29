@@ -5,20 +5,27 @@ import { DataService } from './data.service';
 @Injectable({ providedIn: 'root' })
 export class ExerciseService extends DataService {
   private readonly _exercises = signal<Exercise[]>([]);
+  private readonly _loading = signal(false);
 
   readonly exercises = this._exercises.asReadonly();
+  readonly loading = this._loading.asReadonly();
 
   async fetchAll(): Promise<Exercise[]> {
-    const userId = await this.checkUserId();
-    const { data, error } = await this.client
-      .from('exercises')
-      .select('*')
-      .or(`user_id.eq.${userId},is_global.eq.true`)
-      .order('name');
+    this._loading.set(true);
+    try {
+      const userId = await this.checkUserId();
+      const { data, error } = await this.client
+        .from('exercises')
+        .select('*')
+        .or(`user_id.eq.${userId},is_global.eq.true`)
+        .order('name');
 
-    if (error) throw error;
-    this._exercises.set(data ?? []);
-    return data ?? [];
+      if (error) throw error;
+      this._exercises.set(data ?? []);
+      return data ?? [];
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   async getById(id: string): Promise<Exercise | null> {

@@ -102,6 +102,9 @@
   "routines.estimatedDuration": "Estimated duration (min)",
   "routines.exercisesForm": "Exercises",
   "routines.noExercisesAdded": "No exercises added yet. Pick from your list.",
+  "routines.noExercisesDb": "No exercises available",
+  "routines.noExercisesDbDesc": "Create at least one exercise before adding it to a routine.",
+  "routines.createExercise": "Create Exercise",
   "routines.selectExercise": "Select exercise...",
   "routines.cancel": "Cancel",
   "routines.saving": "Saving...",
@@ -216,6 +219,7 @@
   "difficulty.intermediate": "Intermediate",
   "difficulty.advanced": "Advanced",
 
+  "common.all": "All",
   "common.loading": "Loading...",
   "common.saving": "Saving...",
   "common.cancel": "Cancel",
@@ -227,6 +231,9 @@
   "common.back": "Back",
   "common.confirm": "Confirm",
   "common.or": "or",
+  "common.error": "Error",
+  "common.errorDesc": "Something went wrong. Try again.",
+  "common.retry": "Retry",
 
   "duration.hours": "h",
   "duration.minutes": "m",

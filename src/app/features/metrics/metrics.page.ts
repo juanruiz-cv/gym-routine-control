@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { UiCard } from '@shared/ui/card';
 import { UiSkeletonCard, UiSkeletonStatsGrid } from '@shared/ui';
+import { UiEmptyState } from '@shared/ui/empty-state';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { MetricsService, type WeeklyActivity, type MuscleDistribution } from '@core/services/metrics.service';
 import type { PersonalRecord } from '@shared/models';
@@ -11,7 +12,7 @@ import { LucideTrophy } from '@lucide/angular';
   selector: 'app-metrics-page',
   standalone: true,
   imports: [
-    UiCard, UiSkeletonCard, UiSkeletonStatsGrid,
+    UiCard, UiSkeletonCard, UiSkeletonStatsGrid, UiEmptyState,
     RelativeDatePipe, TranslatePipe,
     LucideTrophy,
   ],
@@ -65,9 +66,7 @@ import { LucideTrophy } from '@lucide/angular';
             </div>
           </app-ui-card>
         } @else {
-          <app-ui-card variant="glass">
-            <p class="text-sm text-on-surface-muted text-center py-6">{{ 'metrics.noActivity' | translate }}</p>
-          </app-ui-card>
+          <app-ui-empty-state variant="metrics" title="{{ 'metrics.noActivity' | translate }}" />
         }
       </div>
 
@@ -100,9 +99,7 @@ import { LucideTrophy } from '@lucide/angular';
             </div>
           </app-ui-card>
         } @else {
-          <app-ui-card variant="glass">
-            <p class="text-sm text-on-surface-muted text-center py-6">{{ 'metrics.noMuscleData' | translate }}</p>
-          </app-ui-card>
+          <app-ui-empty-state variant="metrics" title="{{ 'metrics.noMuscleData' | translate }}" />
         }
       </div>
 
@@ -134,13 +131,7 @@ import { LucideTrophy } from '@lucide/angular';
             }
           </div>
         } @else {
-          <app-ui-card variant="glass">
-            <div class="text-center py-6">
-              <svg lucideTrophy class="w-10 h-10 text-on-surface-muted mx-auto mb-2" strokeWidth="1.5"></svg>
-              <p class="text-sm text-on-surface-muted">{{ 'metrics.noRecords' | translate }}</p>
-              <p class="text-xs text-on-surface-muted mt-1">{{ 'metrics.noRecordsDesc' | translate }}</p>
-            </div>
-          </app-ui-card>
+          <app-ui-empty-state variant="metrics" title="{{ 'metrics.noRecords' | translate }}" message="{{ 'metrics.noRecordsDesc' | translate }}" />
         }
       </div>
     </div>

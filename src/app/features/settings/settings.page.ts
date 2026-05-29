@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
-import { UiSkeletonCard } from '@shared/ui';
+import { UiSkeletonCard, UiSelect, type SelectOption } from '@shared/ui';
 import { SupabaseService } from '@core/services/supabase.service';
 import { I18nService } from '@shared/i18n/i18n.service';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
@@ -14,7 +14,7 @@ import type { UserPreferences } from '@shared/models';
   selector: 'app-settings-page',
   standalone: true,
   imports: [
-    UiCard, UiButton, UiSkeletonCard, TranslatePipe, LanguageSwitcherComponent,
+    UiCard, UiButton, UiSkeletonCard, UiSelect, TranslatePipe, LanguageSwitcherComponent,
     LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone,
   ],
   template: `
@@ -55,17 +55,12 @@ import type { UserPreferences } from '@shared/models';
                   <p class="text-sm font-medium">{{ 'settings.restTimer' | translate }}</p>
                   <p class="text-xs text-on-surface-muted">{{ 'settings.restTimerDesc' | translate }}</p>
                 </div>
-                <select
-                  [value]="restTimer()"
-                  (change)="restTimer.set(($any($event.target)).value); savePreferences()"
-                  class="px-3 py-1.5 rounded-lg bg-surface-input border border-white/10 text-sm text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                >
-                  <option value="30">30s</option>
-                  <option value="60">60s</option>
-                  <option value="90">90s</option>
-                  <option value="120">120s</option>
-                  <option value="180">180s</option>
-                </select>
+                <app-ui-select
+                  size="sm"
+                  [options]="timerOptions"
+                  [(value)]="restTimer"
+                  (valueChange)="savePreferences()"
+                />
               </div>
 
               <app-language-switcher />
@@ -130,6 +125,14 @@ export class SettingsPage implements OnInit {
   private readonly _router = inject(Router);
   private readonly _supabase = inject(SupabaseService);
   private readonly _i18n = inject(I18nService);
+
+  readonly timerOptions: SelectOption[] = [
+    { value: '30', label: '30s' },
+    { value: '60', label: '60s' },
+    { value: '90', label: '90s' },
+    { value: '120', label: '120s' },
+    { value: '180', label: '180s' },
+  ];
 
   readonly profileEmail = signal('');
   readonly restTimer = signal('90');

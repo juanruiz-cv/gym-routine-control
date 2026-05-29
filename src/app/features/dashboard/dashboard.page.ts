@@ -5,6 +5,7 @@ import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiSkeletonStatsGrid, UiSkeletonListItem } from '@shared/ui';
 import { UiBadge } from '@shared/ui/badge';
+import { UiEmptyState } from '@shared/ui/empty-state';
 import { I18nService } from '@shared/i18n/i18n.service';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { MetricsService, type VolumeDataPoint } from '@core/services/metrics.service';
@@ -19,7 +20,7 @@ import type { WorkoutSession } from '@shared/models';
   standalone: true,
   imports: [
     RouterLink, SlicePipe,
-    UiCard, UiButton, UiSkeletonStatsGrid, UiSkeletonListItem, UiBadge,
+    UiCard, UiButton, UiSkeletonStatsGrid, UiSkeletonListItem, UiBadge, UiEmptyState,
     DurationPipe, RelativeDatePipe, TranslatePipe,
     LucideDumbbell, LucideFlame, LucideCalendar, LucideArrowRight,
     LucideTrendingUp, LucidePlay, LucideClock, LucideListOrdered,
@@ -112,15 +113,11 @@ import type { WorkoutSession } from '@shared/models';
             }
           </div>
         } @else if (recentSessions().length === 0) {
-          <app-ui-card variant="glass">
-            <div class="text-center py-6">
-              <svg lucideDumbbell class="w-10 h-10 text-on-surface-muted mx-auto mb-2" strokeWidth="1.5"></svg>
-              <p class="text-sm text-on-surface-muted">{{ 'dashboard.noWorkouts' | translate }}</p>
-              <a ui-button variant="primary" size="sm" class="mt-3" routerLink="/workout">
-                {{ 'dashboard.startFirst' | translate }}
-              </a>
-            </div>
-          </app-ui-card>
+          <app-ui-empty-state
+            variant="workout"
+            title="{{ 'dashboard.noWorkouts' | translate }}"
+            [primaryAction]="{ label: ('dashboard.startFirst' | translate), routerLink: '/workout', variant: 'primary' }"
+          />
         } @else {
           <div class="flex flex-col gap-3">
             @for (session of recentSessions(); track session.id) {

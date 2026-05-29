@@ -12,3 +12,4 @@ export { UiSkeletonCard } from './skeleton-card';
 export { UiSkeletonStatsGrid } from './skeleton-stats-grid';
 export { UiSkeletonListItem } from './skeleton-list-item';
 export { UiToast } from './toast';
+export { UiSelect, type SelectOption } from './select';

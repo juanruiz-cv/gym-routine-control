@@ -6,6 +6,7 @@ import { UiBadge } from '@shared/ui/badge';
 import { UiSkeletonCard } from '@shared/ui';
 import { UiModal } from '@shared/ui/modal';
 import { DifficultyPipe } from '@shared/pipes/difficulty';
+import { UiEmptyState } from '@shared/ui/empty-state';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { RoutineService } from '@core/services/routine.service';
 import { WorkoutService } from '@core/services/workout.service';
@@ -19,7 +20,7 @@ import type { Routine } from '@shared/models';
   selector: 'app-routine-detail-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiModal,
+    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiModal, UiEmptyState,
     DifficultyPipe, TranslatePipe,
     LucideArrowLeft, LucidePlay, LucidePencil, LucideCopy, LucideTrash2, LucideClock,
     LucideDumbbell, LucideFlame, LucideCheck,
@@ -32,6 +33,17 @@ import type { Routine } from '@shared/models';
           @for (i of [1,2,3,4]; track i) {
             <app-ui-skeleton-card height="80px" />
           }
+        </div>
+      }
+
+      <!-- Error -->
+      @if (error()) {
+        <div class="flex flex-col items-center justify-center py-12 px-4 text-center">
+          <app-ui-empty-state variant="error" title="{{ 'common.error' | translate }}" message="{{ 'common.errorDesc' | translate }}">
+            <button ui-button variant="primary" size="md" (click)="goBack()">
+              {{ 'common.back' | translate }}
+            </button>
+          </app-ui-empty-state>
         </div>
       }
 
@@ -96,15 +108,11 @@ import type { Routine } from '@shared/models';
         <div>
           <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'routines.exercisesSection' | translate }}</h2>
           @if (!r.routine_exercises?.length) {
-            <app-ui-card variant="glass">
-              <div class="flex flex-col items-center py-8 text-center">
-                <svg lucideDumbbell class="w-10 h-10 text-on-surface-muted mb-2" strokeWidth="1.5"></svg>
-                <p class="text-sm text-on-surface-muted">{{ 'routines.noExercises' | translate }}</p>
-                <a ui-button variant="primary" size="sm" class="mt-3" routerLink="/routines/{{ r.id }}/edit">
-                  {{ 'routines.addExercises' | translate }}
-                </a>
-              </div>
-            </app-ui-card>
+            <app-ui-empty-state
+              variant="routine"
+              title="{{ 'routines.noExercises' | translate }}"
+              [primaryAction]="{ label: ('routines.addExercises' | translate), routerLink: '/routines/' + r.id + '/edit', variant: 'primary' }"
+            />
           } @else {
             <div class="flex flex-col gap-2">
               @for (ex of r.routine_exercises; track ex.id; let i = $index) {
@@ -175,6 +183,7 @@ export class RoutineDetailPage implements OnInit {
 
   readonly routine = signal<Routine | null>(null);
   readonly loading = signal(true);
+  readonly error = signal(false);
   readonly showDeleteModal = signal(false);
   readonly showDuplicateToast = signal(false);
 
@@ -186,9 +195,10 @@ export class RoutineDetailPage implements OnInit {
     }
     try {
       const r = await this._routines.getById(id);
+      if (!r) { this.error.set(true); return; }
       this.routine.set(r);
     } catch {
-      this.goBack();
+      this.error.set(true);
     } finally {
       this.loading.set(false);
     }

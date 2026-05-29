@@ -111,7 +111,7 @@ export class ExercisesPage implements OnInit {
   readonly selectedMuscle = signal('');
 
   readonly exercises = this._exercises.exercises;
-  readonly loading = signal(true);
+  readonly loading = this._exercises.loading;
 
   readonly filteredExercises = computed(() => {
     const q = this.searchQuery().toLowerCase();
@@ -125,6 +125,5 @@ export class ExercisesPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this._exercises.fetchAll();
-    this.loading.set(false);
   }
 }

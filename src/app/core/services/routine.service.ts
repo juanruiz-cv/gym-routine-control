@@ -12,18 +12,21 @@ export class RoutineService extends DataService {
 
   async fetchAll(): Promise<Routine[]> {
     this._loading.set(true);
-    const userId = await this.checkUserId();
-    const { data, error } = await this.client
-      .from('routines')
-      .select('*, routine_exercises(*, exercise(*))')
-      .eq('user_id', userId)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false });
+    try {
+      const userId = await this.checkUserId();
+      const { data, error } = await this.client
+        .from('routines')
+        .select('*, routine_exercises(*, exercise(*))')
+        .eq('user_id', userId)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
 
-    if (error) throw error;
-    this._routines.set(data ?? []);
-    this._loading.set(false);
-    return data ?? [];
+      if (error) throw error;
+      this._routines.set(data ?? []);
+      return data ?? [];
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   async getById(id: string): Promise<Routine | null> {

@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UiButton } from '@shared/ui/button';
 import { UiInput } from '@shared/ui/input';
+import { UiSelect, type SelectOption } from '@shared/ui/select';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { ExerciseService } from '@core/services/exercise.service';
 import { LucideArrowLeft } from '@lucide/angular';
@@ -10,7 +11,7 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
 @Component({
   selector: 'app-exercise-form-page',
   standalone: true,
-  imports: [UiButton, UiInput, TranslatePipe, LucideArrowLeft],
+  imports: [UiButton, UiInput, UiSelect, TranslatePipe, LucideArrowLeft],
   template: `
     <div class="p-4 space-y-4 max-w-lg mx-auto">
       <!-- Header -->
@@ -25,35 +26,19 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
       <div class="space-y-4">
         <app-ui-input [label]="'exercises.name' | translate" [value]="name()" (valueChange)="name.set($event)" [placeholder]="'exercises.namePlaceholder' | translate" />
 
-        <div class="flex flex-col gap-1.5">
-          <label for="muscleGroup" class="text-sm font-medium text-on-surface">{{ 'exercises.muscleGroup' | translate }}</label>
-          <select
-            id="muscleGroup"
-            [value]="muscleGroup()"
-            (change)="muscleGroup.set(($any($event.target)).value)"
-            class="w-full px-4 py-3 rounded-xl bg-surface-input border border-white/10 text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-          >
-            <option value="" disabled>{{ 'exercises.muscleGroupPlaceholder' | translate }}</option>
-            @for (mg of muscleGroups; track mg) {
-              <option [value]="mg">{{ mg }}</option>
-            }
-          </select>
-        </div>
+        <app-ui-select
+          [label]="'exercises.muscleGroup' | translate"
+          [placeholder]="'exercises.muscleGroupPlaceholder' | translate"
+          [options]="muscleGroupOptions"
+          [(value)]="muscleGroup"
+        />
 
-        <div class="flex flex-col gap-1.5">
-          <label for="equipment" class="text-sm font-medium text-on-surface">{{ 'exercises.equipment' | translate }}</label>
-          <select
-            id="equipment"
-            [value]="equipment()"
-            (change)="equipment.set(($any($event.target)).value)"
-            class="w-full px-4 py-3 rounded-xl bg-surface-input border border-white/10 text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-          >
-            <option value="">{{ 'exercises.equipmentNone' | translate }}</option>
-            @for (eq of equipmentTypes; track eq) {
-              <option [value]="eq">{{ eq }}</option>
-            }
-          </select>
-        </div>
+        <app-ui-select
+          [label]="'exercises.equipment' | translate"
+          [placeholder]="'exercises.equipmentNone' | translate"
+          [options]="equipmentOptions"
+          [(value)]="equipment"
+        />
 
         <app-ui-input [label]="'exercises.category' | translate" [value]="category()" (valueChange)="category.set($event)" [placeholder]="'exercises.categoryPlaceholder' | translate" />
 
@@ -88,8 +73,8 @@ export class ExerciseFormPage implements OnInit {
   private readonly _route = inject(ActivatedRoute);
   private readonly _exercises = inject(ExerciseService);
 
-  readonly muscleGroups = MUSCLE_GROUPS;
-  readonly equipmentTypes = EQUIPMENT_TYPES;
+  readonly muscleGroupOptions: SelectOption[] = MUSCLE_GROUPS.map(mg => ({ value: mg, label: mg }));
+  readonly equipmentOptions: SelectOption[] = EQUIPMENT_TYPES.map(eq => ({ value: eq, label: eq }));
 
   readonly name = signal('');
   readonly muscleGroup = signal('');
