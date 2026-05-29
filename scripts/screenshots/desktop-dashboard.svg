@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <rect width="1280" height="720" fill="#0f0f13"/>
+
+  <!-- Sidebar -->
+  <rect x="0" y="0" width="220" height="720" fill="#0a0a0e" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+  <!-- Logo -->
+  <rect x="28" y="24" width="36" height="36" rx="10" fill="rgba(249,115,22,0.15)"/>
+  <text x="46" y="48" fill="#f97316" font-family="Inter, sans-serif" font-size="16" font-weight="800" text-anchor="middle">G</text>
+  <text x="76" y="48" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="16" font-weight="700">GymControl</text>
+
+  <!-- Nav items -->
+  <rect x="12" y="80" width="196" height="40" rx="8" fill="rgba(249,115,22,0.12)"/>
+  <text x="48" y="105" fill="#f97316" font-family="Inter, sans-serif" font-size="13" font-weight="600">Dashboard</text>
+
+  <text x="48" y="155" fill="#64748b" font-family="Inter, sans-serif" font-size="13" font-weight="500">Rutinas</text>
+  <text x="48" y="205" fill="#64748b" font-family="Inter, sans-serif" font-size="13" font-weight="500">Ejercicios</text>
+  <text x="48" y="255" fill="#64748b" font-family="Inter, sans-serif" font-size="13" font-weight="500">Métricas</text>
+  <text x="48" y="305" fill="#64748b" font-family="Inter, sans-serif" font-size="13" font-weight="500">Ajustes</text>
+
+  <!-- Divider -->
+  <line x1="16" y1="340" x2="204" y2="340" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+  <!-- User at bottom -->
+  <rect x="16" y="660" width="188" height="44" rx="8" fill="#1a1a24"/>
+  <circle cx="38" cy="682" r="14" fill="#2a2a38"/>
+  <text x="66" y="678" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="12" font-weight="500">Ángel Ruiz</text>
+  <text x="66" y="692" fill="#64748b" font-family="Inter, sans-serif" font-size="10">angel@email.com</text>
+
+  <!-- Main content -->
+  <!-- Header row -->
+  <text x="248" y="52" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="22" font-weight="700">Panel de Control</text>
+  <text x="248" y="74" fill="#64748b" font-family="Inter, sans-serif" font-size="13">Buenos días, Ángel · 3 entrenamientos esta semana</text>
+
+  <!-- Stats row (4 cards across) -->
+  <rect x="248" y="96" width="236" height="88" rx="12" fill="#1a1a24" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="264" y="118" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500">Entrenamientos</text>
+  <text x="264" y="166" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="28" font-weight="800">24</text>
+  <text x="320" y="166" fill="#64748b" font-family="Inter, sans-serif" font-size="12">completados</text>
+
+  <rect x="500" y="96" width="236" height="88" rx="12" fill="#1a1a24" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="516" y="118" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500">Racha Actual</text>
+  <text x="516" y="166" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="28" font-weight="800">12</text>
+  <text x="572" y="166" fill="#64748b" font-family="Inter, sans-serif" font-size="12">días seguidos</text>
+
+  <rect x="752" y="96" width="236" height="88" rx="12" fill="#1a1a24" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="768" y="118" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500">Volumen Total</text>
+  <text x="768" y="166" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="28" font-weight="800">2,850</text>
+  <text x="840" y="166" fill="#64748b" font-family="Inter, sans-serif" font-size="12">kg</text>
+
+  <rect x="1004" y="96" width="236" height="88" rx="12" fill="#1a1a24" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="1020" y="118" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500">Esta Semana</text>
+  <text x="1020" y="166" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="28" font-weight="800">4</text>
+  <text x="1076" y="166" fill="#64748b" font-family="Inter, sans-serif" font-size="12">entrenamientos</text>
+
+  <!-- Volume Chart -->
+  <rect x="248" y="204" width="640" height="240" rx="14" fill="#1a1a24" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <text x="272" y="232" fill="#94a3b8" font-family="Inter, sans-serif" font-size="14" font-weight="600">Tendencia de Volumen (8 semanas)</text>
+
+  <!-- Bars -->
+  <rect x="292" y="360" width="48" height="48" rx="4" fill="rgba(255,255,255,0.12)"/>
+  <rect x="364" y="340" width="48" height="68" rx="4" fill="rgba(255,255,255,0.12)"/>
+  <rect x="436" y="370" width="48" height="38" rx="4" fill="rgba(255,255,255,0.12)"/>
+  <rect x="508" y="350" width="48" height="58" rx="4" fill="rgba(255,255,255,0.12)"/>
+  <rect x="580" y="362" width="48" height="46" rx="4" fill="rgba(255,255,255,0.12)"/>
+  <rect x="652" y="332" width="48" height="76" rx="4" fill="rgba(255,255,255,0.12)"/>
+  <rect x="724" y="348" width="48" height="60" rx="4" fill="rgba(255,255,255,0.12)"/>
+  <rect x="796" y="318" width="48" height="90" rx="4" fill="#f97316"/>
+
+  <!-- Y-axis labels -->
+  <text x="280" y="316" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="end">600</text>
+  <text x="280" y="370" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="end">400</text>
+  <text x="280" y="410" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="end">0</text>
+
+  <!-- X-axis labels -->
+  <text x="316" y="430" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="middle">Mar 28</text>
+  <text x="388" y="430" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="middle">Abr 4</text>
+  <text x="460" y="430" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="middle">Abr 11</text>
+  <text x="532" y="430" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="middle">Abr 18</text>
+  <text x="604" y="430" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="middle">Abr 25</text>
+  <text x="676" y="430" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="middle">May 2</text>
+  <text x="748" y="430" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="middle">May 9</text>
+  <text x="820" y="430" fill="#64748b" font-family="Inter, sans-serif" font-size="10" text-anchor="middle">May 16</text>
+
+  <!-- Right panel: Recent Activity -->
+  <text x="912" y="232" fill="#94a3b8" font-family="Inter, sans-serif" font-size="14" font-weight="600">Actividad Reciente</text>
+
+  <rect x="912" y="248" width="330" height="60" rx="10" fill="#1a1a24"/>
+  <rect x="928" y="260" width="32" height="32" rx="8" fill="rgba(249,115,22,0.1)"/>
+  <text x="972" y="278" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="12" font-weight="500">Push Day Completo</text>
+  <text x="972" y="296" fill="#64748b" font-family="Inter, sans-serif" font-size="11">Hoy · 45 min</text>
+
+  <rect x="912" y="316" width="330" height="60" rx="10" fill="#1a1a24"/>
+  <rect x="928" y="328" width="32" height="32" rx="8" fill="rgba(249,115,22,0.1)"/>
+  <text x="972" y="346" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="12" font-weight="500">Pull Day + Cardio</text>
+  <text x="972" y="364" fill="#64748b" font-family="Inter, sans-serif" font-size="11">Ayer · 55 min</text>
+
+  <rect x="912" y="384" width="330" height="60" rx="10" fill="#1a1a24"/>
+  <rect x="928" y="396" width="32" height="32" rx="8" fill="rgba(249,115,22,0.1)"/>
+  <text x="972" y="414" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="12" font-weight="500">Lower Body</text>
+  <text x="972" y="432" fill="#64748b" font-family="Inter, sans-serif" font-size="11">Hace 2 días · 35 min</text>
+
+  <!-- Quick Actions at bottom -->
+  <text x="248" y="490" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600">Acceso Rápido</text>
+
+  <rect x="248" y="504" width="160" height="80" rx="10" fill="#1a1a24"/>
+  <rect x="280" y="520" width="36" height="36" rx="18" fill="rgba(249,115,22,0.15)"/>
+  <polygon points="293,528 293,548 306,538" fill="#f97316"/>
+  <text x="328" y="544" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="13" font-weight="500">Entrenar</text>
+  <text x="328" y="562" fill="#64748b" font-family="Inter, sans-serif" font-size="10">Iniciar sesión</text>
+
+  <rect x="420" y="504" width="160" height="80" rx="10" fill="#1a1a24"/>
+  <rect x="452" y="520" width="36" height="36" rx="18" fill="rgba(255,255,255,0.06)"/>
+  <text x="500" y="544" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="13" font-weight="500">Rutinas</text>
+  <text x="500" y="562" fill="#64748b" font-family="Inter, sans-serif" font-size="10">Gestionar</text>
+
+  <rect x="592" y="504" width="160" height="80" rx="10" fill="#1a1a24"/>
+  <rect x="624" y="520" width="36" height="36" rx="18" fill="rgba(255,255,255,0.06)"/>
+  <text x="672" y="544" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="13" font-weight="500">Ejercicios</text>
+  <text x="672" y="562" fill="#64748b" font-family="Inter, sans-serif" font-size="10">Explorar</text>
+</svg>

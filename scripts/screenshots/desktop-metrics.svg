@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <rect width="1280" height="720" fill="#0f0f13"/>
+
+  <!-- Sidebar -->
+  <rect x="0" y="0" width="220" height="720" fill="#0a0a0e" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+  <rect x="28" y="24" width="36" height="36" rx="10" fill="rgba(249,115,22,0.15)"/>
+  <text x="46" y="48" fill="#f97316" font-family="Inter, sans-serif" font-size="16" font-weight="800" text-anchor="middle">G</text>
+  <text x="76" y="48" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="16" font-weight="700">GymControl</text>
+
+  <text x="48" y="105" fill="#64748b" font-family="Inter, sans-serif" font-size="13" font-weight="500">Dashboard</text>
+  <text x="48" y="155" fill="#64748b" font-family="Inter, sans-serif" font-size="13" font-weight="500">Rutinas</text>
+  <text x="48" y="205" fill="#64748b" font-family="Inter, sans-serif" font-size="13" font-weight="500">Ejercicios</text>
+  <rect x="12" y="220" width="196" height="40" rx="8" fill="rgba(249,115,22,0.12)"/>
+  <text x="48" y="245" fill="#f97316" font-family="Inter, sans-serif" font-size="13" font-weight="600">Métricas</text>
+  <text x="48" y="305" fill="#64748b" font-family="Inter, sans-serif" font-size="13" font-weight="500">Ajustes</text>
+
+  <!-- Main -->
+  <text x="248" y="50" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="22" font-weight="700">Métricas y Analíticas</text>
+
+  <!-- Stats cards row -->
+  <rect x="248" y="76" width="236" height="80" rx="12" fill="#1a1a24"/>
+  <text x="264" y="100" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500">Entrenamientos</text>
+  <text x="264" y="140" fill="#f97316" font-family="Inter, sans-serif" font-size="24" font-weight="800">24</text>
+
+  <rect x="500" y="76" width="236" height="80" rx="12" fill="#1a1a24"/>
+  <text x="516" y="100" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500">Racha Actual</text>
+  <text x="516" y="140" fill="#fb923c" font-family="Inter, sans-serif" font-size="24" font-weight="800">12</text>
+  <text x="544" y="140" fill="#64748b" font-family="Inter, sans-serif" font-size="11">días</text>
+
+  <rect x="752" y="76" width="236" height="80" rx="12" fill="#1a1a24"/>
+  <text x="768" y="100" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500">Volumen Total</text>
+  <text x="768" y="140" fill="#3b82f6" font-family="Inter, sans-serif" font-size="24" font-weight="800">2.8k</text>
+  <text x="800" y="140" fill="#64748b" font-family="Inter, sans-serif" font-size="11">kg</text>
+
+  <rect x="1004" y="76" width="236" height="80" rx="12" fill="#1a1a24"/>
+  <text x="1020" y="100" fill="#64748b" font-family="Inter, sans-serif" font-size="11" font-weight="500">Tiempo Total</text>
+  <text x="1020" y="140" fill="#22c55e" font-family="Inter, sans-serif" font-size="24" font-weight="800">1,240</text>
+  <text x="1058" y="140" fill="#64748b" font-family="Inter, sans-serif" font-size="11">minutos</text>
+
+  <!-- Left column: Weekly Activity -->
+  <text x="248" y="200" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600">Actividad Semanal</text>
+  <rect x="248" y="214" width="460" height="180" rx="14" fill="#1a1a24"/>
+
+  <!-- Bars for 12 weeks -->
+  <rect x="270" y="330" width="24" height="40" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="304" y="340" width="24" height="30" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="338" y="320" width="24" height="50" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="372" y="348" width="24" height="22" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="406" y="330" width="24" height="40" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="440" y="316" width="24" height="54" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="474" y="336" width="24" height="34" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="508" y="344" width="24" height="26" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="542" y="324" width="24" height="46" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="576" y="338" width="24" height="32" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="610" y="326" width="24" height="44" rx="3" fill="rgba(255,255,255,0.12)"/>
+  <rect x="644" y="310" width="24" height="60" rx="3" fill="#f97316"/>
+
+  <text x="282" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">Mar</text>
+  <text x="316" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">Mar</text>
+  <text x="350" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">Abr</text>
+  <text x="384" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">Abr</text>
+  <text x="418" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">Abr</text>
+  <text x="452" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">May</text>
+  <text x="486" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">May</text>
+  <text x="520" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">May</text>
+  <text x="554" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">May</text>
+  <text x="588" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">May</text>
+  <text x="622" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">May</text>
+  <text x="656" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="8" text-anchor="middle">May</text>
+
+  <!-- Right column: Muscle Distribution -->
+  <text x="740" y="200" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600">Distribución Muscular</text>
+  <rect x="740" y="214" width="500" height="180" rx="14" fill="#1a1a24"/>
+
+  <!-- Muscle: Chest -->
+  <text x="760" y="244" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="12">Pecho</text>
+  <text x="1200" y="244" fill="#64748b" font-family="Inter, sans-serif" font-size="11" text-anchor="end">32%</text>
+  <rect x="760" y="252" width="480" height="8" rx="4" fill="rgba(255,255,255,0.04)"/>
+  <rect x="760" y="252" width="153" height="8" rx="4" fill="#f97316"/>
+
+  <!-- Muscle: Back -->
+  <text x="760" y="278" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="12">Espalda</text>
+  <text x="1200" y="278" fill="#64748b" font-family="Inter, sans-serif" font-size="11" text-anchor="end">24%</text>
+  <rect x="760" y="286" width="480" height="8" rx="4" fill="rgba(255,255,255,0.04)"/>
+  <rect x="760" y="286" width="115" height="8" rx="4" fill="#f97316" opacity="0.8"/>
+
+  <!-- Muscle: Legs -->
+  <text x="760" y="312" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="12">Piernas</text>
+  <text x="1200" y="312" fill="#64748b" font-family="Inter, sans-serif" font-size="11" text-anchor="end">18%</text>
+  <rect x="760" y="320" width="480" height="8" rx="4" fill="rgba(255,255,255,0.04)"/>
+  <rect x="760" y="320" width="86" height="8" rx="4" fill="#f97316" opacity="0.6"/>
+
+  <!-- Muscle: Shoulders -->
+  <text x="760" y="346" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="12">Hombros</text>
+  <text x="1200" y="346" fill="#64748b" font-family="Inter, sans-serif" font-size="11" text-anchor="end">14%</text>
+  <rect x="760" y="354" width="480" height="8" rx="4" fill="rgba(255,255,255,0.04)"/>
+  <rect x="760" y="354" width="67" height="8" rx="4" fill="rgba(255,255,255,0.2)"/>
+
+  <!-- Muscle: Arms -->
+  <text x="760" y="380" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="12">Brazos</text>
+  <text x="1200" y="380" fill="#64748b" font-family="Inter, sans-serif" font-size="11" text-anchor="end">12%</text>
+  <rect x="760" y="388" width="480" height="8" rx="4" fill="rgba(255,255,255,0.04)"/>
+  <rect x="760" y="388" width="57" height="8" rx="4" fill="rgba(255,255,255,0.2)"/>
+
+  <!-- Personal Records -->
+  <text x="248" y="440" fill="#94a3b8" font-family="Inter, sans-serif" font-size="13" font-weight="600">Récords Personales</text>
+
+  <!-- PR 1 -->
+  <rect x="248" y="454" width="480" height="64" rx="12" fill="#1a1a24"/>
+  <rect x="264" y="470" width="32" height="32" rx="10" fill="rgba(245,158,11,0.1)"/>
+  <polygon points="272,480 272,494 286,487" fill="#f59e0b"/>
+  <text x="310" y="486" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="13" font-weight="500">Press Banca</text>
+  <text x="310" y="504" fill="#64748b" font-family="Inter, sans-serif" font-size="11">100 kg × 8 reps · e1RM: 124 kg</text>
+  <text x="690" y="486" fill="#64748b" font-family="Inter, sans-serif" font-size="11">hace 1 semana</text>
+
+  <!-- PR 2 -->
+  <rect x="248" y="526" width="480" height="64" rx="12" fill="#1a1a24"/>
+  <rect x="264" y="542" width="32" height="32" rx="10" fill="rgba(245,158,11,0.1)"/>
+  <polygon points="272,552 272,566 286,559" fill="#f59e0b"/>
+  <text x="310" y="558" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="13" font-weight="500">Peso Muerto</text>
+  <text x="310" y="576" fill="#64748b" font-family="Inter, sans-serif" font-size="11">140 kg × 6 reps · e1RM: 168 kg</text>
+  <text x="690" y="558" fill="#64748b" font-family="Inter, sans-serif" font-size="11">hace 3 semanas</text>
+
+  <!-- PR 3 -->
+  <rect x="248" y="598" width="480" height="64" rx="12" fill="#1a1a24"/>
+  <rect x="264" y="614" width="32" height="32" rx="10" fill="rgba(245,158,11,0.1)"/>
+  <polygon points="272,624 272,638 286,631" fill="#f59e0b"/>
+  <text x="310" y="630" fill="#f1f5f9" font-family="Inter, sans-serif" font-size="13" font-weight="500">Sentadilla</text>
+  <text x="310" y="648" fill="#64748b" font-family="Inter, sans-serif" font-size="11">120 kg × 10 reps · e1RM: 160 kg</text>
+  <text x="690" y="630" fill="#64748b" font-family="Inter, sans-serif" font-size="11">hace 2 semanas</text>
+
+  <!-- Right side: empty state hint -->
+  <rect x="760" y="454" width="480" height="208" rx="14" fill="#1a1a24"/>
+  <text x="1000" y="520" fill="#64748b" font-family="Inter, sans-serif" font-size="13" text-anchor="middle">Progreso Semanal</text>
+  <rect x="900" y="540" width="200" height="6" rx="3" fill="rgba(255,255,255,0.04)"/>
+  <rect x="900" y="540" width="140" height="6" rx="3" fill="#f97316"/>
+  <text x="1000" y="570" fill="#64748b" font-family="Inter, sans-serif" font-size="11" text-anchor="middle">70% de consistencia este mes</text>
+  <text x="1000" y="590" fill="#64748b" font-family="Inter, sans-serif" font-size="11" text-anchor="middle">18 de 24 días entrenados</text>
+</svg>
