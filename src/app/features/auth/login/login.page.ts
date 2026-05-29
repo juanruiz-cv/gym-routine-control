@@ -3,17 +3,17 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
-import { LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn } from '@lucide/angular';
+import { LucideEye, LucideEyeOff, LucideLogIn } from '@lucide/angular';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, LucideDumbbell, LucideEye, LucideEyeOff, LucideLogIn],
+  imports: [FormsModule, RouterLink, TranslatePipe, LucideEye, LucideEyeOff, LucideLogIn],
   template: `
     <div class="flex flex-col gap-6 animate-fade-in">
       <div class="text-center">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 mb-4">
-          <svg lucideDumbbell class="w-8 h-8 text-brand" strokeWidth="1.5"></svg>
+        <div class="inline-flex items-center justify-center w-16 h-16 mb-4">
+          <img src="icons/icon-96x96.png" alt="GymControl" class="w-14 h-14" />
         </div>
         <h1 class="text-2xl font-bold">{{ 'auth.welcomeBack' | translate }}</h1>
         <p class="text-on-surface-muted mt-1 text-sm">{{ 'auth.subtitle' | translate }}</p>

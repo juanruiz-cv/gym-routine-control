@@ -4,17 +4,17 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/auth/auth.service';
 import { I18nService } from '@shared/i18n/i18n.service';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
-import { LucideDumbbell, LucideEye, LucideEyeOff, LucideUserPlus } from '@lucide/angular';
+import { LucideEye, LucideEyeOff, LucideUserPlus } from '@lucide/angular';
 
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [FormsModule, RouterLink, TranslatePipe, LucideDumbbell, LucideEye, LucideEyeOff, LucideUserPlus],
+  imports: [FormsModule, RouterLink, TranslatePipe, LucideEye, LucideEyeOff, LucideUserPlus],
   template: `
     <div class="flex flex-col gap-6 animate-fade-in">
       <div class="text-center">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand/10 mb-4">
-          <svg lucideDumbbell class="w-8 h-8 text-brand" strokeWidth="1.5"></svg>
+        <div class="inline-flex items-center justify-center w-16 h-16 mb-4">
+          <img src="icons/icon-96x96.png" alt="GymControl" class="w-14 h-14" />
         </div>
         <h1 class="text-2xl font-bold">{{ 'auth.createAccount' | translate }}</h1>
         <p class="text-on-surface-muted mt-1 text-sm">{{ 'auth.startJourney' | translate }}</p>

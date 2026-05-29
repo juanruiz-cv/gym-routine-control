@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import type { AuthResponse, User, Session } from '@supabase/supabase-js';
+import type { User, Session } from '@supabase/supabase-js';
 import { SupabaseService } from '../services/supabase.service';
 
 export interface AuthState {
@@ -26,21 +26,6 @@ export class AuthService {
   readonly isAuthenticated = computed(() => !!this._state().user);
 
   constructor() {
-    this._initializeAuth();
-  }
-
-  private _initializeAuth(): void {
-    this._supabase.session.then(({ data: { session } }) => {
-      this._state.set({
-        user: session?.user ?? null,
-        session,
-        loading: false,
-      });
-    });
-
-    const { data: { subscription } } = this._supabase.onAuthStateChange();
-    subscription.unsubscribe();
-
     this._supabase.client.auth.onAuthStateChange((_event, session) => {
       this._state.set({
         user: session?.user ?? null,
@@ -48,28 +33,57 @@ export class AuthService {
         loading: false,
       });
     });
+
+    this._supabase.session.then(({ data: { session } }) => {
+      this._state.set({
+        user: session?.user ?? null,
+        session,
+        loading: false,
+      });
+    });
   }
 
-  async signUp(email: string, password: string): Promise<AuthResponse> {
+  async signUp(email: string, password: string): Promise<{ error: Error | null; needsEmailConfirmation?: boolean }> {
     const result = await this._supabase.client.auth.signUp({ email, password });
-    return result;
+
+    if (!result.error && result.data.user) {
+      const { error: profileError } = await this._supabase.client.from('profiles').insert({
+        id: result.data.user.id,
+        email: result.data.user.email,
+        created_at: new Date().toISOString(),
+        preferences: {},
+      }).maybeSingle();
+
+      if (profileError && profileError.code !== '23505') {
+        console.error('Profile creation error:', profileError);
+      }
+    }
+
+    return {
+      error: result.error,
+      needsEmailConfirmation: !!result.data?.user?.identities?.length,
+    };
   }
 
-  async signIn(email: string, password: string): Promise<AuthResponse> {
+  async signIn(email: string, password: string): Promise<{ error: Error | null }> {
     const result = await this._supabase.client.auth.signInWithPassword({ email, password });
     if (result.data.session) {
       await this._router.navigate(['/dashboard']);
     }
-    return result;
+    return { error: result.error };
   }
 
   async signInWithGoogle(): Promise<void> {
-    await this._supabase.client.auth.signInWithOAuth({
+    const { error } = await this._supabase.client.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
+
+    if (error) {
+      console.error('Google OAuth error:', error.message);
+    }
   }
 
   async signOut(): Promise<void> {
