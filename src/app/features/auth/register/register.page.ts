@@ -126,5 +126,12 @@ export class RegisterPage {
     else this.successMessage.set(this._i18n.t('auth.accountCreated'));
     this.isLoading.set(false);
   }
-  protected async onGoogleSignIn(): Promise<void> { await this._auth.signInWithGoogle(); }
+  protected async onGoogleSignIn(): Promise<void> {
+    this.isLoading.set(true);
+    this.error.set(null);
+    this.successMessage.set(null);
+    const { error } = await this._auth.signInWithGoogle();
+    if (error) this.error.set(error.message);
+    this.isLoading.set(false);
+  }
 }

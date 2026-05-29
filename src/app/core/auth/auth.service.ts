@@ -73,17 +73,14 @@ export class AuthService {
     return { error: result.error };
   }
 
-  async signInWithGoogle(): Promise<void> {
+  async signInWithGoogle(): Promise<{ error: Error | null }> {
     const { error } = await this._supabase.client.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
-
-    if (error) {
-      console.error('Google OAuth error:', error.message);
-    }
+    return { error };
   }
 
   async signOut(): Promise<void> {

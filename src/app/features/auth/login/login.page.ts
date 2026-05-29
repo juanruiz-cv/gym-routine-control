@@ -144,7 +144,9 @@ export class LoginPage {
 
   protected async onGoogleSignIn(): Promise<void> {
     this.isLoading.set(true);
-    await this._auth.signInWithGoogle();
+    this.error.set(null);
+    const { error } = await this._auth.signInWithGoogle();
+    if (error) this.error.set(error.message);
     this.isLoading.set(false);
   }
 }
