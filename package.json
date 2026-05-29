@@ -7,7 +7,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:gym-routine-control": "node dist/gym-routine-control/server/server.mjs"
+    "serve:ssr:gym-routine-control": "node dist/gym-routine-control/server/server.mjs",
+    "lint": "ng lint",
+    "prepare": "husky"
   },
   "prettier": {
     "printWidth": 100,
@@ -30,24 +32,58 @@
     "@angular/platform-browser": "^20.3.0",
     "@angular/platform-server": "^20.3.0",
     "@angular/router": "^20.3.0",
+    "@angular/service-worker": "^20.3.0",
     "@angular/ssr": "^20.3.26",
+    "@lucide/angular": "^1.17.0",
+    "@supabase/supabase-js": "^2.106.2",
+    "date-fns": "^4.3.0",
+    "echarts": "^6.1.0",
     "express": "^5.1.0",
+    "idb": "^8.0.3",
+    "lucide-angular": "^1.0.0",
+    "ngx-echarts": "^21.0.0",
     "rxjs": "~7.8.0",
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@angular/build": "^20.3.26",
     "@angular/cli": "^20.3.26",
     "@angular/compiler-cli": "^20.3.0",
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1",
+    "@tailwindcss/postcss": "^4.3.0",
     "@types/express": "^5.0.1",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
+    "angular-eslint": "21.0.1",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^9.39.1",
+    "husky": "^9.1.7",
     "jasmine-core": "~5.9.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.2"
+    "lint-staged": "^17.0.5",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^4.3.0",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "8.46.4"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix"
+    ],
+    "*.html": [
+      "eslint --fix"
+    ],
+    "*.scss": [
+      "prettier --write"
+    ],
+    "*.json": [
+      "prettier --write"
+    ]
   }
 }

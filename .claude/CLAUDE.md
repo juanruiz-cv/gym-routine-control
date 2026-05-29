@@ -1,47 +1,62 @@
-You are an expert in TypeScript, Angular, and scalable web application development. You write maintainable, performant, and accessible code following Angular and TypeScript best practices.
+# Gym Routine Control — Project Context
 
-## TypeScript Best Practices
+You are working on a cross‑platform fitness tracking PWA.
 
-- Use strict type checking
-- Prefer type inference when the type is obvious
-- Avoid the `any` type; use `unknown` when type is uncertain
+## Stack
+- Angular 20 (Standalone, Zoneless, Signals, SSR)
+- Tailwind CSS v4 (dark‑first, mobile‑first)
+- Supabase (PostgreSQL, Auth, Storage)
+- PWA (service‑worker, IndexedDB offline)
+- ECharts, Lucide Angular icons, Zod validation
 
-## Angular Best Practices
+## Architecture
+- Screaming Architecture: feature‑driven, lazy‑loaded routes
+- Smart/Dumb components: pages orchestrate, UI components render
+- Signals first (signal, computed); RxJS only for Supabase real‑time
+- All state transformations are pure — never use `mutate()`
 
-- Always use standalone components over NgModules
-- Must NOT set `standalone: true` inside Angular decorators. It's the default.
-- Use signals for state management
-- Implement lazy loading for feature routes
-- Do NOT use the `@HostBinding` and `@HostListener` decorators. Put host bindings inside the `host` object of the `@Component` or `@Directive` decorator instead
-- Use `NgOptimizedImage` for all static images.
-  - `NgOptimizedImage` does not work for inline base64 images.
-
-## Components
-
-- Keep components small and focused on a single responsibility
-- Use `input()` and `output()` functions instead of decorators
-- Use `computed()` for derived state
-- Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
-- Prefer inline templates for small components
-- Prefer Reactive forms instead of Template-driven ones
-- Do NOT use `ngClass`, use `class` bindings instead
-- Do NOT use `ngStyle`, use `style` bindings instead
-
-## State Management
-
-- Use signals for local component state
-- Use `computed()` for derived state
-- Keep state transformations pure and predictable
-- Do NOT use `mutate` on signals, use `update` or `set` instead
-
-## Templates
-
-- Keep templates simple and avoid complex logic
-- Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
-- Use the async pipe to handle observables
+## Routes (all lazy‑loaded)
+| Path | Feature | Layout |
+|------|---------|--------|
+| `/auth/*` | Login / Register / Forgot‑password | AuthLayout |
+| `/dashboard` | Weekly stats, volume chart, recent activity | MainLayout |
+| `/routines` | List / Detail / Form | MainLayout |
+| `/exercises` | List / Detail / Form | MainLayout |
+| `/workout/*` | Active session / Summary | None (full‑screen) |
+| `/metrics` | Volume, muscle distribution, PRs | MainLayout |
+| `/settings` | Preferences, profile, sign out | MainLayout |
+| `/` → redirect to `/dashboard` | | |
 
 ## Services
+| Service | Role |
+|---------|------|
+| `SupabaseService` | Raw Supabase client, session state |
+| `DataService` | Abstract base class with `checkUserId()` |
+| `AuthService` | Sign‑in/up/out, auth state signal |
+| `RoutineService` | Routine CRUD |
+| `ExerciseService` | Exercise CRUD |
+| `WorkoutService` | Sessions, sets, PR tracking |
+| `MetricsService` | Stats, volume history, streaks, muscle distribution |
+| `NotificationService` | Push / local notifications |
+| `SeoService` | Title + meta tags per route |
 
-- Design services around a single responsibility
-- Use the `providedIn: 'root'` option for singleton services
-- Use the `inject()` function instead of constructor injection
+## Database Tables
+`profiles`, `routines`, `routine_exercises`, `exercises`, `workout_sessions`, `workout_sets`, `personal_records`
+
+## Key Conventions
+- Standalone components (no NgModules)
+- Use `input()` / `output()` functions, never decorators
+- Use `class` / `style` bindings, never `ngClass` / `ngStyle`
+- Use `@if` / `@for` / `@switch` native control flow
+- Use `inject()` instead of constructor DI
+- Strict typing everywhere — avoid `any`, use `unknown`
+- `environment.ts` files contain placeholder Supabase credentials — replace before running
+- Dark mode by default, mobile‑first responsive design
+
+## Build
+```bash
+npm start         # Dev server
+npm run build:prod  # Production build (SSR + PWA)
+npm run serve:ssr   # Serve SSR build locally
+npm run lint        # ESLint
+```
