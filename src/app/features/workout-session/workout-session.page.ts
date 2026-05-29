@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
@@ -10,7 +10,7 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { WorkoutService } from '@core/services/workout.service';
 import { NotificationService } from '@core/services/notification.service';
 import {
-  LucideCheck, LucideX, LucideDumbbell,
+  LucideCheck, LucideX,
   LucideChevronLeft, LucideChevronRight, LucideTimer, LucideCheckCircle,
 } from '@lucide/angular';
 
@@ -18,10 +18,10 @@ import {
   selector: 'app-workout-session-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiTimer, UiModal, UiEmptyState,
+    UiCard, UiButton, UiBadge, UiSkeletonCard, UiTimer, UiModal, UiEmptyState,
     TranslatePipe,
     LucideTimer, LucideCheck, LucideCheckCircle, LucideChevronLeft, LucideChevronRight,
-    LucideX, LucideDumbbell,
+    LucideX,
   ],
   template: `
     <div class="flex flex-col min-h-dvh">

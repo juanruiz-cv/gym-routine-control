@@ -12,7 +12,7 @@ import { RoutineService } from '@core/services/routine.service';
 import { WorkoutService } from '@core/services/workout.service';
 import {
   LucideArrowLeft, LucidePlay, LucidePencil, LucideCopy, LucideTrash2, LucideClock,
-  LucideDumbbell, LucideFlame, LucideCheck,
+  LucideFlame, LucideCheck,
 } from '@lucide/angular';
 import type { Routine } from '@shared/models';
 
@@ -23,7 +23,7 @@ import type { Routine } from '@shared/models';
     RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiModal, UiEmptyState,
     DifficultyPipe, TranslatePipe,
     LucideArrowLeft, LucidePlay, LucidePencil, LucideCopy, LucideTrash2, LucideClock,
-    LucideDumbbell, LucideFlame, LucideCheck,
+    LucideFlame, LucideCheck,
   ],
   template: `
     <div class="p-4 space-y-4 max-w-lg mx-auto">

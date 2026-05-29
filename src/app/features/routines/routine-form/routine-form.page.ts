@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiInput } from '@shared/ui/input';
@@ -10,7 +10,7 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { RoutineService } from '@core/services/routine.service';
 import { ExerciseService } from '@core/services/exercise.service';
 import { SupabaseService } from '@core/services/supabase.service';
-import { LucideArrowLeft, LucidePlus, LucideTrash2, LucideRotateCw } from '@lucide/angular';
+import { LucideArrowLeft, LucidePlus, LucideTrash2, LucideRotateCw, LucideAlertCircle } from '@lucide/angular';
 import type { Exercise, Difficulty } from '@shared/models';
 
 interface ExerciseEntry {
@@ -26,8 +26,8 @@ interface ExerciseEntry {
   selector: 'app-routine-form-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiInput, UiSkeletonCard, UiEmptyState, ExercisePicker, TranslatePipe,
-    LucideArrowLeft, LucidePlus, LucideTrash2, LucideRotateCw,
+    UiCard, UiButton, UiInput, UiSkeletonCard, UiEmptyState, ExercisePicker, TranslatePipe,
+    LucideArrowLeft, LucidePlus, LucideTrash2, LucideRotateCw, LucideAlertCircle,
   ],
   template: `
     <div class="p-4 flex flex-col gap-4 max-w-lg mx-auto">
