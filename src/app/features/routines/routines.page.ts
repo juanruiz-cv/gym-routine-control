@@ -164,7 +164,8 @@ export class RoutinesPage implements OnInit {
     await this._routines.toggleFavorite(id);
   }
 
-  async assignRoutine(routineId: string): Promise<void> {
+  async assignRoutine(routineId: string, routineName: string): Promise<void> {
+    void routineName;
     const userId = this.assignUserId();
     if (!userId) return;
     const result = await this._assignments.assignRoutine(routineId, userId);
