@@ -9,7 +9,9 @@ import { UiSkeletonCard } from '@shared/ui';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { DragScrollDirective } from '@shared/directives/drag-scroll';
 import { ExerciseService } from '@core/services/exercise.service';
-import { MUSCLE_GROUPS, EQUIPMENT_TYPES, MUSCLE_GROUP_ICONS, EQUIPMENT_ICONS } from '@shared/models';
+import { MuscleGroupService } from '@core/services/muscle-group.service';
+import { EquipmentService } from '@core/services/equipment.service';
+import { MUSCLE_GROUP_ICONS, EQUIPMENT_ICONS } from '@shared/models';
 import { LucideSearch, LucideDumbbell, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideWeight, LucideWeightTilde, LucideCircleGauge, LucideHeartPulse, LucideTarget, LucideCircleDot, LucideGlobe } from '@lucide/angular';
 import type { Exercise } from '@shared/models';
 
@@ -39,7 +41,7 @@ import type { Exercise } from '@shared/models';
           ui-button [variant]="selectedMuscle() === '' ? 'primary' : 'secondary'" size="sm"
           class="shrink-0" (click)="selectedMuscle.set('')"
         >{{ 'exercises.all' | translate }}</button>
-        @for (mg of muscleGroups; track mg) {
+        @for (mg of muscleGroupNames(); track mg) {
           <button
             ui-button [variant]="selectedMuscle() === mg ? 'primary' : 'secondary'" size="sm"
             class="shrink-0 flex items-center gap-1.5" (click)="selectedMuscle.set(mg)"
@@ -52,6 +54,7 @@ import type { Exercise } from '@shared/models';
               @case ('zap') { <svg lucideZap class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
               @case ('person-standing') { <svg lucidePersonStanding class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
               @case ('activity') { <svg lucideActivity class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @default { <svg lucideDumbbell class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
             }
             {{ 'muscleGroup.' + mg | translate }}
           </button>
@@ -60,7 +63,7 @@ import type { Exercise } from '@shared/models';
 
       <!-- Equipment Filter -->
       <div appDragScroll class="flex gap-2 overflow-x-auto pb-1 scrollbar-none mt-2">
-        @for (eq of equipmentTypes; track eq) {
+        @for (eq of equipmentNames(); track eq) {
           <button
             ui-button [variant]="selectedEquipment() === eq ? 'primary' : 'secondary'" size="sm"
             class="shrink-0 flex items-center gap-1.5" (click)="selectedEquipment.set(eq)"
@@ -75,6 +78,7 @@ import type { Exercise } from '@shared/models';
               @case ('heart-pulse') { <svg lucideHeartPulse class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
               @case ('target') { <svg lucideTarget class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
               @case ('circle-dot') { <svg lucideCircleDot class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @default { <svg lucideCircleDot class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
             }
             {{ 'equipment.' + eq | translate }}
           </button>
@@ -136,6 +140,8 @@ import type { Exercise } from '@shared/models';
 })
 export class ExercisePicker implements OnInit {
   private readonly _exercises = inject(ExerciseService);
+  private readonly _muscleGroups = inject(MuscleGroupService);
+  private readonly _equipment = inject(EquipmentService);
 
   readonly isOpen = input(false);
   readonly excludeIds = input<string[]>([]);
@@ -143,8 +149,12 @@ export class ExercisePicker implements OnInit {
   readonly selected = output<Exercise>();
   readonly closed = output<void>();
 
-  readonly muscleGroups = MUSCLE_GROUPS;
-  readonly equipmentTypes = EQUIPMENT_TYPES;
+  readonly muscleGroupNames = computed(() =>
+    this._muscleGroups.groups().filter(g => g.is_active).map(g => g.name)
+  );
+  readonly equipmentNames = computed(() =>
+    this._equipment.types().filter(t => t.is_active).map(t => t.name)
+  );
   readonly MUSCLE_GROUP_ICONS = MUSCLE_GROUP_ICONS;
   readonly EQUIPMENT_ICONS = EQUIPMENT_ICONS;
 
@@ -172,7 +182,11 @@ export class ExercisePicker implements OnInit {
   async ngOnInit(): Promise<void> {
     this.loading.set(true);
     try {
-      await this._exercises.fetchAll();
+      await Promise.all([
+        this._exercises.fetchAll(),
+        this._muscleGroups.fetchAll(),
+        this._equipment.fetchAll(),
+      ]);
       this._allExercises.set(this._exercises.exercises());
     } catch {
       this._allExercises.set([]);

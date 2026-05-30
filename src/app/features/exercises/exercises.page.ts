@@ -9,8 +9,9 @@ import { UiEmptyState } from '@shared/ui/empty-state';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { DragScrollDirective } from '@shared/directives/drag-scroll';
 import { ExerciseService } from '@core/services/exercise.service';
+import { MuscleGroupService } from '@core/services/muscle-group.service';
 import { LucidePlus, LucideDumbbell, LucideSearch, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideGlobe } from '@lucide/angular';
-import { MUSCLE_GROUPS, MUSCLE_GROUP_ICONS } from '@shared/models';
+import { MUSCLE_GROUP_ICONS } from '@shared/models';
 
 @Component({
   selector: 'app-exercises-page',
@@ -46,7 +47,7 @@ import { MUSCLE_GROUPS, MUSCLE_GROUP_ICONS } from '@shared/models';
           ui-button [variant]="selectedMuscle() === '' ? 'primary' : 'secondary'" size="sm"
           class="shrink-0" (click)="selectedMuscle.set('')"
         >{{ 'exercises.all' | translate }}</button>
-        @for (mg of muscleGroups; track mg) {
+        @for (mg of muscleGroupNames(); track mg) {
           <button
             ui-button [variant]="selectedMuscle() === mg ? 'primary' : 'secondary'" size="sm"
             class="shrink-0 flex items-center gap-1.5" (click)="selectedMuscle.set(mg)"
@@ -59,6 +60,7 @@ import { MUSCLE_GROUPS, MUSCLE_GROUP_ICONS } from '@shared/models';
               @case ('zap') { <svg lucideZap class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
               @case ('person-standing') { <svg lucidePersonStanding class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
               @case ('activity') { <svg lucideActivity class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @default { <svg lucideDumbbell class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
             }
             {{ 'muscleGroup.' + mg | translate }}
           </button>
@@ -122,8 +124,11 @@ import { MUSCLE_GROUPS, MUSCLE_GROUP_ICONS } from '@shared/models';
 })
 export class ExercisesPage implements OnInit {
   private readonly _exercises = inject(ExerciseService);
+  private readonly _muscleGroups = inject(MuscleGroupService);
 
-  readonly muscleGroups = MUSCLE_GROUPS;
+  readonly muscleGroupNames = computed(() =>
+    this._muscleGroups.groups().filter(g => g.is_active).map(g => g.name)
+  );
   readonly MUSCLE_GROUP_ICONS = MUSCLE_GROUP_ICONS;
   readonly searchQuery = signal('');
   readonly selectedMuscle = signal('');
@@ -142,6 +147,9 @@ export class ExercisesPage implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    await this._exercises.fetchAll();
+    await Promise.all([
+      this._exercises.fetchAll(),
+      this._muscleGroups.fetchAll(),
+    ]);
   }
 }

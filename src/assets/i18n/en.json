@@ -357,5 +357,18 @@
   "staff.metricsTotal": "Assigned",
   "staff.metricsActive": "Active",
   "staff.metricsCompleted": "Completed",
-  "staff.metricsCompletion": "Completion"
+  "staff.metricsCompletion": "Completion",
+  "staff.muscleGroups": "Muscle Groups",
+  "staff.equipment": "Equipment",
+  "staff.add": "Add",
+  "staff.active": "Active",
+  "staff.inactive": "Inactive",
+  "staff.deactivate": "Deactivate",
+  "staff.activate": "Activate",
+  "staff.muscleGroupName": "Muscle group name",
+  "staff.equipmentName": "Equipment name",
+  "staff.deleteMuscleGroup": "Delete Muscle Group",
+  "staff.deleteMuscleGroupMessage": "Are you sure you want to delete \"{name}\"? Existing exercises keep their current value.",
+  "staff.deleteEquipment": "Delete Equipment",
+  "staff.deleteEquipmentMessage": "Are you sure you want to delete \"{name}\"? Existing exercises keep their current value."
 }

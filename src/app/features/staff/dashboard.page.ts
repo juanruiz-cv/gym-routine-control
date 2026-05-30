@@ -2,12 +2,12 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { StaffMetricsService } from '@core/services/staff-metrics.service';
-import { LucideUsers, LucideListOrdered, LucideBarChart3, LucideArrowRight, LucideTarget, LucideCheckCircle, LucideRefreshCw } from '@lucide/angular';
+import { LucideUsers, LucideListOrdered, LucideBarChart3, LucideArrowRight, LucideTarget, LucideCheckCircle, LucideRefreshCw, LucideDumbbell, LucideWrench } from '@lucide/angular';
 
 @Component({
   selector: 'app-staff-dashboard',
   standalone: true,
-  imports: [RouterLink, TranslatePipe, LucideUsers, LucideListOrdered, LucideBarChart3, LucideArrowRight, LucideTarget, LucideCheckCircle, LucideRefreshCw],
+  imports: [RouterLink, TranslatePipe, LucideUsers, LucideListOrdered, LucideBarChart3, LucideArrowRight, LucideTarget, LucideCheckCircle, LucideRefreshCw, LucideDumbbell, LucideWrench],
   template: `
     <div class="p-4 space-y-5 max-w-lg mx-auto">
       <h1 class="text-xl font-bold">{{ 'staff.title' | translate }}</h1>
@@ -67,6 +67,24 @@ import { LucideUsers, LucideListOrdered, LucideBarChart3, LucideArrowRight, Luci
           <div class="flex items-center gap-3">
             <svg lucideListOrdered class="w-5 h-5 text-accent" strokeWidth="1.5" aria-hidden="true"></svg>
             <span class="text-sm font-medium">{{ 'staff.assignedRoutines' | translate }}</span>
+          </div>
+          <svg lucideArrowRight class="w-4 h-4 text-on-surface-muted" strokeWidth="2" aria-hidden="true"></svg>
+        </a>
+        <a routerLink="/staff/muscle-groups"
+          class="flex items-center justify-between px-4 py-3 rounded-xl bg-surface-elevated hover:bg-surface-hover transition-colors"
+        >
+          <div class="flex items-center gap-3">
+            <svg lucideDumbbell class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
+            <span class="text-sm font-medium">{{ 'staff.muscleGroups' | translate }}</span>
+          </div>
+          <svg lucideArrowRight class="w-4 h-4 text-on-surface-muted" strokeWidth="2" aria-hidden="true"></svg>
+        </a>
+        <a routerLink="/staff/equipment"
+          class="flex items-center justify-between px-4 py-3 rounded-xl bg-surface-elevated hover:bg-surface-hover transition-colors"
+        >
+          <div class="flex items-center gap-3">
+            <svg lucideWrench class="w-5 h-5 text-warning" strokeWidth="1.5" aria-hidden="true"></svg>
+            <span class="text-sm font-medium">{{ 'staff.equipment' | translate }}</span>
           </div>
           <svg lucideArrowRight class="w-4 h-4 text-on-surface-muted" strokeWidth="2" aria-hidden="true"></svg>
         </a>

@@ -357,5 +357,18 @@
   "staff.metricsTotal": "Asignadas",
   "staff.metricsActive": "Activas",
   "staff.metricsCompleted": "Completadas",
-  "staff.metricsCompletion": "Progreso"
+  "staff.metricsCompletion": "Progreso",
+  "staff.muscleGroups": "Grupos Musculares",
+  "staff.equipment": "Equipos",
+  "staff.add": "Agregar",
+  "staff.active": "Activo",
+  "staff.inactive": "Inactivo",
+  "staff.deactivate": "Desactivar",
+  "staff.activate": "Activar",
+  "staff.muscleGroupName": "Nombre del grupo muscular",
+  "staff.equipmentName": "Nombre del equipo",
+  "staff.deleteMuscleGroup": "Eliminar Grupo Muscular",
+  "staff.deleteMuscleGroupMessage": "¿Estás seguro de eliminar \"{name}\"? Los ejercicios existentes conservan su valor actual.",
+  "staff.deleteEquipment": "Eliminar Equipo",
+  "staff.deleteEquipmentMessage": "¿Estás seguro de eliminar \"{name}\"? Los ejercicios existentes conservan su valor actual."
 }

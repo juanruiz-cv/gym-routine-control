@@ -20,6 +20,14 @@ export default [
         path: 'routines',
         loadComponent: () => import('./routines.page').then(m => m.StaffRoutinesPage),
       },
+      {
+        path: 'muscle-groups',
+        loadComponent: () => import('./muscle-groups.page').then(m => m.StaffMuscleGroupsPage),
+      },
+      {
+        path: 'equipment',
+        loadComponent: () => import('./equipment.page').then(m => m.StaffEquipmentPage),
+      },
     ],
   },
 ] satisfies Routes;

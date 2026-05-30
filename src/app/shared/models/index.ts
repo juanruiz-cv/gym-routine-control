@@ -129,6 +129,22 @@ export interface PersonalRecord {
   session_id: string | null;
 }
 
+export interface MuscleGroupEntity {
+  id: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EquipmentTypeEntity {
+  id: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
 export type MuscleGroup = string;
 export type Equipment = string;
