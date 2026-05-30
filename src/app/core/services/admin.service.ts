@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { SupabaseService } from './supabase.service';
 import { AuditService } from './audit.service';
 import { environment } from '@env/environment';
-import type { Profile, UserRole } from '@shared/models';
+import type { UserRole } from '@shared/models';
 
 export interface UserWithProfile {
   id: string;
@@ -29,11 +29,11 @@ export class AdminService {
   async getUsers(): Promise<UserWithProfile[]> {
     const { data } = await this._supabase.client
       .from('profiles')
-      .select('id, display_name, role, created_at, updated_at')
+      .select('id, display_name, email, role, created_at, updated_at')
       .order('created_at', { ascending: false });
     return (data ?? []).map(p => ({
       ...p,
-      email: null,
+      email: p.email ?? null,
       last_sign_in_at: null,
     })) as UserWithProfile[];
   }

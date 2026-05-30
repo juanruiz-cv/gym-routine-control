@@ -116,7 +116,7 @@ export class WorkoutService extends DataService {
   async getSessionWithSets(sessionId: string): Promise<WorkoutSession | null> {
     const { data, error } = await this.client
       .from('workout_sessions')
-      .select('*, routine:routines(*), sets:workout_sets(*, routine_exercises(*, exercise:exercises(*)))')
+      .select('*, routine:routines(*, routine_exercises(*, exercise:exercises(*))), sets:workout_sets(*, routine_exercises(*, exercise:exercises(*)))')
       .eq('id', sessionId)
       .single();
 
