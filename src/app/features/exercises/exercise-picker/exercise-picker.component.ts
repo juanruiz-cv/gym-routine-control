@@ -7,9 +7,10 @@ import { UiBadge } from '@shared/ui/badge';
 import { UiEmptyState } from '@shared/ui/empty-state';
 import { UiSkeletonCard } from '@shared/ui';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
+import { DragScrollDirective } from '@shared/directives/drag-scroll';
 import { ExerciseService } from '@core/services/exercise.service';
-import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
-import { LucideSearch, LucideDumbbell } from '@lucide/angular';
+import { MUSCLE_GROUPS, EQUIPMENT_TYPES, MUSCLE_GROUP_ICONS, EQUIPMENT_ICONS } from '@shared/models';
+import { LucideSearch, LucideDumbbell, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideWeight, LucideWeightTilde, LucideCircleGauge, LucideHeartPulse, LucideTarget, LucideCircleDot } from '@lucide/angular';
 import type { Exercise } from '@shared/models';
 
 @Component({
@@ -17,8 +18,8 @@ import type { Exercise } from '@shared/models';
   standalone: true,
   imports: [
     UiModal, UiInput, UiButton, UiCard, UiBadge, UiEmptyState, UiSkeletonCard,
-    TranslatePipe,
-    LucideSearch, LucideDumbbell,
+    TranslatePipe, DragScrollDirective,
+    LucideSearch, LucideDumbbell, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideWeight, LucideWeightTilde, LucideCircleGauge, LucideHeartPulse, LucideTarget, LucideCircleDot,
   ],
   template: `
     <app-ui-modal [isOpen]="isOpen()" [title]="'routines.selectExercise' | translate" (closed)="closed.emit()">
@@ -33,7 +34,7 @@ import type { Exercise } from '@shared/models';
       </app-ui-input>
 
       <!-- Muscle Group Filter -->
-      <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none mt-3">
+      <div appDragScroll class="flex gap-2 overflow-x-auto pb-1 scrollbar-none mt-3">
         <button
           ui-button [variant]="selectedMuscle() === '' ? 'primary' : 'secondary'" size="sm"
           class="shrink-0" (click)="selectedMuscle.set('')"
@@ -41,18 +42,42 @@ import type { Exercise } from '@shared/models';
         @for (mg of muscleGroups; track mg) {
           <button
             ui-button [variant]="selectedMuscle() === mg ? 'primary' : 'secondary'" size="sm"
-            class="shrink-0" (click)="selectedMuscle.set(mg)"
-          >{{ mg }}</button>
+            class="shrink-0 flex items-center gap-1.5" (click)="selectedMuscle.set(mg)"
+          >
+            @switch (MUSCLE_GROUP_ICONS[mg]) {
+              @case ('heart') { <svg lucideHeart class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('accessibility') { <svg lucideAccessibility class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('dumbbell') { <svg lucideDumbbell class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('footprints') { <svg lucideFootprints class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('zap') { <svg lucideZap class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('person-standing') { <svg lucidePersonStanding class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('activity') { <svg lucideActivity class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+            }
+            {{ 'muscleGroup.' + mg | translate }}
+          </button>
         }
       </div>
 
       <!-- Equipment Filter -->
-      <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none mt-2">
+      <div appDragScroll class="flex gap-2 overflow-x-auto pb-1 scrollbar-none mt-2">
         @for (eq of equipmentTypes; track eq) {
           <button
             ui-button [variant]="selectedEquipment() === eq ? 'primary' : 'secondary'" size="sm"
-            class="shrink-0" (click)="selectedEquipment.set(eq)"
-          >{{ eq }}</button>
+            class="shrink-0 flex items-center gap-1.5" (click)="selectedEquipment.set(eq)"
+          >
+            @switch (EQUIPMENT_ICONS[eq]) {
+              @case ('weight') { <svg lucideWeight class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('dumbbell') { <svg lucideDumbbell class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('weight-tilde') { <svg lucideWeightTilde class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('circle-gauge') { <svg lucideCircleGauge class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('zap') { <svg lucideZap class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('person-standing') { <svg lucidePersonStanding class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('heart-pulse') { <svg lucideHeartPulse class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('target') { <svg lucideTarget class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+              @case ('circle-dot') { <svg lucideCircleDot class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg> }
+            }
+            {{ 'equipment.' + eq | translate }}
+          </button>
         }
       </div>
 
@@ -89,10 +114,10 @@ import type { Exercise } from '@shared/models';
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium truncate">{{ ex.name }}</p>
                     <div class="flex items-center gap-2 mt-0.5">
-                      <app-ui-badge size="sm">{{ ex.muscle_group }}</app-ui-badge>
-                      @if (ex.equipment) {
-                        <span class="text-xs text-on-surface-muted">{{ ex.equipment }}</span>
-                      }
+                    <app-ui-badge size="sm">{{ 'muscleGroup.' + ex.muscle_group | translate }}</app-ui-badge>
+                    @if (ex.equipment) {
+                      <span class="text-xs text-on-surface-muted">{{ 'equipment.' + ex.equipment | translate }}</span>
+                    }
                     </div>
                   </div>
                 </div>
@@ -115,6 +140,8 @@ export class ExercisePicker implements OnInit {
 
   readonly muscleGroups = MUSCLE_GROUPS;
   readonly equipmentTypes = EQUIPMENT_TYPES;
+  readonly MUSCLE_GROUP_ICONS = MUSCLE_GROUP_ICONS;
+  readonly EQUIPMENT_ICONS = EQUIPMENT_ICONS;
 
   readonly searchQuery = signal('');
   readonly selectedMuscle = signal('');

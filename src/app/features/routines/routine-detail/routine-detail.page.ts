@@ -124,7 +124,7 @@ import type { Routine } from '@shared/models';
                     <div class="flex-1 min-w-0">
                       <p class="text-sm font-medium">{{ ex.exercise?.name ?? ('routines.unknown' | translate) }}</p>
                       @if (ex.exercise?.muscle_group) {
-                        <p class="text-xs text-on-surface-muted">{{ ex.exercise!.muscle_group }}</p>
+                        <p class="text-xs text-on-surface-muted">{{ 'muscleGroup.' + ex.exercise!.muscle_group | translate }}</p>
                       }
                       <div class="flex items-center gap-3 mt-1.5 text-xs text-on-surface-muted">
                         <span>{{ ex.sets }} {{ 'routines.sets' | translate }}</span>

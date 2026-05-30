@@ -75,7 +75,7 @@ import {
               </div>
               <h1 class="text-xl font-bold">{{ currentEx.exercise?.name ?? ('workout.title' | translate) }}</h1>
               @if (currentEx.exercise?.muscle_group) {
-                <app-ui-badge variant="brand" size="sm" class="mt-1">{{ currentEx.exercise!.muscle_group }}</app-ui-badge>
+                <app-ui-badge variant="brand" size="sm" class="mt-1">{{ 'muscleGroup.' + currentEx.exercise!.muscle_group | translate }}</app-ui-badge>
               }
             </div>
 

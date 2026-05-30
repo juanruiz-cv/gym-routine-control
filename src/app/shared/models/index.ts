@@ -121,3 +121,37 @@ export const EQUIPMENT_TYPES = [
 ] as const;
 
 export const DIFFICULTIES: Difficulty[] = ['beginner', 'intermediate', 'advanced'];
+
+export const MUSCLE_GROUP_ICONS: Record<string, string> = {
+  Chest: 'heart',
+  Back: 'accessibility',
+  Shoulders: 'accessibility',
+  Biceps: 'dumbbell',
+  Triceps: 'dumbbell',
+  Legs: 'footprints',
+  Quadriceps: 'footprints',
+  Hamstrings: 'footprints',
+  Glutes: 'footprints',
+  Calves: 'footprints',
+  Core: 'zap',
+  Abs: 'zap',
+  Obliques: 'zap',
+  Forearms: 'dumbbell',
+  Traps: 'accessibility',
+  'Full Body': 'person-standing',
+  Cardio: 'activity',
+};
+
+export const EQUIPMENT_ICONS: Record<string, string> = {
+  Barbell: 'weight',
+  Dumbbell: 'dumbbell',
+  Kettlebell: 'weight-tilde',
+  Machine: 'circle-gauge',
+  Cable: 'zap',
+  Bodyweight: 'person-standing',
+  'Resistance Band': 'heart-pulse',
+  'Medicine Ball': 'target',
+  'EZ Bar': 'weight',
+  'Smith Machine': 'circle-gauge',
+  Other: 'circle-dot',
+};

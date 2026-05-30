@@ -42,9 +42,9 @@ import type { Exercise, PersonalRecord } from '@shared/models';
             <div>
               <h1 class="text-xl font-bold">{{ ex.name }}</h1>
               <div class="flex items-center gap-2 mt-2">
-                <app-ui-badge variant="brand" size="sm">{{ ex.muscle_group }}</app-ui-badge>
+                <app-ui-badge variant="brand" size="sm">{{ 'muscleGroup.' + ex.muscle_group | translate }}</app-ui-badge>
                 @if (ex.equipment) {
-                  <app-ui-badge size="sm">{{ ex.equipment }}</app-ui-badge>
+                  <app-ui-badge size="sm">{{ 'equipment.' + ex.equipment | translate }}</app-ui-badge>
                 }
                 @if (ex.category) {
                   <app-ui-badge size="sm">{{ ex.category }}</app-ui-badge>

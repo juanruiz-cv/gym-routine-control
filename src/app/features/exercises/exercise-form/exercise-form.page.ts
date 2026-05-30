@@ -4,6 +4,7 @@ import { UiButton } from '@shared/ui/button';
 import { UiInput } from '@shared/ui/input';
 import { UiSelect, type SelectOption } from '@shared/ui/select';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
+import { I18nService } from '@shared/i18n/i18n.service';
 import { ExerciseService } from '@core/services/exercise.service';
 import { LucideArrowLeft } from '@lucide/angular';
 import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
@@ -29,14 +30,14 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
         <app-ui-select
           [label]="'exercises.muscleGroup' | translate"
           [placeholder]="'exercises.muscleGroupPlaceholder' | translate"
-          [options]="muscleGroupOptions"
+          [options]="muscleGroupOptions()"
           [(value)]="muscleGroup"
         />
 
         <app-ui-select
           [label]="'exercises.equipment' | translate"
           [placeholder]="'exercises.equipmentNone' | translate"
-          [options]="equipmentOptions"
+          [options]="equipmentOptions()"
           [(value)]="equipment"
         />
 
@@ -72,9 +73,14 @@ export class ExerciseFormPage implements OnInit {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _exercises = inject(ExerciseService);
+  private readonly _i18n = inject(I18nService);
 
-  readonly muscleGroupOptions: SelectOption[] = MUSCLE_GROUPS.map(mg => ({ value: mg, label: mg }));
-  readonly equipmentOptions: SelectOption[] = EQUIPMENT_TYPES.map(eq => ({ value: eq, label: eq }));
+  readonly muscleGroupOptions = computed<SelectOption[]>(() =>
+    MUSCLE_GROUPS.map(mg => ({ value: mg, label: this._i18n.t('muscleGroup.' + mg) }))
+  );
+  readonly equipmentOptions = computed<SelectOption[]>(() =>
+    EQUIPMENT_TYPES.map(eq => ({ value: eq, label: this._i18n.t('equipment.' + eq) }))
+  );
 
   readonly name = signal('');
   readonly muscleGroup = signal('');
