@@ -155,10 +155,18 @@ import {
                 <div class="flex items-center gap-3 mb-3">
                   <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
                   <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
+                  <input
+                    type="number"
+                    [value]="customRestTime()"
+                    (input)="onRestTimeChange(+$any($event.target).value)"
+                    class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                    min="10" step="5"
+                  />
+                  <span class="text-xs text-on-surface-muted">s</span>
                 </div>
                 <app-ui-timer
                   mode="countdown"
-                  [duration]="currentEx.rest_time || 90"
+                  [duration]="customRestTime()"
                   [autoStart]="true"
                   [allowSkip]="true"
                   skipLabel="timer.skipRest"
@@ -241,6 +249,7 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
   readonly workout = this._workout.activeWorkout;
   readonly confirmCancel = signal(false);
   readonly showRestTimer = signal(true);
+  readonly customRestTime = signal(90);
 
   private _wakeLock: WakeLockSentinel | null = null;
 
@@ -285,6 +294,8 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     }
 
     this._requestWakeLock();
+    const initialEx = this.workout()?.session.routine?.routine_exercises?.[0];
+    this.customRestTime.set(initialEx?.rest_time ?? 90);
   }
 
   ngOnDestroy(): void {
@@ -294,6 +305,14 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
   skipRest(): void {
     this.showRestTimer.set(false);
     setTimeout(() => this.showRestTimer.set(true), 50);
+  }
+
+  onRestTimeChange(value: number): void {
+    if (!isNaN(value) && value >= 10) {
+      this.customRestTime.set(value);
+      this.showRestTimer.set(false);
+      setTimeout(() => this.showRestTimer.set(true), 50);
+    }
   }
 
   onRestCompleted(): void {
@@ -350,8 +369,10 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     const max = (w.session.routine?.routine_exercises?.length ?? 1) - 1;
     if (w.currentExerciseIndex < max) {
       const newIndex = w.currentExerciseIndex + 1;
+      const newEx = w.session.routine?.routine_exercises?.[newIndex];
+      this.customRestTime.set(newEx?.rest_time ?? 90);
       const sets = w.session.sets ?? [];
-      const nextExId = w.session.routine?.routine_exercises?.[newIndex]?.id;
+      const nextExId = newEx?.id;
       const nextSetIndex = nextExId ? sets.findIndex(s => s.routine_exercise_id === nextExId && !s.is_completed) : 0;
       this._updateWorkoutPosition(newIndex, Math.max(0, nextSetIndex));
     }
@@ -362,8 +383,10 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     if (!w) return;
     if (w.currentExerciseIndex > 0) {
       const newIndex = w.currentExerciseIndex - 1;
+      const newEx = w.session.routine?.routine_exercises?.[newIndex];
+      this.customRestTime.set(newEx?.rest_time ?? 90);
       const sets = w.session.sets ?? [];
-      const prevExId = w.session.routine?.routine_exercises?.[newIndex]?.id;
+      const prevExId = newEx?.id;
       const prevSetIndex = prevExId ? sets.findIndex(s => s.routine_exercise_id === prevExId && !s.is_completed) : 0;
       this._updateWorkoutPosition(newIndex, Math.max(0, prevSetIndex));
     }
