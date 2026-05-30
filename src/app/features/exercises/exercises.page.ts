@@ -92,6 +92,7 @@ import { MUSCLE_GROUP_ICONS } from '@shared/models';
       }
 
       <!-- Exercise List -->
+      @if (!loading()) {
       <div class="flex flex-col gap-2">
         @for (ex of filteredExercises(); track ex.id) {
           <a routerLink="/exercises/{{ ex.id }}">
@@ -119,6 +120,7 @@ import { MUSCLE_GROUP_ICONS } from '@shared/models';
           </a>
         }
       </div>
+      }
     </div>
   `,
 })

@@ -78,6 +78,7 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar, LucideU
       }
 
       <!-- Routine List -->
+      @if (!loading()) {
       <div class="space-y-3">
         @for (routine of filteredRoutines(); track routine.id) {
           <app-ui-card variant="glass" [padding]="true">
@@ -128,6 +129,7 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar, LucideU
           </app-ui-card>
         }
       </div>
+      }
     </div>
   `,
 })
@@ -162,7 +164,7 @@ export class RoutinesPage implements OnInit {
     await this._routines.toggleFavorite(id);
   }
 
-  async assignRoutine(routineId: string, routineName: string): Promise<void> {
+  async assignRoutine(routineId: string): Promise<void> {
     const userId = this.assignUserId();
     if (!userId) return;
     const result = await this._assignments.assignRoutine(routineId, userId);
