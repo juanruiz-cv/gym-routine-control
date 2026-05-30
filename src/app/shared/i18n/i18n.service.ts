@@ -1,6 +1,7 @@
 import { Injectable, signal, inject, isDevMode, PLATFORM_ID, TransferState, makeStateKey } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { SupabaseService } from '@core/services/supabase.service';
+import { ProfileService } from '@core/services/profile.service';
 import type { UserPreferences } from '@shared/models';
 
 export type SupportedLang = 'es' | 'en';
@@ -30,6 +31,7 @@ function humanizeKey(key: string): string {
 @Injectable({ providedIn: 'root' })
 export class I18nService {
   private readonly _supabase = inject(SupabaseService);
+  private readonly _profile = inject(ProfileService);
   private readonly _platformId = inject(PLATFORM_ID);
   private readonly _transferState = inject(TransferState);
 
@@ -146,34 +148,26 @@ export class I18nService {
 
   private async _saveToProfile(lang: SupportedLang): Promise<void> {
     if (isPlatformServer(this._platformId)) return;
-    if (!this._supabase.client) return;
-    const { data: { user } } = await this._supabase.client.auth.getUser();
-    if (!user) return;
-    const { data } = await this._supabase.client
-      .from('profiles')
-      .select('preferences')
-      .eq('id', user.id)
-      .single();
-    const prefs = (data?.preferences ?? {}) as UserPreferences;
-    await this._supabase.client.from('profiles').upsert({
-      id: user.id,
-      preferences: { ...prefs, language: lang },
-    });
+    if (this._supabase.client && !isPlatformServer(this._platformId)) {
+      const { data: { user } } = await this._supabase.client.auth.getUser();
+      if (!user) return;
+      const prefs = await this._profile.getPreferences(user.id);
+      await this._profile.updatePreferences(user.id, {
+        ...(prefs ?? {}),
+        language: lang,
+      });
+    }
   }
 
   async loadFromProfile(): Promise<void> {
     if (isPlatformServer(this._platformId) || this._loaded) return;
-    if (!this._supabase.client) return;
-    const { data: { user } } = await this._supabase.client.auth.getUser();
-    if (!user) return;
-    const { data } = await this._supabase.client
-      .from('profiles')
-      .select('preferences')
-      .eq('id', user.id)
-      .single();
-    const prefs = data?.preferences as UserPreferences | undefined;
-    if (prefs?.language && (prefs.language === 'es' || prefs.language === 'en')) {
-      await this.setLanguage(prefs.language);
+    if (this._supabase.client && !isPlatformServer(this._platformId)) {
+      const { data: { user } } = await this._supabase.client.auth.getUser();
+      if (!user) return;
+      const prefs = await this._profile.getPreferences(user.id);
+      if (prefs?.language && (prefs.language === 'es' || prefs.language === 'en')) {
+        await this.setLanguage(prefs.language);
+      }
     }
   }
 }

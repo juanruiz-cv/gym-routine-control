@@ -4,6 +4,7 @@ import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiSkeletonCard, UiSelect, type SelectOption } from '@shared/ui';
 import { SupabaseService } from '@core/services/supabase.service';
+import { ProfileService } from '@core/services/profile.service';
 import { I18nService } from '@shared/i18n/i18n.service';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { LanguageSwitcherComponent } from '@shared/i18n/language-switcher.component';
@@ -124,6 +125,7 @@ import type { UserPreferences } from '@shared/models';
 export class SettingsPage implements OnInit {
   private readonly _router = inject(Router);
   private readonly _supabase = inject(SupabaseService);
+  private readonly _profile = inject(ProfileService);
   private readonly _i18n = inject(I18nService);
 
   readonly timerOptions: SelectOption[] = [
@@ -146,14 +148,8 @@ export class SettingsPage implements OnInit {
 
     const userId = user?.id;
     if (userId) {
-      const { data } = await this._supabase.client
-        .from('profiles')
-        .select('preferences')
-        .eq('id', userId)
-        .single();
-
-      if (data?.preferences) {
-        const prefs = data.preferences as UserPreferences;
+      const prefs = await this._profile.getPreferences(userId);
+      if (prefs) {
         this.restTimer.set(prefs.rest_timer?.toString() ?? '90');
         this.soundEnabled.set(prefs.sound_enabled ?? true);
         this.vibrationEnabled.set(prefs.vibration_enabled ?? true);
@@ -166,15 +162,12 @@ export class SettingsPage implements OnInit {
     const { data: { user } } = await this._supabase.client.auth.getUser();
     if (!user) return;
 
-    await this._supabase.client.from('profiles').upsert({
-      id: user.id,
-      preferences: {
-        theme: 'dark',
-        rest_timer: parseInt(this.restTimer()),
-        sound_enabled: this.soundEnabled(),
-        vibration_enabled: this.vibrationEnabled(),
-        language: this._i18n.currentLang(),
-      } satisfies UserPreferences,
+    await this._profile.updatePreferences(user.id, {
+      theme: 'dark',
+      rest_timer: parseInt(this.restTimer()),
+      sound_enabled: this.soundEnabled(),
+      vibration_enabled: this.vibrationEnabled(),
+      language: this._i18n.currentLang(),
     });
   }
 

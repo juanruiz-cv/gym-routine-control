@@ -47,16 +47,10 @@ export class AuthService {
     const result = await this._supabase.client.auth.signUp({ email, password });
 
     if (!result.error && result.data.user) {
-      const { error: profileError } = await this._supabase.client.from('profiles').insert({
-        id: result.data.user.id,
-        email: result.data.user.email,
-        created_at: new Date().toISOString(),
-        preferences: {},
-      }).maybeSingle();
-
-      if (profileError && profileError.code !== '23505') {
-        console.error('Profile creation error:', profileError);
-      }
+      await this._supabase.client.from('profiles').upsert(
+        { id: result.data.user.id },
+        { onConflict: 'id' },
+      );
     }
 
     return {
