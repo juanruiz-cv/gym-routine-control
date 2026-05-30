@@ -121,36 +121,36 @@ import type { UserPreferences } from '@shared/models';
                 <div class="flex rounded-xl overflow-hidden border border-border shrink-0">
                   <button
                     (click)="setTheme('system')"
-                    class="px-3 py-1.5 text-sm font-medium transition-colors flex items-center gap-1"
+                    [title]="'settings.themeSystem' | translate"
+                    class="px-3 py-1.5 text-sm font-medium transition-colors"
                     [class.bg-brand]="themeMode() === 'system'"
                     [class.text-white]="themeMode() === 'system'"
                     [class.text-on-surface-muted]="themeMode() !== 'system'"
                     [class.hover:text-on-surface]="themeMode() !== 'system'"
                   >
                     <svg lucideMonitor class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
-                    <span>{{ 'settings.themeSystem' | translate }}</span>
                   </button>
                   <button
                     (click)="setTheme('light')"
-                    class="px-3 py-1.5 text-sm font-medium transition-colors flex items-center gap-1"
+                    [title]="'settings.themeLight' | translate"
+                    class="px-3 py-1.5 text-sm font-medium transition-colors"
                     [class.bg-brand]="themeMode() === 'light'"
                     [class.text-white]="themeMode() === 'light'"
                     [class.text-on-surface-muted]="themeMode() !== 'light'"
                     [class.hover:text-on-surface]="themeMode() !== 'light'"
                   >
                     <svg lucideSun class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
-                    <span>{{ 'settings.themeLight' | translate }}</span>
                   </button>
                   <button
                     (click)="setTheme('dark')"
-                    class="px-3 py-1.5 text-sm font-medium transition-colors flex items-center gap-1"
+                    [title]="'settings.themeDark' | translate"
+                    class="px-3 py-1.5 text-sm font-medium transition-colors"
                     [class.bg-brand]="themeMode() === 'dark'"
                     [class.text-white]="themeMode() === 'dark'"
                     [class.text-on-surface-muted]="themeMode() !== 'dark'"
                     [class.hover:text-on-surface]="themeMode() !== 'dark'"
                   >
                     <svg lucideMoon class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
-                    <span>{{ 'settings.themeDark' | translate }}</span>
                   </button>
                 </div>
               </div>

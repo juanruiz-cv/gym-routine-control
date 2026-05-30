@@ -18,32 +18,14 @@ import { LucideLanguages } from '@lucide/angular';
         @for (opt of options; track opt.value) {
           <button
             (click)="setLang(opt.value)"
-            class="px-3 py-1.5 text-sm font-medium transition-colors flex items-center gap-1"
+            [title]="opt.nameKey | translate"
+            class="px-3 py-1.5 text-sm font-medium transition-colors"
             [class.bg-brand]="i18n.currentLang() === opt.value"
             [class.text-white]="i18n.currentLang() === opt.value"
             [class.text-on-surface-muted]="i18n.currentLang() !== opt.value"
             [class.hover:text-on-surface]="i18n.currentLang() !== opt.value"
           >
-            @if (opt.value === 'es') {
-              <svg viewBox="0 0 20 14" class="w-4 h-3 shrink-0" aria-hidden="true">
-                <rect width="20" height="3.5" fill="#c60b1e"/>
-                <rect y="3.5" width="20" height="7" fill="#ffc400"/>
-                <rect y="10.5" width="20" height="3.5" fill="#c60b1e"/>
-              </svg>
-            } @else {
-              <svg viewBox="0 0 20 14" class="w-4 h-3 shrink-0" aria-hidden="true">
-                <rect width="20" height="14" fill="#fff"/>
-                <rect y="1" width="20" height="1" fill="#b22234"/>
-                <rect y="3" width="20" height="1" fill="#b22234"/>
-                <rect y="5" width="20" height="1" fill="#b22234"/>
-                <rect y="7" width="20" height="1" fill="#b22234"/>
-                <rect y="9" width="20" height="1" fill="#b22234"/>
-                <rect y="11" width="20" height="1" fill="#b22234"/>
-                <rect y="13" width="20" height="1" fill="#b22234"/>
-                <rect width="8" height="7" fill="#3c3b6e"/>
-              </svg>
-            }
-            <span>{{ opt.label }}</span>
+            {{ opt.label }}
           </button>
         }
       </div>
@@ -54,8 +36,8 @@ export class LanguageSwitcherComponent {
   protected readonly i18n = inject(I18nService);
 
   protected readonly options = [
-    { value: 'es' as SupportedLang, label: 'ES' },
-    { value: 'en' as SupportedLang, label: 'EN' },
+    { value: 'es' as SupportedLang, label: 'ES', nameKey: 'language.es' },
+    { value: 'en' as SupportedLang, label: 'EN', nameKey: 'language.en' },
   ];
 
   protected async setLang(lang: SupportedLang): Promise<void> {

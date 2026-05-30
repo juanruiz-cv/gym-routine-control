@@ -25,7 +25,7 @@ export interface SelectOption {
         [attr.aria-haspopup]="'listbox'"
         [attr.aria-controls]="isOpen() ? listboxId() : null"
         class="w-full flex items-center justify-between gap-2 text-left transition-colors
-               bg-surface-input border border-white/10 text-on-surface
+               bg-surface-input border border-border text-on-surface
                focus:outline-none focus:ring-1 focus:ring-brand
                disabled:opacity-50 disabled:cursor-not-allowed"
         [class.rounded-xl]="size() === 'md'"
@@ -51,7 +51,7 @@ export interface SelectOption {
       @if (isOpen()) {
         <div
           [id]="listboxId()"
-          class="absolute z-50 left-0 right-0 mt-1 bg-surface-elevated border border-white/10 shadow-lg overflow-hidden animate-fade-in"
+          class="absolute z-50 left-0 right-0 mt-1 bg-surface-elevated border border-border shadow-lg overflow-hidden animate-fade-in"
           [class.rounded-xl]="size() === 'md'"
           [class.rounded-lg]="size() === 'sm'"
           (mousedown)="$event.stopPropagation()"

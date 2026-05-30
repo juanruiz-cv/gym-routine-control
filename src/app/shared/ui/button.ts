@@ -29,7 +29,7 @@ export class UiButton {
     ];
     const variants: Record<ButtonVariant, string> = {
       primary: 'bg-brand text-white hover:bg-brand-dark active:scale-[0.98]',
-      secondary: 'bg-surface-elevated text-on-surface hover:bg-surface-hover border border-white/10',
+      secondary: 'bg-surface-elevated text-on-surface hover:bg-surface-hover border border-border',
       ghost: 'text-on-surface-muted hover:text-on-surface hover:bg-surface-hover',
       danger: 'bg-error/10 text-error hover:bg-error/20',
     };
