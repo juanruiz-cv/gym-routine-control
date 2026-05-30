@@ -19,7 +19,7 @@ export class UiSkeleton {
   readonly rounded = input(true);
 
   protected readonly classes = computed(() => {
-    const base = ['animate-pulse-soft bg-white/10'];
+    const base = ['animate-pulse-soft bg-skeleton/10'];
 
     if (this.variant() === 'circular') {
       return [...base, 'rounded-full'].join(' ');
