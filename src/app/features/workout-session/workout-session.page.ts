@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
@@ -32,13 +32,12 @@ import {
 
         <!-- Header -->
         <div class="sticky top-0 z-10 bg-surface/80 backdrop-blur-xl">
-          <div class="flex items-center justify-between p-4">
+          <div class="flex items-center justify-between px-4 py-2">
             <button (click)="confirmCancel.set(true)" class="p-2 rounded-xl hover:bg-surface-hover transition-colors" [attr.aria-label]="'workout.cancel' | translate">
               <svg lucideX class="w-5 h-5" strokeWidth="2" aria-hidden="true"></svg>
             </button>
             <div class="text-center">
               <p class="text-sm font-medium">{{ session.routine?.name ?? ('workout.title' | translate) }}</p>
-              <p class="text-xs text-on-surface-muted" aria-live="polite" aria-atomic="true">{{ elapsedTime() }}</p>
             </div>
             <div class="w-9"></div>
           </div>
@@ -64,8 +63,19 @@ import {
           @let completedSets = completedExerciseSets();
           @let totalSets = totalExerciseSets();
 
-          <!-- Current Exercise -->
           <div class="flex-1 p-4 space-y-4 max-w-lg mx-auto w-full">
+            <!-- Global Timer -->
+            <app-ui-card variant="glass" [padding]="true">
+              <app-ui-timer
+                mode="countup"
+                [autoStart]="true"
+                [allowStop]="true"
+                stopLabel="workout.finish"
+                (timerStopped)="confirmCancel.set(true)"
+              />
+            </app-ui-card>
+
+            <!-- Exercise Info -->
             <div>
               <div class="flex items-center justify-between mb-1">
                 <span class="text-xs text-on-surface-muted">
@@ -140,13 +150,21 @@ import {
             </div>
 
             <!-- Rest Timer -->
-            @if (completedSets > 0 && completedSets < totalSets) {
+            @if (completedSets > 0 && completedSets < totalSets && showRestTimer()) {
               <app-ui-card variant="glass">
                 <div class="flex items-center gap-3 mb-3">
                   <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
                   <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
                 </div>
-                <app-ui-timer [duration]="currentEx.rest_time || 90" />
+                <app-ui-timer
+                  mode="countdown"
+                  [duration]="currentEx.rest_time || 90"
+                  [autoStart]="true"
+                  [allowSkip]="true"
+                  skipLabel="timer.skipRest"
+                  (timerStopped)="skipRest()"
+                  (timerCompleted)="onRestCompleted()"
+                />
               </app-ui-card>
             }
 
@@ -214,7 +232,7 @@ import {
     </div>
   `,
 })
-export class WorkoutSessionPage implements OnInit {
+export class WorkoutSessionPage implements OnInit, OnDestroy {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _workout = inject(WorkoutService);
@@ -222,7 +240,9 @@ export class WorkoutSessionPage implements OnInit {
 
   readonly workout = this._workout.activeWorkout;
   readonly confirmCancel = signal(false);
-  private _startTime = Date.now();
+  readonly showRestTimer = signal(true);
+
+  private _wakeLock: WakeLockSentinel | null = null;
 
   readonly totalProgress = computed(() => {
     const w = this.workout();
@@ -230,13 +250,6 @@ export class WorkoutSessionPage implements OnInit {
     const total = w.session.sets.length;
     const completed = w.session.sets.filter(s => s.is_completed).length;
     return total > 0 ? (completed / total) * 100 : 0;
-  });
-
-  readonly elapsedTime = computed(() => {
-    const elapsed = Math.floor((Date.now() - this._startTime) / 1000);
-    const m = Math.floor(elapsed / 60);
-    const s = elapsed % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
   });
 
   readonly currentExerciseSets = computed(() => {
@@ -271,8 +284,21 @@ export class WorkoutSessionPage implements OnInit {
       }
     }
 
-    this._startTime = Date.now();
-    setInterval(() => { /* trigger change detection for elapsedTime */ }, 1000);
+    this._requestWakeLock();
+  }
+
+  ngOnDestroy(): void {
+    this._releaseWakeLock();
+  }
+
+  skipRest(): void {
+    this.showRestTimer.set(false);
+    setTimeout(() => this.showRestTimer.set(true), 50);
+  }
+
+  onRestCompleted(): void {
+    this._notification.playTimerEnd();
+    this._notification.vibrate([200, 100, 200]);
   }
 
   updateWeight(setId: string, weight: number): void {
@@ -308,6 +334,9 @@ export class WorkoutSessionPage implements OnInit {
       weight: set.weight ?? undefined,
       reps: set.reps ?? undefined,
     });
+
+    this.showRestTimer.set(false);
+    setTimeout(() => this.showRestTimer.set(true), 50);
   }
 
   soundClick(): void {
@@ -347,6 +376,7 @@ export class WorkoutSessionPage implements OnInit {
   async finishWorkout(): Promise<void> {
     const w = this.workout();
     if (!w) return;
+    this._releaseWakeLock();
     await this._workout.completeSession(w.session.id);
     await this._router.navigate(['/workout', w.session.id, 'summary']);
   }
@@ -355,7 +385,32 @@ export class WorkoutSessionPage implements OnInit {
     const w = this.workout();
     if (!w) return;
     this.confirmCancel.set(false);
+    this._releaseWakeLock();
     await this._workout.cancelSession(w.session.id);
     await this._router.navigate(['/routines']);
+  }
+
+  private async _requestWakeLock(): Promise<void> {
+    try {
+      if ('wakeLock' in navigator) {
+        this._wakeLock = await navigator.wakeLock.request('screen');
+        this._wakeLock.addEventListener('release', () => {
+          this._wakeLock = null;
+        });
+      }
+    } catch {
+      /* WakeLock not supported or denied */
+    }
+  }
+
+  private async _releaseWakeLock(): Promise<void> {
+    try {
+      if (this._wakeLock) {
+        await this._wakeLock.release();
+        this._wakeLock = null;
+      }
+    } catch {
+      /* already released */
+    }
   }
 }

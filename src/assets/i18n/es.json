@@ -247,6 +247,7 @@
   "workout.completeSet": "Completar serie",
   "workout.progress": "Progreso del entrenamiento",
   "workout.weight": "Peso",
+  "workout.paused": "Entrenamiento Pausado",
 
   "workoutSummary.title": "¡Entrenamiento Completado!",
   "workoutSummary.subtitle": "¡Gran trabajo!",
@@ -266,6 +267,11 @@
   "timer.reset": "Reiniciar",
   "timer.resume": "Reanudar",
   "timer.start": "Iniciar Temporizador",
+  "timer.skipRest": "Saltar Descanso",
+  "timer.skip": "Saltar",
+  "timer.stop": "Detener",
+  "timer.elapsed": "Transcurrido",
+  "timer.workoutRunning": "Entrenamiento en curso",
 
   "modal.closeLabel": "Cerrar modal",
   "modal.close": "Cerrar",

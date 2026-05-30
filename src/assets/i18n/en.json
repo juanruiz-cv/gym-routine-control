@@ -247,6 +247,7 @@
   "workout.completeSet": "Complete set",
   "workout.progress": "Workout progress",
   "workout.weight": "Weight",
+  "workout.paused": "Workout Paused",
 
   "workoutSummary.title": "Workout Complete!",
   "workoutSummary.subtitle": "Great job!",
@@ -266,6 +267,11 @@
   "timer.reset": "Reset",
   "timer.resume": "Resume",
   "timer.start": "Start Timer",
+  "timer.skipRest": "Skip Rest",
+  "timer.skip": "Skip",
+  "timer.stop": "Stop",
+  "timer.elapsed": "Elapsed",
+  "timer.workoutRunning": "Workout in progress",
 
   "modal.closeLabel": "Close modal",
   "modal.close": "Close",
