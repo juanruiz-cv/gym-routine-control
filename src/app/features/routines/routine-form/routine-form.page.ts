@@ -63,7 +63,7 @@ interface ExerciseEntry {
           <app-ui-input [label]="'routines.estimatedDuration' | translate" type="number" [value]="duration()" (valueChange)="duration.set($event)" placeholder="45" />
 
           @if (perm.isStaffOrAbove()) {
-            <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-hover cursor-pointer select-none">
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-hover cursor-pointer select-none" role="group" [attr.aria-label]="'routines.isTemplate' | translate">
               <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
                 <svg lucideFile class="w-5 h-5 text-accent" strokeWidth="1.5" aria-hidden="true"></svg>
               </div>
@@ -84,7 +84,7 @@ interface ExerciseEntry {
                   [style.transform]="isTemplate() ? 'translateX(24px)' : 'translateX(0)'"
                 ></div>
               </button>
-            </label>
+            </div>
           }
         </div>
       </app-ui-card>
@@ -339,6 +339,22 @@ export class RoutineFormPage implements OnInit {
           updatePayload['is_template'] = this.isTemplate();
         }
         await this._routines.update(this._editId, updatePayload as Parameters<typeof this._routines.update>[1]);
+
+        await this._supabase.client.from('routine_exercises').delete().eq('routine_id', this._editId);
+
+        if (this.exercises().length > 0) {
+          const routineExs = this.exercises().map((ex, i) => ({
+            routine_id: this._editId as string,
+            exercise_id: ex.exerciseId,
+            sort_order: i,
+            sets: ex.sets,
+            reps: ex.reps,
+            weight: ex.weight,
+            rest_time: ex.restTime,
+          }));
+          await this._supabase.client.from('routine_exercises').insert(routineExs);
+        }
+
         await this._router.navigate(['/routines', this._editId]);
       } else {
         const routine = await this._routines.create({

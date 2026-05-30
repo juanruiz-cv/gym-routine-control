@@ -6,9 +6,10 @@ import { UiSelect, type SelectOption } from '@shared/ui/select';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { I18nService } from '@shared/i18n/i18n.service';
 import { ExerciseService } from '@core/services/exercise.service';
+import { MuscleGroupService } from '@core/services/muscle-group.service';
+import { EquipmentService } from '@core/services/equipment.service';
 import { PermissionService } from '@core/services/permission.service';
 import { LucideArrowLeft, LucideGlobe } from '@lucide/angular';
-import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
 
 @Component({
   selector: 'app-exercise-form-page',
@@ -45,7 +46,7 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
         <app-ui-input [label]="'exercises.category' | translate" [value]="category()" (valueChange)="category.set($event)" [placeholder]="'exercises.categoryPlaceholder' | translate" />
 
         @if (perm.canCreateGlobalExercises()) {
-          <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-hover cursor-pointer select-none">
+          <div class="flex items-center gap-3 p-3 rounded-xl bg-surface-hover cursor-pointer select-none" role="group" [attr.aria-label]="'exercises.isGlobal' | translate">
             <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
               <svg lucideGlobe class="w-5 h-5 text-accent" strokeWidth="1.5" aria-hidden="true"></svg>
             </div>
@@ -66,7 +67,7 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
                 [style.transform]="isGlobal() ? 'translateX(24px)' : 'translateX(0)'"
               ></div>
             </button>
-          </label>
+          </div>
         }
 
         <div class="flex flex-col gap-1.5">
@@ -99,14 +100,16 @@ export class ExerciseFormPage implements OnInit {
   private readonly _router = inject(Router);
   private readonly _route = inject(ActivatedRoute);
   private readonly _exercises = inject(ExerciseService);
+  private readonly _muscleGroups = inject(MuscleGroupService);
+  private readonly _equipment = inject(EquipmentService);
   private readonly _i18n = inject(I18nService);
   protected readonly perm = inject(PermissionService);
 
   readonly muscleGroupOptions = computed<SelectOption[]>(() =>
-    MUSCLE_GROUPS.map(mg => ({ value: mg, label: this._i18n.t('muscleGroup.' + mg) }))
+    this._muscleGroups.groups().filter(g => g.is_active).map(mg => ({ value: mg.name, label: this._i18n.t('muscleGroup.' + mg.name) }))
   );
   readonly equipmentOptions = computed<SelectOption[]>(() =>
-    EQUIPMENT_TYPES.map(eq => ({ value: eq, label: this._i18n.t('equipment.' + eq) }))
+    this._equipment.types().filter(t => t.is_active).map(eq => ({ value: eq.name, label: this._i18n.t('equipment.' + eq.name) }))
   );
 
   readonly name = signal('');
@@ -135,6 +138,10 @@ export class ExerciseFormPage implements OnInit {
         this.isGlobal.set(ex.is_global);
       }
     }
+    await Promise.all([
+      this._muscleGroups.fetchAll(),
+      this._equipment.fetchAll(),
+    ]);
   }
 
   async save(): Promise<void> {
