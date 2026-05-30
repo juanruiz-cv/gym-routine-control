@@ -216,6 +216,17 @@
   "modal.closeLabel": "Cerrar modal",
   "modal.close": "Cerrar",
 
+  "notFound.title": "404",
+  "notFound.heading": "Página no encontrada",
+  "notFound.description": "La página que buscas no existe o fue movida.",
+  "notFound.easterEgg": "Parece que esta ruta de entrenamiento no existe. Volvamos al camino correcto.",
+  "notFound.redirectingHome": "Redirigiendo al panel principal en {seconds}...",
+  "notFound.redirectingLogin": "Redirigiendo al inicio de sesión en {seconds}...",
+  "notFound.goHome": "Ir al panel",
+  "notFound.goLogin": "Ir al inicio de sesión",
+  "notFound.goBack": "Volver atrás",
+  "notFound.requestedUrl": "URL solicitada:",
+
   "emptyState.default": "Nada aquí todavía",
 
   "validation.email": "Por favor ingresa un correo válido",

@@ -64,6 +64,8 @@
   --animate-scale-in: scale-in 0.2s ease-out;
   --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
   --animate-spin-slow: spin 3s linear infinite;
+  --animate-plate-spin: plate-spin 20s linear infinite;
+  --animate-plate-float: plate-float 3.5s ease-in-out infinite;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -84,6 +86,14 @@
   @keyframes pulse-soft {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
+  }
+  @keyframes plate-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes plate-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
   }
 }
 
