@@ -333,6 +333,9 @@
   "admin.manageUsers": "Gestionar Usuarios",
   "admin.promoteToStaff": "Ascender a Staff",
   "admin.demoteToUser": "Degradar a Usuario",
+  "admin.promoteToAdmin": "Ascender a Admin",
+  "admin.confirmPromoteAdmin": "Ascender a Admin",
+  "admin.confirmPromoteAdminMessage": "¿Estás seguro de que querés ascender a {name} a Admin? Esta acción es irreversible.",
   "admin.auditLog": "Registro de Auditoría",
 
   "staff.title": "Panel de Staff",

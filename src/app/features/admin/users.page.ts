@@ -2,18 +2,20 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { AdminService, type UserWithProfile } from '@core/services/admin.service';
 import { PermissionService } from '@core/services/permission.service';
+import { AuthService } from '@core/auth/auth.service';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
+import { UiModal } from '@shared/ui/modal';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
-import { LucideUser, LucideChevronUp, LucideChevronDown, LucideSearch } from '@lucide/angular';
+import { LucideUser, LucideChevronUp, LucideChevronDown, LucideSearch, LucideShield, LucideAlertTriangle } from '@lucide/angular';
 import { UiInput } from '@shared/ui/input';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [DatePipe, UiCard, UiButton, UiBadge, TranslatePipe, UiInput,
-    LucideUser, LucideChevronUp, LucideChevronDown, LucideSearch],
+  imports: [DatePipe, UiCard, UiButton, UiBadge, UiModal, TranslatePipe, UiInput,
+    LucideUser, LucideChevronUp, LucideChevronDown, LucideSearch, LucideShield, LucideAlertTriangle],
   template: `
     <div class="p-4 space-y-4 max-w-lg mx-auto">
       <h1 class="text-xl font-bold">{{ 'admin.manageUsers' | translate }}</h1>
@@ -27,6 +29,13 @@ import { UiInput } from '@shared/ui/input';
         <svg lucideSearch class="w-4 h-4" strokeWidth="2" icon aria-hidden="true"></svg>
       </app-ui-input>
 
+      @if (error()) {
+        <p class="text-sm text-error flex items-center gap-1.5">
+          <svg lucideAlertTriangle class="w-4 h-4 shrink-0" strokeWidth="2" aria-hidden="true"></svg>
+          {{ error() }}
+        </p>
+      }
+
       <div class="flex flex-col gap-2">
         @for (user of filteredUsers(); track user.id) {
           <app-ui-card>
@@ -37,7 +46,7 @@ import { UiInput } from '@shared/ui/input';
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium truncate">{{ user.display_name ?? '—' }}</p>
                 <div class="flex items-center gap-2 mt-0.5">
-                  <app-ui-badge [size]="'sm'">
+                  <app-ui-badge [size]="'sm'" [variant]="badgeVariant(user.role)">
                     {{ 'role.' + user.role | translate }}
                   </app-ui-badge>
                   <span class="text-xs text-on-surface-muted">
@@ -45,7 +54,7 @@ import { UiInput } from '@shared/ui/input';
                   </span>
                 </div>
               </div>
-              @if (perm.isAdmin() && user.role !== 'admin') {
+              @if (perm.isAdmin() && user.role !== 'admin' && user.id !== currentUserId()) {
                 <div class="flex gap-1 shrink-0">
                   @if (user.role === 'user') {
                     <button ui-button size="sm" variant="secondary" [title]="'admin.promoteToStaff' | translate"
@@ -59,6 +68,10 @@ import { UiInput } from '@shared/ui/input';
                       <svg lucideChevronDown class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
                     </button>
                   }
+                  <button ui-button size="sm" variant="primary" [title]="'admin.promoteToAdmin' | translate"
+                    (click)="openPromoteToAdmin(user)" [disabled]="loading()">
+                    <svg lucideShield class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
+                  </button>
                 </div>
               }
             </div>
@@ -68,15 +81,35 @@ import { UiInput } from '@shared/ui/input';
         }
       </div>
     </div>
+
+    <app-ui-modal [isOpen]="confirmModalOpen()" [title]="'admin.confirmPromoteAdmin' | translate" (closed)="cancelPromote()">
+      <p class="text-sm text-on-surface-secondary mb-4">
+        {{ 'admin.confirmPromoteAdminMessage' | translate: { name: confirmTarget()?.display_name ?? '' } }}
+      </p>
+      <div class="flex gap-2">
+        <button ui-button variant="danger" class="flex-1" (click)="confirmPromote()" [disabled]="loading()">
+          {{ 'admin.promoteToAdmin' | translate }}
+        </button>
+        <button ui-button variant="secondary" class="flex-1" (click)="cancelPromote()" [disabled]="loading()">
+          {{ 'common.cancel' | translate }}
+        </button>
+      </div>
+    </app-ui-modal>
   `,
 })
 export class AdminUsersPage implements OnInit {
   private readonly _admin = inject(AdminService);
+  private readonly _auth = inject(AuthService);
   protected readonly perm = inject(PermissionService);
 
   protected readonly users = signal<UserWithProfile[]>([]);
   protected readonly searchQuery = signal('');
   protected readonly loading = signal(false);
+  protected readonly error = signal<string | null>(null);
+  protected readonly currentUserId = computed(() => this._auth.user()?.id ?? '');
+
+  protected readonly confirmModalOpen = signal(false);
+  protected readonly confirmTarget = signal<UserWithProfile | null>(null);
 
   protected readonly filteredUsers = computed(() => {
     const q = this.searchQuery().toLowerCase();
@@ -87,27 +120,58 @@ export class AdminUsersPage implements OnInit {
     );
   });
 
+  protected badgeVariant(role: string): 'brand' | 'warning' | 'default' {
+    return role === 'admin' ? 'brand' : role === 'staff' ? 'warning' : 'default';
+  }
+
   async ngOnInit(): Promise<void> {
     this.users.set(await this._admin.getUsers());
   }
 
+  protected openPromoteToAdmin(user: UserWithProfile): void {
+    this.confirmTarget.set(user);
+    this.confirmModalOpen.set(true);
+  }
+
+  protected cancelPromote(): void {
+    this.confirmModalOpen.set(false);
+    this.confirmTarget.set(null);
+  }
+
+  protected async confirmPromote(): Promise<void> {
+    const target = this.confirmTarget();
+    if (!target) return;
+    this.confirmModalOpen.set(false);
+    this.confirmTarget.set(null);
+    await this._changeRole(target.id, 'admin');
+  }
+
   async promote(userId: string): Promise<void> {
-    this.loading.set(true);
-    const { error } = await this._admin.promoteToStaff(userId);
-    if (!error) {
-      this.users.update(users =>
-        users.map(u => u.id === userId ? { ...u, role: 'staff' as const } : u)
-      );
-    }
-    this.loading.set(false);
+    await this._changeRole(userId, 'staff');
   }
 
   async demote(userId: string): Promise<void> {
+    await this._changeRole(userId, 'user');
+  }
+
+  private async _changeRole(userId: string, role: 'admin' | 'staff' | 'user'): Promise<void> {
     this.loading.set(true);
-    const { error } = await this._admin.demoteToUser(userId);
-    if (!error) {
+    this.error.set(null);
+
+    let result: { error?: string };
+    if (role === 'admin') {
+      result = await this._admin.promoteToAdmin(userId);
+    } else if (role === 'staff') {
+      result = await this._admin.promoteToStaff(userId);
+    } else {
+      result = await this._admin.demoteToUser(userId);
+    }
+
+    if (result.error) {
+      this.error.set(result.error);
+    } else {
       this.users.update(users =>
-        users.map(u => u.id === userId ? { ...u, role: 'user' as const } : u)
+        users.map(u => u.id === userId ? { ...u, role } : u)
       );
     }
     this.loading.set(false);

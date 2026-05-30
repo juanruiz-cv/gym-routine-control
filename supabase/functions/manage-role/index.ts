@@ -44,8 +44,8 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Invalid payload' }), { status: 400 });
     }
 
-    if (user_id === caller.id && role !== 'admin') {
-      return new Response(JSON.stringify({ error: 'Cannot demote yourself' }), { status: 400 });
+    if (user_id === caller.id) {
+      return new Response(JSON.stringify({ error: 'Cannot change your own role' }), { status: 400 });
     }
 
     const { data: targetProfile } = await supabaseClient

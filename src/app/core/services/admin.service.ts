@@ -46,7 +46,11 @@ export class AdminService {
     return this._callManageRole(userId, 'user');
   }
 
-  private async _callManageRole(userId: string, role: 'staff' | 'user'): Promise<{ error?: string }> {
+  async promoteToAdmin(userId: string): Promise<{ error?: string }> {
+    return this._callManageRole(userId, 'admin');
+  }
+
+  private async _callManageRole(userId: string, role: 'staff' | 'user' | 'admin'): Promise<{ error?: string }> {
     const { data: { session } } = await this._supabase.client.auth.getSession();
     const token = session?.access_token;
     if (!token) return { error: 'Not authenticated' };

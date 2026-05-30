@@ -333,6 +333,9 @@
   "admin.manageUsers": "Manage Users",
   "admin.promoteToStaff": "Promote to Staff",
   "admin.demoteToUser": "Demote to User",
+  "admin.promoteToAdmin": "Promote to Admin",
+  "admin.confirmPromoteAdmin": "Promote to Admin",
+  "admin.confirmPromoteAdminMessage": "Are you sure you want to promote {name} to Admin? This action is irreversible.",
   "admin.auditLog": "Audit Log",
 
   "staff.title": "Staff Panel",
