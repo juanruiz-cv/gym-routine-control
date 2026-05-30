@@ -16,16 +16,39 @@ export class RoutineService extends DataService {
     this._loading.set(true);
     try {
       const userId = await this.checkUserId();
-      const { data, error } = await this.client
+
+      const { data: ownRoutines } = await this.client
         .from('routines')
         .select('*, routine_exercises(*, exercise:exercises(*))')
-        .or(`user_id.eq.${userId},id.in.(select routine_id from routine_assignments where user_id.eq.${userId})`)
+        .eq('user_id', userId)
         .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      this._routines.set(data ?? []);
-      return data ?? [];
+      const { data: assignments } = await this.client
+        .from('routine_assignments')
+        .select('routine_id')
+        .eq('user_id', userId);
+
+      const assignedIds = (assignments ?? []).map(a => a.routine_id);
+
+      let assignedRoutines: Routine[] = [];
+      if (assignedIds.length > 0) {
+        const { data } = await this.client
+          .from('routines')
+          .select('*, routine_exercises(*, exercise:exercises(*))')
+          .in('id', assignedIds)
+          .is('deleted_at', null)
+          .order('created_at', { ascending: false });
+        assignedRoutines = (data ?? []) as Routine[];
+      }
+
+      const merged = [...(ownRoutines ?? []), ...assignedRoutines];
+      const seen = new Set<string>();
+      const result = merged.filter(r => !seen.has(r.id) && seen.add(r.id));
+      result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      this._routines.set(result);
+      return result;
     } finally {
       this._loading.set(false);
     }
