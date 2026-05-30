@@ -17,17 +17,22 @@ interface NavItem {
     LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChart3, LucideSettings, LucideShield, LucideUserCog],
   template: `
     <nav class="fixed bottom-0 left-0 right-0 z-50 bg-surface-elevated border-t border-white/10 safe-area-bottom">
-      <div class="flex items-center h-16 overflow-x-auto no-scrollbar snap-x snap-mandatory" appDragScroll>
+      <div
+        class="flex items-center h-16 overflow-x-auto no-scrollbar snap-x snap-mandatory px-2"
+        style="mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);"
+        appDragScroll
+      >
         @for (item of navItems(); track item.route) {
           <a
             [routerLink]="[item.route]"
-            routerLinkActive="text-brand"
+            routerLinkActive=""
             #rla="routerLinkActive"
-            [class.text-brand]="rla.isActive"
-            [class.text-on-surface-muted]="!rla.isActive"
             [attr.aria-current]="rla.isActive ? 'page' : null"
-            class="flex flex-col items-center gap-0.5 text-xs font-medium transition-colors duration-200 shrink-0 flex-1 min-w-[72px] snap-center"
+            [class]="navItemClass(rla.isActive)"
           >
+            <span class="w-4 h-[2.5px] rounded-full bg-brand transition-opacity duration-300"
+              [class.opacity-0]="!rla.isActive"
+              [class.opacity-100]="rla.isActive"></span>
             @switch (item.key) {
               @case ('nav.dashboard') { <svg lucideLayoutDashboard class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
               @case ('nav.routines') { <svg lucideListOrdered class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
@@ -46,6 +51,13 @@ interface NavItem {
 })
 export class BottomNavComponent {
   private readonly _perm = inject(PermissionService);
+
+  protected navItemClass(isActive: boolean): string {
+    const base = 'flex flex-col items-center gap-[3px] text-[11px] font-medium transition-all duration-200 shrink-0 flex-1 min-w-[80px] max-w-[108px] snap-center rounded-xl py-1.5';
+    return isActive
+      ? base + ' text-brand bg-brand/8'
+      : base + ' text-on-surface-muted hover:bg-surface-hover/40';
+  }
 
   protected readonly navItems = computed<NavItem[]>(() => {
     const r = this._perm.role();
