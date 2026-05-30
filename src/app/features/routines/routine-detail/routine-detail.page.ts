@@ -304,19 +304,28 @@ export class RoutineDetailPage implements OnInit {
 
     try {
       const users = await this._admin.getUsers();
-      const match = users.find(u => u.email === this.assignEmail());
+      const normalizedEmail = this.assignEmail().trim().toLowerCase();
+      console.log('[doAssign] users:', users.length,
+        'emails:', users.map(u => u.email?.toLowerCase()));
+      console.log('[doAssign] buscando:', normalizedEmail);
+
+      const match = users.find(u => u.email?.toLowerCase() === normalizedEmail);
       if (!match) {
         this.assignError.set(this._i18n?.t('staff.userNotFound') ?? 'User not found');
         return;
       }
+
+      console.log('[doAssign] match encontrado:', match.id, match.email);
       const result = await this._assignments.assignRoutine(r.id, match.id);
+      console.log('[doAssign] assignRoutine result:', result);
       if (result.error) {
         this.assignError.set(result.error);
       } else {
         this.assignSuccess.set(this._i18n?.t('staff.assignSuccess') ?? 'Routine assigned!');
         this.assignEmail.set('');
       }
-    } catch {
+    } catch (e) {
+      console.error('[doAssign] error:', e);
       this.assignError.set(this._i18n?.t('common.error') ?? 'An error occurred');
     } finally {
       this.assignSaving.set(false);
