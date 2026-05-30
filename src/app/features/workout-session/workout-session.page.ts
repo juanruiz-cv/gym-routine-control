@@ -177,7 +177,7 @@ import {
             }
 
             <!-- Navigation -->
-            <div class="flex gap-3">
+            <div class="flex gap-3 mt-4">
               <button
                 ui-button variant="secondary" size="md" class="flex-1"
                 [disabled]="w.currentExerciseIndex === 0"
