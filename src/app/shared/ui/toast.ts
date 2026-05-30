@@ -11,7 +11,7 @@ type ToastPosition = 'top' | 'bottom';
   template: `
     @if (visible()) {
       <div [class]="positionClasses()" class="fixed left-4 right-4 z-[200] flex justify-center pointer-events-none">
-        <div class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg backdrop-blur-xl pointer-events-auto max-w-md w-full animate-slide-up" [class]="typeClasses()">
+        <div role="alert" class="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg backdrop-blur-xl pointer-events-auto max-w-md w-full animate-slide-up" [class]="typeClasses()">
           @switch (type()) {
             @case ('success') { <svg lucideCheckCircle class="w-5 h-5 text-success" strokeWidth="2"></svg> }
             @case ('error') { <svg lucideAlertCircle class="w-5 h-5 text-error" strokeWidth="2"></svg> }
@@ -19,8 +19,8 @@ type ToastPosition = 'top' | 'bottom';
             @default { <svg lucideInfo class="w-5 h-5 text-info" strokeWidth="2"></svg> }
           }
           <p class="flex-1 text-sm font-medium text-on-surface">{{ message() }}</p>
-          <button (click)="dismiss()" class="p-0.5 text-on-surface-muted hover:text-on-surface transition-colors">
-            <svg lucideX class="w-4 h-4" strokeWidth="2"></svg>
+          <button (click)="dismiss()" class="p-0.5 text-on-surface-muted hover:text-on-surface transition-colors" aria-label="Close">
+            <svg lucideX class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
           </button>
         </div>
       </div>

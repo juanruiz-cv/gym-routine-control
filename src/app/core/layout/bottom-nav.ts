@@ -22,14 +22,15 @@ interface NavItem {
             #rla="routerLinkActive"
             [class.text-brand]="rla.isActive"
             [class.text-on-surface-muted]="!rla.isActive"
+            [attr.aria-current]="rla.isActive ? 'page' : null"
             class="flex flex-col items-center gap-0.5 text-xs font-medium transition-colors duration-200"
           >
             @switch (item.key) {
-              @case ('nav.dashboard') { <svg lucideLayoutDashboard class="w-[22px] h-[22px]" strokeWidth="1.5"></svg> }
-              @case ('nav.routines') { <svg lucideListOrdered class="w-[22px] h-[22px]" strokeWidth="1.5"></svg> }
-              @case ('nav.exercises') { <svg lucideDumbbell class="w-[22px] h-[22px]" strokeWidth="1.5"></svg> }
-              @case ('nav.metrics') { <svg lucideBarChart3 class="w-[22px] h-[22px]" strokeWidth="1.5"></svg> }
-              @case ('nav.settings') { <svg lucideSettings class="w-[22px] h-[22px]" strokeWidth="1.5"></svg> }
+              @case ('nav.dashboard') { <svg lucideLayoutDashboard class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
+              @case ('nav.routines') { <svg lucideListOrdered class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
+              @case ('nav.exercises') { <svg lucideDumbbell class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
+              @case ('nav.metrics') { <svg lucideBarChart3 class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
+              @case ('nav.settings') { <svg lucideSettings class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
             }
             <span>{{ item.key | translate }}</span>
           </a>

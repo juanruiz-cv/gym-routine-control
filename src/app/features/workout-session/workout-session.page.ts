@@ -33,18 +33,25 @@ import {
         <!-- Header -->
         <div class="sticky top-0 z-10 bg-surface/80 backdrop-blur-xl">
           <div class="flex items-center justify-between p-4">
-            <button (click)="confirmCancel.set(true)" class="p-2 rounded-xl hover:bg-surface-hover transition-colors">
-              <svg lucideX class="w-5 h-5" strokeWidth="2"></svg>
+            <button (click)="confirmCancel.set(true)" class="p-2 rounded-xl hover:bg-surface-hover transition-colors" [attr.aria-label]="'workout.cancel' | translate">
+              <svg lucideX class="w-5 h-5" strokeWidth="2" aria-hidden="true"></svg>
             </button>
             <div class="text-center">
               <p class="text-sm font-medium">{{ session.routine?.name ?? ('workout.title' | translate) }}</p>
-              <p class="text-xs text-on-surface-muted">{{ elapsedTime() }}</p>
+              <p class="text-xs text-on-surface-muted" aria-live="polite" aria-atomic="true">{{ elapsedTime() }}</p>
             </div>
             <div class="w-9"></div>
           </div>
 
           <!-- Progress Bar -->
-          <div class="h-1 bg-white/5">
+          <div
+            class="h-1 bg-white/5"
+            role="progressbar"
+            [attr.aria-valuenow]="totalProgress()"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-label]="'workout.progress' | translate"
+          >
             <div
               class="h-full bg-brand transition-all duration-300"
               [style.width.%]="totalProgress()"
@@ -66,7 +73,7 @@ import {
                 </span>
                 <span class="text-xs text-on-surface-muted">{{ 'workout.setsProgress' | translate:{ current: completedSets, total: totalSets } }}</span>
               </div>
-              <h2 class="text-xl font-bold">{{ currentEx.exercise?.name ?? ('workout.title' | translate) }}</h2>
+              <h1 class="text-xl font-bold">{{ currentEx.exercise?.name ?? ('workout.title' | translate) }}</h1>
               @if (currentEx.exercise?.muscle_group) {
                 <app-ui-badge variant="brand" size="sm" class="mt-1">{{ currentEx.exercise!.muscle_group }}</app-ui-badge>
               }
@@ -88,11 +95,13 @@ import {
                           <span class="text-on-surface font-medium">{{ set.weight ?? '—' }} kg</span>
                           <span class="text-on-surface-muted">×</span>
                           <span class="text-on-surface font-medium">{{ set.reps ?? '—' }}</span>
-                          <svg lucideCheckCircle class="w-5 h-5 text-success" strokeWidth="2"></svg>
+                          <svg lucideCheckCircle class="w-5 h-5 text-success" strokeWidth="2" aria-hidden="true"></svg>
                         </div>
                       } @else {
                         <div class="flex items-center gap-2">
+                          <label class="sr-only" [for]="'weight-' + set.id">{{ 'workout.weight' | translate }}</label>
                           <input
+                            [id]="'weight-' + set.id"
                             #weightInput
                             type="number"
                             [value]="set.weight ?? ''"
@@ -103,7 +112,9 @@ import {
                             min="0"
                           />
                           <span class="text-on-surface-muted">×</span>
+                          <label class="sr-only" [for]="'reps-' + set.id">{{ 'routines.reps' | translate }}</label>
                           <input
+                            [id]="'reps-' + set.id"
                             #repsInput
                             type="number"
                             [value]="set.reps ?? ''"
@@ -116,8 +127,9 @@ import {
                             ui-button variant="primary" size="sm"
                             [disabled]="i !== w.currentSetIndex"
                             (click)="completeSet(set.id); soundClick()"
+                            [attr.aria-label]="'workout.completeSet' | translate"
                           >
-                            <svg lucideCheck class="w-4 h-4" strokeWidth="2.5"></svg>
+                            <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
                           </button>
                         </div>
                       }
@@ -131,7 +143,7 @@ import {
             @if (completedSets > 0 && completedSets < totalSets) {
               <app-ui-card variant="glass">
                 <div class="flex items-center gap-3 mb-3">
-                  <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5"></svg>
+                  <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
                   <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
                 </div>
                 <app-ui-timer [duration]="currentEx.rest_time || 90" />
@@ -145,7 +157,7 @@ import {
                 [disabled]="w.currentExerciseIndex === 0"
                 (click)="prevExercise()"
               >
-                <svg lucideChevronLeft class="w-4 h-4" strokeWidth="2"></svg>
+                <svg lucideChevronLeft class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
                 {{ 'workout.previous' | translate }}
               </button>
 
@@ -155,14 +167,14 @@ import {
                   (click)="nextExercise()"
                 >
                   {{ 'workout.next' | translate }}
-                  <svg lucideChevronRight class="w-4 h-4" strokeWidth="2"></svg>
+                  <svg lucideChevronRight class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
                 </button>
               } @else {
                 <button
                   ui-button variant="primary" size="md" class="flex-1"
                   (click)="finishWorkout()"
                 >
-                  <svg lucideCheck class="w-4 h-4" strokeWidth="2.5"></svg>
+                  <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
                   {{ 'workout.finish' | translate }}
                 </button>
               }

@@ -9,8 +9,8 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
   standalone: true,
   imports: [TranslatePipe],
   template: `
-    <div class="flex flex-col items-center justify-center gap-4 py-20 animate-fade-in">
-      <div class="w-10 h-10 border-2 border-brand/30 border-t-brand rounded-full animate-spin"></div>
+    <div class="flex flex-col items-center justify-center gap-4 py-20 animate-fade-in" role="status" aria-live="polite">
+      <div class="w-10 h-10 border-2 border-brand/30 border-t-brand rounded-full animate-spin" aria-hidden="true"></div>
       <p class="text-sm text-on-surface-muted">{{ 'auth.completingSignIn' | translate }}</p>
     </div>
   `,

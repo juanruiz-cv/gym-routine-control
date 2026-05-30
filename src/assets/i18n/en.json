@@ -122,6 +122,8 @@
   "routines.saving": "Saving...",
   "routines.update": "Update",
   "routines.create_": "Create",
+  "routines.addFavorite": "Add to favorites",
+  "routines.removeFavorite": "Remove from favorites",
   "routines.startTooltip": "Start workout",
   "routines.editTooltip": "Edit this routine",
   "routines.duplicateTooltip": "Duplicate this routine",
@@ -202,6 +204,9 @@
   "workout.cancelConfirm": "Are you sure you want to cancel this workout? Progress will be lost.",
   "workout.keepGoing": "Keep Going",
   "workout.cancel": "Cancel",
+  "workout.completeSet": "Complete set",
+  "workout.progress": "Workout progress",
+  "workout.weight": "Weight",
 
   "workoutSummary.title": "Workout Complete!",
   "workoutSummary.subtitle": "Great job!",
@@ -263,6 +268,7 @@
   "common.error": "Error",
   "common.errorDesc": "Something went wrong. Try again.",
   "common.retry": "Retry",
+  "common.skipToContent": "Skip to main content",
 
   "duration.hours": "h",
   "duration.minutes": "m",

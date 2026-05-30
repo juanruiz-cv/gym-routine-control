@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, inject, AfterViewInit, ElementRef, effect } from '@angular/core';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 
 @Component({
@@ -7,12 +7,11 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
   imports: [TranslatePipe],
   template: `
     @if (isOpen()) {
-      <div class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" role="dialog" aria-modal="true" (keydown.escape)="close()">
+      <div #modalDialog class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4" role="dialog" aria-modal="true" (keydown.escape)="close()" (keydown)="onKeydown($event)">
         <!-- Backdrop -->
         <div
           class="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in"
           (click)="close()"
-          (keydown.escape)="close()"
           tabindex="-1"
         ></div>
 
@@ -56,7 +55,9 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
     }
   `,
 })
-export class UiModal {
+export class UiModal implements AfterViewInit {
+  private readonly _elementRef = inject(ElementRef);
+
   readonly isOpen = input(false);
   readonly title = input('');
   readonly noPadding = input(false);
@@ -64,7 +65,60 @@ export class UiModal {
 
   readonly closed = output<void>();
 
+  private _previousActiveElement: HTMLElement | null = null;
+
+  constructor() {
+    effect(() => {
+      if (this.isOpen()) {
+        this._previousActiveElement = document.activeElement as HTMLElement;
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+    effect(() => {
+      if (this.isOpen()) {
+        setTimeout(() => this._focusFirstElement());
+      }
+    });
+  }
+
+  protected onKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Tab') return;
+    const dialog = this._elementRef.nativeElement.querySelector('[role="dialog"]');
+    if (!dialog) return;
+    const focusable = this._getFocusableElements(dialog);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      (last as HTMLElement).focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      (first as HTMLElement).focus();
+    }
+  }
+
   protected close(): void {
     this.closed.emit();
+    if (this._previousActiveElement) {
+      this._previousActiveElement.focus();
+    }
+  }
+
+  private _focusFirstElement(): void {
+    const dialog = this._elementRef.nativeElement.querySelector('[role="dialog"]');
+    if (!dialog) return;
+    const focusable = this._getFocusableElements(dialog);
+    if (focusable.length) {
+      (focusable[0] as HTMLElement).focus();
+    }
+  }
+
+  private _getFocusableElements(container: Element): NodeListOf<HTMLElement> {
+    return container.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
   }
 }

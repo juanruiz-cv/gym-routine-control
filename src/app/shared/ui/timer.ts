@@ -11,7 +11,7 @@ import { LucidePlay, LucidePause, LucideRotateCcw } from '@lucide/angular';
   template: `
     <div class="flex flex-col items-center gap-4">
       <div class="relative w-40 h-40 sm:w-48 sm:h-48">
-        <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+        <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100" aria-hidden="true">
           <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="6" />
           <circle
             cx="50" cy="50" r="44" fill="none"
@@ -21,7 +21,7 @@ import { LucidePlay, LucidePause, LucideRotateCcw } from '@lucide/angular';
           />
         </svg>
         <div class="absolute inset-0 flex flex-col items-center justify-center">
-          <span class="text-4xl sm:text-5xl font-bold tabular-nums text-on-surface">{{ displayTime() }}</span>
+          <span class="text-4xl sm:text-5xl font-bold tabular-nums text-on-surface" aria-live="polite" aria-atomic="true">{{ displayTime() }}</span>
           <span class="text-xs text-on-surface-muted mt-1">
             @if (state() === 'idle') { {{ 'timer.ready' | translate }} }
             @else if (state() === 'running') { {{ 'timer.resting' | translate }} }

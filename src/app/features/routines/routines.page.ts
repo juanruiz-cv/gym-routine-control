@@ -25,7 +25,7 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '
       <div class="flex items-center justify-between">
         <h1 class="text-xl font-bold">{{ 'routines.title' | translate }}</h1>
         <a ui-button variant="primary" size="sm" routerLink="/routines/new">
-          <svg lucidePlus class="w-4 h-4" strokeWidth="2.5"></svg>
+          <svg lucidePlus class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
           {{ 'routines.new' | translate }}
         </a>
       </div>
@@ -37,7 +37,7 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '
         (valueChange)="searchQuery.set($event)"
         [hasIcon]="true"
       >
-        <svg lucideSearch class="w-4 h-4" strokeWidth="2" icon></svg>
+        <svg lucideSearch class="w-4 h-4" strokeWidth="2" icon aria-hidden="true"></svg>
       </app-ui-input>
 
       <!-- Loading -->
@@ -53,7 +53,7 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '
       @if (!loading() && filteredRoutines().length === 0 && !searchQuery()) {
         <app-ui-empty-state title="{{ 'routines.empty' | translate }}" message="{{ 'routines.emptyDesc' | translate }}">
           <a ui-button variant="primary" routerLink="/routines/new">
-            <svg lucidePlus class="w-4 h-4" strokeWidth="2.5"></svg>
+            <svg lucidePlus class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
             {{ 'routines.create' | translate }}
           </a>
         </app-ui-empty-state>
@@ -74,7 +74,7 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '
                   <div class="flex items-center gap-2">
                     <h3 class="font-semibold truncate">{{ routine.name }}</h3>
                     @if (routine.is_favorite) {
-                      <svg lucideStar class="w-4 h-4 shrink-0 text-yellow-400" strokeWidth="2" fill="currentColor"></svg>
+                      <svg lucideStar class="w-4 h-4 shrink-0 text-yellow-400" strokeWidth="2" fill="currentColor" aria-hidden="true"></svg>
                     }
                   </div>
                   @if (routine.description) {
@@ -90,7 +90,7 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '
                     }
                     @if (routine.estimated_duration) {
                       <span class="text-xs text-on-surface-muted flex items-center gap-1">
-                        <svg lucideClock class="w-3 h-3" strokeWidth="2"></svg>
+                        <svg lucideClock class="w-3 h-3" strokeWidth="2" aria-hidden="true"></svg>
                         {{ routine.estimated_duration }}min
                       </span>
                     }
@@ -102,8 +102,9 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar } from '
                   class="p-2 rounded-lg hover:bg-surface-hover transition-colors"
                   [class.text-yellow-400]="routine.is_favorite"
                   [class.text-on-surface-muted]="!routine.is_favorite"
+                  [attr.aria-label]="routine.is_favorite ? ('routines.removeFavorite' | translate) : ('routines.addFavorite' | translate)"
                 >
-                  <svg lucideHeart class="w-5 h-5" strokeWidth="1.5" [attr.fill]="routine.is_favorite ? 'currentColor' : 'none'"></svg>
+                  <svg lucideHeart class="w-5 h-5" strokeWidth="1.5" [attr.fill]="routine.is_favorite ? 'currentColor' : 'none'" aria-hidden="true"></svg>
                 </button>
               </div>
             </a>

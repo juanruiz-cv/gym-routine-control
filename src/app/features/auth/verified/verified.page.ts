@@ -17,7 +17,7 @@ import { UiButton } from '@shared/ui/button';
       </div>
 
       <div class="animate-check-scale" style="animation-delay: 0ms">
-        <svg class="w-20 h-20 sm:w-24 sm:h-24" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="w-20 h-20 sm:w-24 sm:h-24" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <filter id="check-glow" x="-20%" y="-20%" width="140%" height="140%">
               <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#22c55e" flood-opacity="0.35" />
@@ -57,7 +57,7 @@ import { UiButton } from '@shared/ui/button';
       </button>
 
       @if (countdown() >= 0) {
-        <p class="text-on-surface-muted text-sm">
+        <p class="text-on-surface-muted text-sm" aria-live="polite" aria-atomic="true">
           {{ 'notFound.redirectingHome' | translate: { seconds: countdown() } }}
         </p>
       }
