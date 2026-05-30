@@ -72,20 +72,14 @@ drop policy if exists "Users can insert own profile" on public.profiles;
 drop policy if exists "Admin can manage all profiles" on public.profiles;
 create policy "Admin can manage all profiles"
   on public.profiles for all
-  using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
-  )
-  with check (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
-  );
+  using (public.get_my_role() = 'admin')
+  with check (public.get_my_role() = 'admin');
 
 -- Staff: view all, update own
 drop policy if exists "Staff can view all profiles" on public.profiles;
 create policy "Staff can view all profiles"
   on public.profiles for select
-  using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
-  );
+  using (public.get_my_role() = 'staff');
 
 -- User: view/update own
 drop policy if exists "Users can view own profile" on public.profiles;
@@ -108,16 +102,8 @@ create policy "Users can insert own profile"
 drop policy if exists "Only admins can update role" on public.profiles;
 create policy "Only admins can update role"
   on public.profiles for update
-  using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
-    or
-    (auth.uid() = id and (select 1 from public.profiles where id = auth.uid()) is not null and current_setting('app.updating_role') is null)
-  )
-  with check (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
-    or
-    auth.uid() = id
-  );
+  using (public.get_my_role() = 'admin')
+  with check (public.get_my_role() = 'admin');
 
 -- ================================================================
 -- 6. RLS — ROUTINES
@@ -134,7 +120,7 @@ drop policy if exists "Admin can manage all routines" on public.routines;
 create policy "Admin can manage all routines"
   on public.routines for all
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+    public.get_my_role() = 'admin'
   );
 
 -- Staff: all routines (view/create/update), soft-delete own
@@ -142,23 +128,23 @@ drop policy if exists "Staff can manage routines" on public.routines;
 create policy "Staff can manage routines"
   on public.routines for select
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
     and deleted_at is null
   );
 
 create policy "Staff can create routines"
   on public.routines for insert
   with check (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
   );
 
 create policy "Staff can update any routine"
   on public.routines for update
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
   )
   with check (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
   );
 
 -- Staff can see assigned routines for their users (via routine_assignments)
@@ -207,7 +193,7 @@ drop policy if exists "Admin can manage all exercises" on public.exercises;
 create policy "Admin can manage all exercises"
   on public.exercises for all
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+    public.get_my_role() = 'admin'
   );
 
 -- Staff: view all, create global, update all, soft-delete own
@@ -215,7 +201,7 @@ drop policy if exists "Staff can view all exercises" on public.exercises;
 create policy "Staff can view all exercises"
   on public.exercises for select
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
     or is_global = true
     or auth.uid() = user_id
   );
@@ -224,7 +210,7 @@ drop policy if exists "Staff can create exercises" on public.exercises;
 create policy "Staff can create exercises"
   on public.exercises for insert
   with check (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
     or auth.uid() = user_id
   );
 
@@ -232,11 +218,11 @@ drop policy if exists "Staff can update exercises" on public.exercises;
 create policy "Staff can update exercises"
   on public.exercises for update
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
     or auth.uid() = user_id
   )
   with check (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
     or auth.uid() = user_id
   );
 
@@ -276,7 +262,7 @@ drop policy if exists "Admin can manage routine exercises" on public.routine_exe
 create policy "Admin can manage routine exercises"
   on public.routine_exercises for all
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+    public.get_my_role() = 'admin'
   );
 
 -- Staff: all
@@ -284,7 +270,7 @@ drop policy if exists "Staff can manage routine exercises" on public.routine_exe
 create policy "Staff can manage routine exercises"
   on public.routine_exercises for all
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
     and exists (
       select 1 from public.routines where id = routine_id
     )
@@ -325,7 +311,7 @@ drop policy if exists "Admin can manage assignments" on public.routine_assignmen
 create policy "Admin can manage assignments"
   on public.routine_assignments for all
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+    public.get_my_role() = 'admin'
   );
 
 -- Staff: select, insert, update (no delete)
@@ -333,21 +319,20 @@ drop policy if exists "Staff can view assignments" on public.routine_assignments
 create policy "Staff can view assignments"
   on public.routine_assignments for select
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'staff')
+    public.get_my_role() = 'staff'
   );
 
 drop policy if exists "Staff can create assignments" on public.routine_assignments;
 create policy "Staff can create assignments"
   on public.routine_assignments for insert
   with check (
-    exists (select 1 from public.profiles where id = auth.uid() and role in ('admin', 'staff'))
+    public.get_my_role() in ('admin', 'staff')
   );
 
-drop policy if exists "Staff can update assignments" on public.routine_assignments;
-create policy "Staff can update assignments"
+drop policy if exists "Staff can update assignments"
   on public.routine_assignments for update
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role in ('admin', 'staff'))
+    public.get_my_role() in ('admin', 'staff')
   );
 
 -- User: view own assignments
@@ -366,7 +351,7 @@ drop policy if exists "Admin can view audit logs" on public.audit_logs;
 create policy "Admin can view audit logs"
   on public.audit_logs for select
   using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+    public.get_my_role() = 'admin'
   );
 
 -- Anyone can insert audit logs (trigger/server-side)
@@ -383,25 +368,29 @@ create policy "Anyone can insert audit logs"
 -- Staff/Admin can view via the client-side if needed
 
 -- ================================================================
--- 12. HELPER FUNCTION — is_admin, is_staff
+-- 12. HELPER FUNCTION — get_my_role, is_admin, is_staff
 -- ================================================================
+
+-- get_my_role uses security definer to bypass RLS (avoids recursion)
+create or replace function public.get_my_role()
+returns text
+language sql stable security definer
+as $$
+  select role from public.profiles where id = auth.uid()
+$$;
 
 create or replace function public.is_admin()
 returns boolean
 language sql stable security definer
 as $$
-  select exists (
-    select 1 from public.profiles where id = auth.uid() and role = 'admin'
-  );
+  select public.get_my_role() = 'admin'
 $$;
 
 create or replace function public.is_staff()
 returns boolean
 language sql stable security definer
 as $$
-  select exists (
-    select 1 from public.profiles where id = auth.uid() and role in ('admin', 'staff')
-  );
+  select public.get_my_role() in ('admin', 'staff')
 $$;
 
 -- ================================================================

@@ -39,11 +39,14 @@ export class PermissionService {
   }
 
   private async _loadProfile(userId: string): Promise<void> {
-    const { data } = await this._supabase.client
+    const { data, error } = await this._supabase.client
       .from('profiles')
       .select('role')
       .eq('id', userId)
       .single<{ role: UserRole }>();
+    if (error) {
+      console.error('[PermissionService] Failed to load role:', error.message);
+    }
     this._role.set(data?.role ?? 'user');
   }
 

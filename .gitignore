@@ -38,6 +38,9 @@ testem.log
 /typings
 __screenshots__/
 
+# Supabase
+supabase/.temp/
+
 # System files
 .DS_Store
 Thumbs.db
