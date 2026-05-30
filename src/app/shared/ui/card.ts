@@ -26,7 +26,7 @@ export class UiCard {
   readonly padding = input(true);
 
   protected readonly classes = computed(() => {
-    const base = ['rounded-2xl transition-colors duration-200'];
+    const base = ['rounded-2xl transition-colors duration-200 border border-border'];
 
     const variants = {
       default: 'bg-surface-card',
