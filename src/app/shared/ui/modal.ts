@@ -1,4 +1,4 @@
-import { Component, input, output, inject, AfterViewInit, ElementRef, effect } from '@angular/core';
+import { Component, input, output, inject, ElementRef, effect } from '@angular/core';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 
 @Component({
@@ -55,7 +55,7 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
     }
   `,
 })
-export class UiModal implements AfterViewInit {
+export class UiModal {
   private readonly _elementRef = inject(ElementRef);
 
   readonly isOpen = input(false);
@@ -71,13 +71,6 @@ export class UiModal implements AfterViewInit {
     effect(() => {
       if (this.isOpen()) {
         this._previousActiveElement = document.activeElement as HTMLElement;
-      }
-    });
-  }
-
-  ngAfterViewInit(): void {
-    effect(() => {
-      if (this.isOpen()) {
         setTimeout(() => this._focusFirstElement());
       }
     });

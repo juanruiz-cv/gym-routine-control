@@ -79,7 +79,7 @@ import { LucidePlus, LucideHeart, LucideSearch, LucideClock, LucideStar, LucideU
 
       <!-- Routine List -->
       @if (!loading()) {
-      <div class="space-y-3">
+      <div class="flex flex-col gap-3">
         @for (routine of filteredRoutines(); track routine.id) {
           <app-ui-card variant="glass" [padding]="true">
             <button (click)="assignUserId() ? assignRoutine(routine.id, routine.name) : null" class="block w-full text-left">
