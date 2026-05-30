@@ -16,6 +16,7 @@ export class RoutineService extends DataService {
     this._loading.set(true);
     try {
       const userId = await this.checkUserId();
+      console.log('[fetchAll] userId:', userId);
 
       const { data: ownRoutines } = await this.client
         .from('routines')
@@ -23,13 +24,16 @@ export class RoutineService extends DataService {
         .eq('user_id', userId)
         .is('deleted_at', null)
         .order('created_at', { ascending: false });
+      console.log('[fetchAll] ownRoutines:', ownRoutines?.length ?? 0);
 
       const { data: assignments } = await this.client
         .from('routine_assignments')
         .select('routine_id')
         .eq('user_id', userId);
+      console.log('[fetchAll] assignments:', assignments?.length ?? 0,
+        'ids:', (assignments ?? []).map((a: { routine_id: string }) => a.routine_id));
 
-      const assignedIds = (assignments ?? []).map(a => a.routine_id);
+      const assignedIds = (assignments ?? []).map((a: { routine_id: string }) => a.routine_id);
 
       let assignedRoutines: Routine[] = [];
       if (assignedIds.length > 0) {
@@ -40,12 +44,14 @@ export class RoutineService extends DataService {
           .is('deleted_at', null)
           .order('created_at', { ascending: false });
         assignedRoutines = (data ?? []) as Routine[];
+        console.log('[fetchAll] assignedRoutines:', assignedRoutines.length);
       }
 
       const merged = [...(ownRoutines ?? []), ...assignedRoutines];
       const seen = new Set<string>();
       const result = merged.filter(r => !seen.has(r.id) && seen.add(r.id));
       result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      console.log('[fetchAll] result:', result.length);
 
       this._routines.set(result);
       return result;
