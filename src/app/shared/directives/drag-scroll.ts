@@ -9,6 +9,7 @@ export class DragScrollDirective implements AfterViewInit {
   private readonly _destroyRef = inject(DestroyRef);
 
   private _isDragging = false;
+  private _hasMoved = false;
   private _startX = 0;
   private _scrollLeft = 0;
 
@@ -20,22 +21,38 @@ export class DragScrollDirective implements AfterViewInit {
     el.style.webkitUserSelect = 'none';
 
     const onPointerDown = (e: PointerEvent) => {
-      this._isDragging = true;
+      this._isDragging = false;
+      this._hasMoved = false;
       this._startX = e.clientX;
       this._scrollLeft = el.scrollLeft;
-      el.style.cursor = 'grabbing';
-      el.setPointerCapture(e.pointerId);
     };
 
     const onPointerMove = (e: PointerEvent) => {
-      if (!this._isDragging) return;
+      const dx = Math.abs(e.clientX - this._startX);
+      if (!this._isDragging) {
+        if (dx < 5) return;
+        this._isDragging = true;
+        this._hasMoved = true;
+        el.setPointerCapture(e.pointerId);
+        el.style.cursor = 'grabbing';
+      }
       e.preventDefault();
-      const dx = e.clientX - this._startX;
-      el.scrollLeft = this._scrollLeft - dx;
+      el.scrollLeft = this._scrollLeft - (e.clientX - this._startX);
     };
 
-    const onPointerUp = (_e: PointerEvent) => {
+    const onPointerUp = () => {
+      if (!this._hasMoved) {
+        el.style.cursor = 'grab';
+        return;
+      }
       this._isDragging = false;
+      this._hasMoved = false;
+      el.style.cursor = 'grab';
+    };
+
+    const onPointerCancel = () => {
+      this._isDragging = false;
+      this._hasMoved = false;
       el.style.cursor = 'grab';
     };
 
@@ -43,12 +60,14 @@ export class DragScrollDirective implements AfterViewInit {
     el.addEventListener('pointermove', onPointerMove);
     el.addEventListener('pointerup', onPointerUp);
     el.addEventListener('pointerleave', onPointerUp);
+    el.addEventListener('pointercancel', onPointerCancel);
 
     this._destroyRef.onDestroy(() => {
       el.removeEventListener('pointerdown', onPointerDown);
       el.removeEventListener('pointermove', onPointerMove);
       el.removeEventListener('pointerup', onPointerUp);
       el.removeEventListener('pointerleave', onPointerUp);
+      el.removeEventListener('pointercancel', onPointerCancel);
     });
   }
 }
