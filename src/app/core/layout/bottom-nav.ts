@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { PermissionService } from '@core/services/permission.service';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
+import { DragScrollDirective } from '@shared/directives/drag-scroll';
 import { LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChart3, LucideSettings, LucideShield, LucideUserCog } from '@lucide/angular';
 
 interface NavItem {
@@ -12,11 +13,11 @@ interface NavItem {
 @Component({
   selector: 'app-bottom-nav',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, TranslatePipe,
+  imports: [RouterLink, RouterLinkActive, TranslatePipe, DragScrollDirective,
     LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChart3, LucideSettings, LucideShield, LucideUserCog],
   template: `
     <nav class="fixed bottom-0 left-0 right-0 z-50 bg-surface-elevated border-t border-white/10 safe-area-bottom">
-      <div class="flex items-center justify-around h-16 max-w-lg mx-auto">
+      <div class="flex items-center h-16 overflow-x-auto no-scrollbar snap-x snap-mandatory" appDragScroll>
         @for (item of navItems(); track item.route) {
           <a
             [routerLink]="[item.route]"
@@ -25,7 +26,7 @@ interface NavItem {
             [class.text-brand]="rla.isActive"
             [class.text-on-surface-muted]="!rla.isActive"
             [attr.aria-current]="rla.isActive ? 'page' : null"
-            class="flex flex-col items-center gap-0.5 text-xs font-medium transition-colors duration-200"
+            class="flex flex-col items-center gap-0.5 text-xs font-medium transition-colors duration-200 shrink-0 flex-1 min-w-[72px] snap-center"
           >
             @switch (item.key) {
               @case ('nav.dashboard') { <svg lucideLayoutDashboard class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
