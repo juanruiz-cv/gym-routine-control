@@ -10,7 +10,8 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { RoutineService } from '@core/services/routine.service';
 import { ExerciseService } from '@core/services/exercise.service';
 import { SupabaseService } from '@core/services/supabase.service';
-import { LucideArrowLeft, LucidePlus, LucideTrash2, LucideRotateCw, LucideAlertCircle } from '@lucide/angular';
+import { LucideArrowLeft, LucidePlus, LucideTrash2, LucideRotateCw, LucideAlertCircle, LucideFile } from '@lucide/angular';
+import { PermissionService } from '@core/services/permission.service';
 import type { Exercise, Difficulty } from '@shared/models';
 
 interface ExerciseEntry {
@@ -27,7 +28,7 @@ interface ExerciseEntry {
   standalone: true,
   imports: [
     UiCard, UiButton, UiInput, UiSkeletonCard, UiEmptyState, ExercisePicker, TranslatePipe,
-    LucideArrowLeft, LucidePlus, LucideTrash2, LucideRotateCw, LucideAlertCircle,
+    LucideArrowLeft, LucidePlus, LucideTrash2, LucideRotateCw, LucideAlertCircle, LucideFile,
   ],
   template: `
     <div class="p-4 flex flex-col gap-4 max-w-lg mx-auto">
@@ -54,12 +55,37 @@ interface ExerciseEntry {
                   size="sm"
                   (click)="difficulty.set(diff)"
                 >
-                  {{ diff | translate }}
+                  {{ 'difficulty.' + diff | translate }}
                 </button>
               }
             </div>
           </fieldset>
           <app-ui-input [label]="'routines.estimatedDuration' | translate" type="number" [value]="duration()" (valueChange)="duration.set($event)" placeholder="45" />
+
+          @if (perm.isStaffOrAbove()) {
+            <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-hover cursor-pointer select-none">
+              <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+                <svg lucideFile class="w-5 h-5 text-accent" strokeWidth="1.5" aria-hidden="true"></svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium">{{ 'routines.isTemplate' | translate }}</p>
+                <p class="text-xs text-on-surface-muted">{{ 'routines.isTemplateDesc' | translate }}</p>
+              </div>
+              <button
+                type="button" role="switch"
+                [attr.aria-checked]="isTemplate()"
+                (click)="isTemplate.set(!isTemplate())"
+                class="relative w-12 h-6 rounded-full transition-colors duration-200 shrink-0"
+                [class.bg-brand]="isTemplate()"
+                [class.bg-white/10]="!isTemplate()"
+              >
+                <div
+                  class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200"
+                  [style.transform]="isTemplate() ? 'translateX(24px)' : 'translateX(0)'"
+                ></div>
+              </button>
+            </label>
+          }
         </div>
       </app-ui-card>
 
@@ -138,7 +164,7 @@ interface ExerciseEntry {
                       [value]="ex.restTime"
                       (input)="updateExercise(i, 'restTime', +$any($event.target).value)"
                       class="w-14 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                      [placeholder]="'common.cancel' | translate"
+                      [placeholder]="'routines.rest' | translate"
                       min="0"
                     />
                   </div>
@@ -146,7 +172,7 @@ interface ExerciseEntry {
                     <span>{{ 'routines.sets' | translate }}</span>
                     <span>{{ 'routines.reps' | translate }}</span>
                     <span>{{ 'routines.kg' | translate }}</span>
-                    <span>{{ 'common.cancel' | translate }}</span>
+                    <span>{{ 'routines.rest' | translate }}</span>
                   </div>
                 </div>
                 <button (click)="removeExercise(i)" class="p-1.5 rounded-lg text-error hover:bg-error/10 transition-colors shrink-0">
@@ -200,6 +226,7 @@ export class RoutineFormPage implements OnInit {
   private readonly _routines = inject(RoutineService);
   private readonly _exercises = inject(ExerciseService);
   private readonly _supabase = inject(SupabaseService);
+  protected readonly perm = inject(PermissionService);
 
   readonly difficulties: Difficulty[] = ['beginner', 'intermediate', 'advanced'];
 
@@ -208,6 +235,7 @@ export class RoutineFormPage implements OnInit {
   readonly difficulty = signal<Difficulty>('beginner');
   readonly duration = signal('');
   readonly exercises = signal<ExerciseEntry[]>([]);
+  readonly isTemplate = signal(false);
   readonly saving = signal(false);
   readonly allExercises = signal<Exercise[]>([]);
   readonly exercisesStatus = signal<'loading' | 'success' | 'empty' | 'error'>('loading');
@@ -235,6 +263,7 @@ export class RoutineFormPage implements OnInit {
         this.description.set(routine.description ?? '');
         this.difficulty.set(routine.difficulty);
         this.duration.set(routine.estimated_duration?.toString() ?? '');
+        this.isTemplate.set(routine.is_template);
         if (routine.routine_exercises) {
           this.exercises.set(routine.routine_exercises.map(re => ({
             exerciseId: re.exercise_id,
@@ -300,12 +329,16 @@ export class RoutineFormPage implements OnInit {
 
     try {
       if (this._editId) {
-        await this._routines.update(this._editId, {
+        const updatePayload: Record<string, unknown> = {
           name: this.name(),
           description: this.description() || null,
           difficulty: this.difficulty(),
           estimated_duration: this.duration() ? parseInt(this.duration()) : null,
-        });
+        };
+        if (this.perm.isStaffOrAbove()) {
+          updatePayload['is_template'] = this.isTemplate();
+        }
+        await this._routines.update(this._editId, updatePayload as Parameters<typeof this._routines.update>[1]);
         await this._router.navigate(['/routines', this._editId]);
       } else {
         const routine = await this._routines.create({
@@ -314,7 +347,7 @@ export class RoutineFormPage implements OnInit {
           difficulty: this.difficulty(),
           estimated_duration: this.duration() ? parseInt(this.duration()) : null,
           is_favorite: false,
-          is_template: false,
+          is_template: this.isTemplate(),
         });
 
         if (this.exercises().length > 0) {

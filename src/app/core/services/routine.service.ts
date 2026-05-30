@@ -1,9 +1,11 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import type { Routine } from '@shared/models';
 import { DataService } from './data.service';
+import { PermissionService } from './permission.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoutineService extends DataService {
+  private readonly _perm = inject(PermissionService);
   private readonly _routines = signal<Routine[]>([]);
   private readonly _loading = signal(false);
 
@@ -17,7 +19,24 @@ export class RoutineService extends DataService {
       const { data, error } = await this.client
         .from('routines')
         .select('*, routine_exercises(*, exercise:exercises(*))')
-        .eq('user_id', userId)
+        .or(`user_id.eq.${userId},id.in.(select routine_id from routine_assignments where user_id.eq.${userId})`)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      this._routines.set(data ?? []);
+      return data ?? [];
+    } finally {
+      this._loading.set(false);
+    }
+  }
+
+  async fetchAllStaff(): Promise<Routine[]> {
+    this._loading.set(true);
+    try {
+      const { data, error } = await this.client
+        .from('routines')
+        .select('*, routine_exercises(*, exercise:exercises(*))')
         .is('deleted_at', null)
         .order('created_at', { ascending: false });
 
@@ -30,12 +49,10 @@ export class RoutineService extends DataService {
   }
 
   async getById(id: string): Promise<Routine | null> {
-    const userId = await this.checkUserId();
     const { data, error } = await this.client
       .from('routines')
       .select('*, routine_exercises(*, exercise:exercises(*))')
       .eq('id', id)
-      .eq('user_id', userId)
       .single();
 
     if (error) throw error;
@@ -56,12 +73,10 @@ export class RoutineService extends DataService {
   }
 
   async update(id: string, updates: Partial<Routine>): Promise<Routine> {
-    const userId = await this.checkUserId();
     const { data, error } = await this.client
       .from('routines')
       .update(updates)
       .eq('id', id)
-      .eq('user_id', userId)
       .select()
       .single();
 
@@ -71,12 +86,10 @@ export class RoutineService extends DataService {
   }
 
   async softDelete(id: string): Promise<void> {
-    const userId = await this.checkUserId();
     const { error } = await this.client
       .from('routines')
       .update({ deleted_at: new Date().toISOString() })
-      .eq('id', id)
-      .eq('user_id', userId);
+      .eq('id', id);
 
     if (error) throw error;
     this._routines.update(r => r.filter(rt => rt.id !== id));

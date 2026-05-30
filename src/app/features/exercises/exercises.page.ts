@@ -9,7 +9,7 @@ import { UiEmptyState } from '@shared/ui/empty-state';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { DragScrollDirective } from '@shared/directives/drag-scroll';
 import { ExerciseService } from '@core/services/exercise.service';
-import { LucidePlus, LucideDumbbell, LucideSearch, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity } from '@lucide/angular';
+import { LucidePlus, LucideDumbbell, LucideSearch, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideGlobe } from '@lucide/angular';
 import { MUSCLE_GROUPS, MUSCLE_GROUP_ICONS } from '@shared/models';
 
 @Component({
@@ -17,7 +17,7 @@ import { MUSCLE_GROUPS, MUSCLE_GROUP_ICONS } from '@shared/models';
   standalone: true,
   imports: [
     RouterLink, UiCard, UiButton, UiBadge, UiSkeletonListItem, UiInput, UiEmptyState, TranslatePipe, DragScrollDirective,
-    LucidePlus, LucideDumbbell, LucideSearch, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity,
+    LucidePlus, LucideDumbbell, LucideSearch, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideGlobe,
   ],
   template: `
     <div class="p-4 flex flex-col gap-4 max-w-lg mx-auto">
@@ -99,7 +99,12 @@ import { MUSCLE_GROUPS, MUSCLE_GROUP_ICONS } from '@shared/models';
                   <svg lucideDumbbell class="w-5 h-5 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-medium truncate">{{ ex.name }}</p>
+                  <div class="flex items-center gap-1.5">
+                    <p class="text-sm font-medium truncate">{{ ex.name }}</p>
+                    @if (ex.is_global) {
+                      <svg lucideGlobe class="w-3.5 h-3.5 shrink-0 text-accent" strokeWidth="2" [title]="'exercises.isGlobal' | translate" aria-hidden="true"></svg>
+                    }
+                  </div>
                   <div class="flex items-center gap-2 mt-0.5">
                     <app-ui-badge size="sm">{{ 'muscleGroup.' + ex.muscle_group | translate }}</app-ui-badge>
                     @if (ex.equipment) {

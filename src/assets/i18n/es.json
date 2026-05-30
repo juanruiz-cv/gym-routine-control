@@ -55,6 +55,7 @@
   "auth.emailVerified": "Correo verificado correctamente",
   "auth.emailVerifiedDesc": "Tu cuenta ha sido verificada. Ya puedes comenzar a utilizar la aplicación.",
   "auth.goToDashboard": "Ir al Panel",
+  "auth.redirectingDashboard": "Redirigiendo al panel principal en {seconds}...",
 
   "dashboard.title": "Panel",
   "dashboard.greetingMorning": "Buenos días",
@@ -112,6 +113,8 @@
   "routines.descriptionPlaceholder": "Pecho, hombros, tríceps",
   "routines.difficulty": "Dificultad",
   "routines.estimatedDuration": "Duración estimada (min)",
+  "routines.isTemplate": "Plantilla",
+  "routines.isTemplateDesc": "Hacer esta rutina disponible como plantilla",
   "routines.exercisesForm": "Ejercicios",
   "routines.noExercisesAdded": "Aún no has añadido ejercicios. Elige de tu lista.",
   "routines.noExercisesDb": "No hay ejercicios disponibles",
@@ -159,6 +162,8 @@
   "exercises.categoryPlaceholder": "Ej: Fuerza, Hipertrofia",
   "exercises.instructionsLabel": "Instrucciones (opcional)",
   "exercises.instructionsPlaceholder": "Describe cómo realizar este ejercicio...",
+  "exercises.isGlobal": "Ejercicio global",
+  "exercises.isGlobalDesc": "Hacer este ejercicio disponible para todos los usuarios",
 
   "muscleGroup.Chest": "Pectorales",
   "muscleGroup.Back": "Espalda",
@@ -311,5 +316,43 @@
   "duration.separator": " ",
 
   "language.es": "Español",
-  "language.en": "Inglés"
+  "language.en": "Inglés",
+
+  "nav.admin": "Admin",
+  "nav.staff": "Staff",
+
+  "role.admin": "Admin",
+  "role.staff": "Staff",
+  "role.user": "Usuario",
+
+  "admin.title": "Panel de Administración",
+  "admin.totalUsers": "Usuarios",
+  "admin.totalStaff": "Staff",
+  "admin.totalRoutines": "Rutinas",
+  "admin.totalWorkouts": "Entrenos",
+  "admin.manageUsers": "Gestionar Usuarios",
+  "admin.promoteToStaff": "Ascender a Staff",
+  "admin.demoteToUser": "Degradar a Usuario",
+  "admin.auditLog": "Registro de Auditoría",
+
+  "staff.title": "Panel de Staff",
+  "staff.viewUsers": "Ver Usuarios",
+  "staff.assignRoutine": "Asignar Rutina",
+  "staff.assignedRoutines": "Rutinas Asignadas",
+  "staff.progress": "Progreso",
+  "staff.noAssignments": "Sin asignaciones aún",
+  "staff.assignEmailPrompt": "Ingresa el correo del usuario para asignar esta rutina",
+  "staff.assignSuccess": "¡Rutina asignada exitosamente!",
+  "staff.userNotFound": "No se encontró ningún usuario con ese correo",
+  "staff.selectRoutine": "Seleccionar rutina",
+  "staff.assignInstructions": "Haz clic en una rutina para asignarla a este usuario",
+
+  "assignment.assigned": "Asignada",
+  "assignment.active": "Activa",
+  "assignment.completed": "Completada",
+  "assignment.archived": "Archivada",
+  "staff.metricsTotal": "Asignadas",
+  "staff.metricsActive": "Activas",
+  "staff.metricsCompleted": "Completadas",
+  "staff.metricsCompletion": "Progreso"
 }

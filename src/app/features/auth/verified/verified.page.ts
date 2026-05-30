@@ -58,7 +58,7 @@ import { UiButton } from '@shared/ui/button';
 
       @if (countdown() >= 0) {
         <p class="text-on-surface-muted text-sm" aria-live="polite" aria-atomic="true">
-          {{ 'notFound.redirectingHome' | translate: { seconds: countdown() } }}
+          {{ 'auth.redirectingDashboard' | translate: { seconds: countdown() } }}
         </p>
       }
     </div>

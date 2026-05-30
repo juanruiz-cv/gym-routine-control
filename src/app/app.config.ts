@@ -20,11 +20,11 @@ export const appConfig: ApplicationConfig = {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    provideAppInitializer(() => {
+    provideAppInitializer(async () => {
       const i18n = inject(I18nService);
       const theme = inject(ThemeService);
       theme.init();
-      return i18n.init();
+      await i18n.init();
     }),
   ],
 };

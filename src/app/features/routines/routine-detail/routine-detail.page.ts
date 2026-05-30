@@ -3,16 +3,22 @@ import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
+import { UiInput } from '@shared/ui/input';
 import { UiSkeletonCard } from '@shared/ui';
 import { UiModal } from '@shared/ui/modal';
 import { DifficultyPipe } from '@shared/pipes/difficulty';
 import { UiEmptyState } from '@shared/ui/empty-state';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
+import { I18nService } from '@shared/i18n/i18n.service';
 import { RoutineService } from '@core/services/routine.service';
 import { WorkoutService } from '@core/services/workout.service';
+import { AuthService } from '@core/auth/auth.service';
+import { PermissionService } from '@core/services/permission.service';
+import { RoutineAssignmentService } from '@core/services/routine-assignment.service';
+import { AdminService } from '@core/services/admin.service';
 import {
   LucideArrowLeft, LucidePlay, LucidePencil, LucideCopy, LucideTrash2, LucideClock,
-  LucideFlame, LucideCheck,
+  LucideFlame, LucideCheck, LucideUserPlus,
 } from '@lucide/angular';
 import type { Routine } from '@shared/models';
 
@@ -20,10 +26,10 @@ import type { Routine } from '@shared/models';
   selector: 'app-routine-detail-page',
   standalone: true,
   imports: [
-    RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiModal, UiEmptyState,
+    RouterLink, UiCard, UiButton, UiBadge, UiInput, UiSkeletonCard, UiModal, UiEmptyState,
     DifficultyPipe, TranslatePipe,
     LucideArrowLeft, LucidePlay, LucidePencil, LucideCopy, LucideTrash2, LucideClock,
-    LucideFlame, LucideCheck,
+    LucideFlame, LucideCheck, LucideUserPlus,
   ],
   template: `
     <div class="p-4 space-y-4 max-w-lg mx-auto">
@@ -90,7 +96,7 @@ import type { Routine } from '@shared/models';
 
         <!-- Action Strip -->
         <div class="flex gap-2">
-          <button ui-button variant="secondary" size="sm" class="flex-1" title="{{ 'routines.editTooltip' | translate }}" routerLink="/routines/{{ r.id }}/edit">
+          <button ui-button variant="secondary" size="sm" class="flex-1" title="{{ 'routines.editTooltip' | translate }}" (click)="editRoutine(r)">
             <svg lucidePencil class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'routines.edit' | translate }}
           </button>
@@ -98,6 +104,12 @@ import type { Routine } from '@shared/models';
             <svg lucideCopy class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'routines.duplicate' | translate }}
           </button>
+          @if (perm.canAssignRoutines()) {
+            <button ui-button variant="secondary" size="sm" class="flex-1" title="{{ 'staff.assignRoutine' | translate }}" (click)="showAssignModal.set(true)">
+              <svg lucideUserPlus class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
+              {{ 'staff.assignRoutine' | translate }}
+            </button>
+          }
           <button ui-button variant="danger" size="sm" class="flex-1" title="{{ 'routines.deleteTooltip' | translate }}" (click)="showDeleteModal.set(true)">
             <svg lucideTrash2 class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'routines.delete' | translate }}
@@ -149,6 +161,28 @@ import type { Routine } from '@shared/models';
         </div>
       }
 
+      <!-- Assign Modal -->
+      <app-ui-modal [isOpen]="showAssignModal()" [title]="'staff.assignRoutine' | translate" (closed)="showAssignModal.set(false)">
+        <p class="text-sm text-on-surface-muted mb-3">{{ 'staff.assignEmailPrompt' | translate }}</p>
+        <app-ui-input
+          [placeholder]="'auth.emailPlaceholder' | translate"
+          [value]="assignEmail()"
+          (valueChange)="assignEmail.set($event); assignError.set('')"
+        />
+        @if (assignError()) {
+          <p class="text-xs text-error mt-1">{{ assignError() }}</p>
+        }
+        @if (assignSuccess()) {
+          <p class="text-xs text-success mt-1">{{ assignSuccess() }}</p>
+        }
+        <div class="flex gap-3 mt-4">
+          <button ui-button variant="ghost" size="md" class="flex-1" (click)="showAssignModal.set(false)">{{ 'common.cancel' | translate }}</button>
+          <button ui-button variant="primary" size="md" class="flex-1" [disabled]="assignSaving()" (click)="doAssign()">
+            {{ assignSaving() ? ('common.saving' | translate) : ('staff.assignRoutine' | translate) }}
+          </button>
+        </div>
+      </app-ui-modal>
+
       <!-- Duplicate toast -->
       @if (showDuplicateToast()) {
         <div class="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 animate-slide-up">
@@ -181,12 +215,22 @@ export class RoutineDetailPage implements OnInit {
   private readonly _route = inject(ActivatedRoute);
   private readonly _routines = inject(RoutineService);
   private readonly _workout = inject(WorkoutService);
+  private readonly _auth = inject(AuthService);
+  private readonly _assignments = inject(RoutineAssignmentService);
+  private readonly _admin = inject(AdminService);
+  private readonly _i18n = inject(I18nService);
+  protected readonly perm = inject(PermissionService);
 
   readonly routine = signal<Routine | null>(null);
   readonly loading = signal(true);
   readonly error = signal(false);
   readonly showDeleteModal = signal(false);
   readonly showDuplicateToast = signal(false);
+  readonly showAssignModal = signal(false);
+  readonly assignEmail = signal('');
+  readonly assignError = signal('');
+  readonly assignSuccess = signal('');
+  readonly assignSaving = signal(false);
 
   async ngOnInit(): Promise<void> {
     const id = this._route.snapshot.paramMap.get('id');
@@ -235,5 +279,47 @@ export class RoutineDetailPage implements OnInit {
 
   goBack(): void {
     this._router.navigate(['/routines']);
+  }
+
+  async editRoutine(r: Routine): Promise<void> {
+    const userId = this._auth.user()?.id;
+    if (!userId) return;
+
+    if (r.user_id !== userId && !this.perm.isStaffOrAbove()) {
+      const copy = await this._routines.duplicate(r.id);
+      if (copy) {
+        await this._router.navigate(['/routines', copy.id, 'edit']);
+      }
+    } else {
+      await this._router.navigate(['/routines', r.id, 'edit']);
+    }
+  }
+
+  async doAssign(): Promise<void> {
+    const r = this.routine();
+    if (!r || !this.assignEmail()) return;
+    this.assignSaving.set(true);
+    this.assignError.set('');
+    this.assignSuccess.set('');
+
+    try {
+      const users = await this._admin.getUsers();
+      const match = users.find(u => u.email === this.assignEmail());
+      if (!match) {
+        this.assignError.set(this._i18n?.t('staff.userNotFound') ?? 'User not found');
+        return;
+      }
+      const result = await this._assignments.assignRoutine(r.id, match.id);
+      if (result.error) {
+        this.assignError.set(result.error);
+      } else {
+        this.assignSuccess.set(this._i18n?.t('staff.assignSuccess') ?? 'Routine assigned!');
+        this.assignEmail.set('');
+      }
+    } catch {
+      this.assignError.set(this._i18n?.t('common.error') ?? 'An error occurred');
+    } finally {
+      this.assignSaving.set(false);
+    }
   }
 }

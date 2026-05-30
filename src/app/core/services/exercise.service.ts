@@ -43,7 +43,7 @@ export class ExerciseService extends DataService {
     const userId = await this.checkUserId();
     const { data, error } = await this.client
       .from('exercises')
-      .insert({ ...exercise, user_id: userId, is_global: false })
+      .insert({ ...exercise, user_id: userId, created_by: userId, updated_by: userId })
       .select()
       .single();
 
@@ -56,9 +56,8 @@ export class ExerciseService extends DataService {
     const userId = await this.checkUserId();
     const { data, error } = await this.client
       .from('exercises')
-      .update(updates)
+      .update({ ...updates, updated_by: userId })
       .eq('id', id)
-      .eq('user_id', userId)
       .select()
       .single();
 
@@ -68,12 +67,10 @@ export class ExerciseService extends DataService {
   }
 
   async delete(id: string): Promise<void> {
-    const userId = await this.checkUserId();
     const { error } = await this.client
       .from('exercises')
       .delete()
-      .eq('id', id)
-      .eq('user_id', userId);
+      .eq('id', id);
 
     if (error) throw error;
     this._exercises.update(e => e.filter(ex => ex.id !== id));

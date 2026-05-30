@@ -55,6 +55,7 @@
   "auth.emailVerified": "Email verified successfully",
   "auth.emailVerifiedDesc": "Your account has been verified. You can now start using the application.",
   "auth.goToDashboard": "Go to Dashboard",
+  "auth.redirectingDashboard": "Redirecting to Dashboard in {seconds}...",
 
   "dashboard.title": "Dashboard",
   "dashboard.greetingMorning": "Good morning",
@@ -112,6 +113,8 @@
   "routines.descriptionPlaceholder": "Chest, shoulders, triceps",
   "routines.difficulty": "Difficulty",
   "routines.estimatedDuration": "Estimated duration (min)",
+  "routines.isTemplate": "Template",
+  "routines.isTemplateDesc": "Make this routine available as a template",
   "routines.exercisesForm": "Exercises",
   "routines.noExercisesAdded": "No exercises added yet. Pick from your list.",
   "routines.noExercisesDb": "No exercises available",
@@ -159,6 +162,8 @@
   "exercises.categoryPlaceholder": "e.g., Strength, Hypertrophy",
   "exercises.instructionsLabel": "Instructions (optional)",
   "exercises.instructionsPlaceholder": "Describe how to perform this exercise...",
+  "exercises.isGlobal": "Global Exercise",
+  "exercises.isGlobalDesc": "Make this exercise available to all users",
 
   "muscleGroup.Chest": "Chest",
   "muscleGroup.Back": "Back",
@@ -311,5 +316,43 @@
   "duration.separator": " ",
 
   "language.es": "Spanish",
-  "language.en": "English"
+  "language.en": "English",
+
+  "nav.admin": "Admin",
+  "nav.staff": "Staff",
+
+  "role.admin": "Admin",
+  "role.staff": "Staff",
+  "role.user": "User",
+
+  "admin.title": "Admin Panel",
+  "admin.totalUsers": "Users",
+  "admin.totalStaff": "Staff",
+  "admin.totalRoutines": "Routines",
+  "admin.totalWorkouts": "Workouts",
+  "admin.manageUsers": "Manage Users",
+  "admin.promoteToStaff": "Promote to Staff",
+  "admin.demoteToUser": "Demote to User",
+  "admin.auditLog": "Audit Log",
+
+  "staff.title": "Staff Panel",
+  "staff.viewUsers": "View Users",
+  "staff.assignRoutine": "Assign Routine",
+  "staff.assignedRoutines": "Assigned Routines",
+  "staff.progress": "Progress",
+  "staff.noAssignments": "No assignments yet",
+  "staff.assignEmailPrompt": "Enter the user's email to assign this routine",
+  "staff.assignSuccess": "Routine assigned successfully!",
+  "staff.userNotFound": "No user found with that email",
+  "staff.selectRoutine": "Select a Routine",
+  "staff.assignInstructions": "Click a routine to assign it to this user",
+
+  "assignment.assigned": "Assigned",
+  "assignment.active": "Active",
+  "assignment.completed": "Completed",
+  "assignment.archived": "Archived",
+  "staff.metricsTotal": "Assigned",
+  "staff.metricsActive": "Active",
+  "staff.metricsCompleted": "Completed",
+  "staff.metricsCompletion": "Completion"
 }

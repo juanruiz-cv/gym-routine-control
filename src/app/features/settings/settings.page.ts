@@ -9,7 +9,8 @@ import { ThemeService, type ThemeMode } from '@core/services/theme.service';
 import { I18nService } from '@shared/i18n/i18n.service';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { LanguageSwitcherComponent } from '@shared/i18n/language-switcher.component';
-import { LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone, LucideMonitor, LucideSun, LucideMoon } from '@lucide/angular';
+import { LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone, LucideMonitor, LucideSun, LucideMoon, LucideShield } from '@lucide/angular';
+import { PermissionService } from '@core/services/permission.service';
 import type { UserPreferences } from '@shared/models';
 
 @Component({
@@ -17,7 +18,7 @@ import type { UserPreferences } from '@shared/models';
   standalone: true,
   imports: [
     UiCard, UiButton, UiSkeletonCard, UiSelect, TranslatePipe, LanguageSwitcherComponent,
-    LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone, LucideMonitor, LucideSun, LucideMoon,
+    LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone, LucideMonitor, LucideSun, LucideMoon, LucideShield,
   ],
   template: `
     <div class="p-4 space-y-5 max-w-lg mx-auto">
@@ -41,6 +42,10 @@ import type { UserPreferences } from '@shared/models';
               <div class="flex-1 min-w-0">
                 <p class="font-medium">{{ profileEmail() }}</p>
                 <p class="text-xs text-on-surface-muted">{{ 'settings.signedIn' | translate }}</p>
+                <div class="flex items-center gap-1 mt-1">
+                  <svg lucideShield class="w-3 h-3 text-on-surface-muted" strokeWidth="2" aria-hidden="true"></svg>
+                  <span class="text-xs text-on-surface-muted">{{ 'role.' + perm.role() | translate }}</span>
+                </div>
               </div>
             </div>
           </app-ui-card>
@@ -173,6 +178,7 @@ export class SettingsPage implements OnInit {
   private readonly _profile = inject(ProfileService);
   private readonly _theme = inject(ThemeService);
   private readonly _i18n = inject(I18nService);
+  protected readonly perm = inject(PermissionService);
 
   readonly timerOptions: SelectOption[] = [
     { value: '30', label: '30s' },

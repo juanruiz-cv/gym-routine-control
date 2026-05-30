@@ -1,10 +1,35 @@
+export type UserRole = 'admin' | 'staff' | 'user';
+
 export interface Profile {
   id: string;
   display_name: string | null;
   avatar_url: string | null;
+  role: UserRole;
   preferences: UserPreferences;
   created_at: string;
   updated_at: string;
+}
+
+export interface RoutineAssignment {
+  id: string;
+  routine_id: string;
+  user_id: string;
+  assigned_by: string;
+  assigned_at: string;
+  status: 'assigned' | 'active' | 'completed' | 'archived';
+  routine?: Routine;
+  user?: { display_name: string; email?: string };
+}
+
+export interface AuditLog {
+  id: string;
+  actor_id: string;
+  target_id: string | null;
+  action: string;
+  entity_type: string;
+  entity_id: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
 }
 
 export interface UserPreferences {
@@ -44,6 +69,8 @@ export interface Exercise {
   video_url: string | null;
   image_url: string | null;
   is_global: boolean;
+  created_by: string | null;
+  updated_by: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -10,7 +10,7 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { DragScrollDirective } from '@shared/directives/drag-scroll';
 import { ExerciseService } from '@core/services/exercise.service';
 import { MUSCLE_GROUPS, EQUIPMENT_TYPES, MUSCLE_GROUP_ICONS, EQUIPMENT_ICONS } from '@shared/models';
-import { LucideSearch, LucideDumbbell, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideWeight, LucideWeightTilde, LucideCircleGauge, LucideHeartPulse, LucideTarget, LucideCircleDot } from '@lucide/angular';
+import { LucideSearch, LucideDumbbell, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideWeight, LucideWeightTilde, LucideCircleGauge, LucideHeartPulse, LucideTarget, LucideCircleDot, LucideGlobe } from '@lucide/angular';
 import type { Exercise } from '@shared/models';
 
 @Component({
@@ -19,7 +19,7 @@ import type { Exercise } from '@shared/models';
   imports: [
     UiModal, UiInput, UiButton, UiCard, UiBadge, UiEmptyState, UiSkeletonCard,
     TranslatePipe, DragScrollDirective,
-    LucideSearch, LucideDumbbell, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideWeight, LucideWeightTilde, LucideCircleGauge, LucideHeartPulse, LucideTarget, LucideCircleDot,
+    LucideSearch, LucideDumbbell, LucideHeart, LucideAccessibility, LucideFootprints, LucideZap, LucidePersonStanding, LucideActivity, LucideWeight, LucideWeightTilde, LucideCircleGauge, LucideHeartPulse, LucideTarget, LucideCircleDot, LucideGlobe,
   ],
   template: `
     <app-ui-modal [isOpen]="isOpen()" [title]="'routines.selectExercise' | translate" (closed)="closed.emit()">
@@ -112,7 +112,12 @@ import type { Exercise } from '@shared/models';
                     <svg lucideDumbbell class="w-5 h-5 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium truncate">{{ ex.name }}</p>
+                    <div class="flex items-center gap-1.5">
+                      <p class="text-sm font-medium truncate">{{ ex.name }}</p>
+                      @if (ex.is_global) {
+                        <svg lucideGlobe class="w-3.5 h-3.5 shrink-0 text-accent" strokeWidth="2" [title]="'exercises.isGlobal' | translate" aria-hidden="true"></svg>
+                      }
+                    </div>
                     <div class="flex items-center gap-2 mt-0.5">
                     <app-ui-badge size="sm">{{ 'muscleGroup.' + ex.muscle_group | translate }}</app-ui-badge>
                     @if (ex.equipment) {

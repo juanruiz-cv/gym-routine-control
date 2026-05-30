@@ -6,13 +6,14 @@ import { UiSelect, type SelectOption } from '@shared/ui/select';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { I18nService } from '@shared/i18n/i18n.service';
 import { ExerciseService } from '@core/services/exercise.service';
-import { LucideArrowLeft } from '@lucide/angular';
+import { PermissionService } from '@core/services/permission.service';
+import { LucideArrowLeft, LucideGlobe } from '@lucide/angular';
 import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
 
 @Component({
   selector: 'app-exercise-form-page',
   standalone: true,
-  imports: [UiButton, UiInput, UiSelect, TranslatePipe, LucideArrowLeft],
+  imports: [UiButton, UiInput, UiSelect, TranslatePipe, LucideArrowLeft, LucideGlobe],
   template: `
     <div class="p-4 space-y-4 max-w-lg mx-auto">
       <!-- Header -->
@@ -42,6 +43,31 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
         />
 
         <app-ui-input [label]="'exercises.category' | translate" [value]="category()" (valueChange)="category.set($event)" [placeholder]="'exercises.categoryPlaceholder' | translate" />
+
+        @if (perm.canCreateGlobalExercises()) {
+          <label class="flex items-center gap-3 p-3 rounded-xl bg-surface-hover cursor-pointer select-none">
+            <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0">
+              <svg lucideGlobe class="w-5 h-5 text-accent" strokeWidth="1.5" aria-hidden="true"></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium">{{ 'exercises.isGlobal' | translate }}</p>
+              <p class="text-xs text-on-surface-muted">{{ 'exercises.isGlobalDesc' | translate }}</p>
+            </div>
+            <button
+              type="button" role="switch"
+              [attr.aria-checked]="isGlobal()"
+              (click)="isGlobal.set(!isGlobal())"
+              class="relative w-12 h-6 rounded-full transition-colors duration-200 shrink-0"
+              [class.bg-brand]="isGlobal()"
+              [class.bg-white/10]="!isGlobal()"
+            >
+              <div
+                class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200"
+                [style.transform]="isGlobal() ? 'translateX(24px)' : 'translateX(0)'"
+              ></div>
+            </button>
+          </label>
+        }
 
         <div class="flex flex-col gap-1.5">
           <label for="instructions" class="text-sm font-medium text-on-surface">{{ 'exercises.instructionsLabel' | translate }}</label>
@@ -74,6 +100,7 @@ export class ExerciseFormPage implements OnInit {
   private readonly _route = inject(ActivatedRoute);
   private readonly _exercises = inject(ExerciseService);
   private readonly _i18n = inject(I18nService);
+  protected readonly perm = inject(PermissionService);
 
   readonly muscleGroupOptions = computed<SelectOption[]>(() =>
     MUSCLE_GROUPS.map(mg => ({ value: mg, label: this._i18n.t('muscleGroup.' + mg) }))
@@ -87,6 +114,7 @@ export class ExerciseFormPage implements OnInit {
   readonly equipment = signal('');
   readonly category = signal('');
   readonly instructions = signal('');
+  readonly isGlobal = signal(false);
   readonly saving = signal(false);
 
   private _editId: string | null = null;
@@ -104,6 +132,7 @@ export class ExerciseFormPage implements OnInit {
         this.equipment.set(ex.equipment ?? '');
         this.category.set(ex.category ?? '');
         this.instructions.set(ex.instructions ?? '');
+        this.isGlobal.set(ex.is_global);
       }
     }
   }
@@ -113,19 +142,22 @@ export class ExerciseFormPage implements OnInit {
     this.saving.set(true);
 
     try {
-      const payload = {
+      const payload: Record<string, unknown> = {
         name: this.name(),
         muscle_group: this.muscleGroup(),
         equipment: this.equipment() || null,
         category: this.category() || null,
         instructions: this.instructions() || null,
       };
+      if (this.perm.canCreateGlobalExercises()) {
+        payload['is_global'] = this.isGlobal();
+      }
 
       if (this._editId) {
         await this._exercises.update(this._editId, payload);
         await this._router.navigate(['/exercises', this._editId]);
       } else {
-        const ex = await this._exercises.create(payload as Parameters<typeof this._exercises.create>[0]);
+        const ex = await this._exercises.create(payload as unknown as Parameters<typeof this._exercises.create>[0]);
         await this._router.navigate(['/exercises', ex.id]);
       }
     } catch {
