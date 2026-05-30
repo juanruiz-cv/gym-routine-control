@@ -17,7 +17,7 @@ import { MUSCLE_GROUPS, EQUIPMENT_TYPES } from '@shared/models';
       <!-- Header -->
       <div class="flex items-center gap-3">
         <button (click)="goBack()" class="p-2 rounded-xl hover:bg-surface-hover transition-colors">
-          <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2"></svg>
+          <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2" aria-hidden="true"></svg>
         </button>
         <h1 class="text-xl font-bold">{{ isEdit() ? ('exercises.editExercise' | translate) : ('exercises.newExercise' | translate) }}</h1>
       </div>

@@ -36,7 +36,7 @@ import type { Exercise, PersonalRecord } from '@shared/models';
         <!-- Header -->
         <div>
           <button (click)="goBack()" class="p-2 rounded-xl hover:bg-surface-hover transition-colors mb-3">
-            <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2"></svg>
+            <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2" aria-hidden="true"></svg>
           </button>
           <div class="flex items-start justify-between gap-3">
             <div>
@@ -57,11 +57,11 @@ import type { Exercise, PersonalRecord } from '@shared/models';
         <!-- Actions -->
         <div class="flex gap-2">
           <button ui-button variant="secondary" size="sm" class="flex-1" routerLink="/exercises/{{ ex.id }}/edit">
-            <svg lucidePencil class="w-4 h-4" strokeWidth="2"></svg>
+            <svg lucidePencil class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'common.edit' | translate }}
           </button>
           <button ui-button variant="danger" size="sm" class="flex-1" (click)="showDeleteModal.set(true)">
-            <svg lucideTrash2 class="w-4 h-4" strokeWidth="2"></svg>
+            <svg lucideTrash2 class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'common.delete' | translate }}
           </button>
         </div>
@@ -86,7 +86,7 @@ import type { Exercise, PersonalRecord } from '@shared/models';
                 <app-ui-card variant="glass" [padding]="true">
                   <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
-                      <svg lucideTrophy class="w-5 h-5 text-warning" strokeWidth="1.5"></svg>
+                      <svg lucideTrophy class="w-5 h-5 text-warning" strokeWidth="1.5" aria-hidden="true"></svg>
                     </div>
                     <div class="flex-1">
                       <div class="flex items-center gap-2">

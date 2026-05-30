@@ -9,7 +9,7 @@ import { LucideLanguages } from '@lucide/angular';
   imports: [TranslatePipe, LucideLanguages],
   template: `
     <div class="flex items-center gap-3">
-      <svg lucideLanguages class="w-5 h-5 text-brand" strokeWidth="1.5"></svg>
+      <svg lucideLanguages class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
       <div class="flex-1">
         <p class="text-sm font-medium">{{ 'settings.language' | translate }}</p>
         <p class="text-xs text-on-surface-muted">{{ 'settings.languageDesc' | translate }}</p>

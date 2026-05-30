@@ -154,6 +154,20 @@
   }
 }
 
+@layer base {
+  .light {
+    --color-surface: #ffffff;
+    --color-surface-elevated: #f8fafc;
+    --color-surface-card: #f1f5f9;
+    --color-surface-hover: #e2e8f0;
+    --color-surface-input: #ffffff;
+    --color-on-surface: #0f172a;
+    --color-on-surface-secondary: #475569;
+    --color-on-surface-muted: #94a3b8;
+    --color-border: rgba(0, 0, 0, 0.08);
+  }
+}
+
 @layer utilities {
   .safe-area-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);

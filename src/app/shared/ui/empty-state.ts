@@ -39,25 +39,25 @@ const VARIANT_ICONS: Record<EmptyStateVariant, unknown> = {
       <div class="w-16 h-16 rounded-2xl bg-surface-hover flex items-center justify-center mb-4">
         @switch (variant()) {
           @case ('exercise') {
-            <svg lucideDumbbell class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5"></svg>
+            <svg lucideDumbbell class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
           }
           @case ('routine') {
-            <svg lucideClipboardList class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5"></svg>
+            <svg lucideClipboardList class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
           }
           @case ('metrics') {
-            <svg lucideTrophy class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5"></svg>
+            <svg lucideTrophy class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
           }
           @case ('workout') {
-            <svg lucideActivity class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5"></svg>
+            <svg lucideActivity class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
           }
           @case ('search') {
-            <svg lucideSearch class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5"></svg>
+            <svg lucideSearch class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
           }
           @case ('error') {
-            <svg lucideAlertCircle class="w-7 h-7 text-error" strokeWidth="1.5"></svg>
+            <svg lucideAlertCircle class="w-7 h-7 text-error" strokeWidth="1.5" aria-hidden="true"></svg>
           }
           @default {
-            <svg lucideInbox class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5"></svg>
+            <svg lucideInbox class="w-7 h-7 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
           }
         }
       </div>

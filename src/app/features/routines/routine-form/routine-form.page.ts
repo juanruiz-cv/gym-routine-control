@@ -34,7 +34,7 @@ interface ExerciseEntry {
       <!-- Header -->
       <div class="flex items-center gap-3">
         <button (click)="goBack()" class="p-2 rounded-xl hover:bg-surface-hover transition-colors">
-          <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2"></svg>
+          <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2" aria-hidden="true"></svg>
         </button>
         <h1 class="text-xl font-bold">{{ isEdit() ? ('routines.editRoutine' | translate) : ('routines.newRoutine' | translate) }}</h1>
       </div>
@@ -78,10 +78,10 @@ interface ExerciseEntry {
           <!-- Error loading exercises -->
           @if (exercisesStatus() === 'error') {
             <div class="flex flex-col items-center py-8 text-center">
-              <svg lucideAlertCircle class="w-10 h-10 text-error mb-2" strokeWidth="1.5"></svg>
+              <svg lucideAlertCircle class="w-10 h-10 text-error mb-2" strokeWidth="1.5" aria-hidden="true"></svg>
               <p class="text-sm text-on-surface-muted">{{ 'common.errorDesc' | translate }}</p>
               <button ui-button variant="secondary" size="sm" class="mt-3" (click)="retryLoadExercises()">
-                <svg lucideRotateCw class="w-4 h-4" strokeWidth="2"></svg>
+                <svg lucideRotateCw class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
                 {{ 'common.retry' | translate }}
               </button>
             </div>
@@ -150,7 +150,7 @@ interface ExerciseEntry {
                   </div>
                 </div>
                 <button (click)="removeExercise(i)" class="p-1.5 rounded-lg text-error hover:bg-error/10 transition-colors shrink-0">
-                  <svg lucideTrash2 class="w-4 h-4" strokeWidth="2"></svg>
+                  <svg lucideTrash2 class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
                 </button>
               </div>
             }
@@ -161,7 +161,7 @@ interface ExerciseEntry {
                 ui-button variant="secondary" size="md" class="w-full"
                 (click)="showPicker.set(true)"
               >
-                <svg lucidePlus class="w-4 h-4" strokeWidth="2.5"></svg>
+                <svg lucidePlus class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
                 {{ 'routines.selectExercise' | translate }}
               </button>
             }

@@ -8,7 +8,7 @@ export interface Profile {
 }
 
 export interface UserPreferences {
-  theme: 'dark' | 'light';
+  theme: 'dark' | 'light' | 'system';
   rest_timer: number;
   sound_enabled: boolean;
   vibration_enabled: boolean;

@@ -7,6 +7,7 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideServiceWorker } from '@angular/service-worker';
 import { authInterceptor } from '@core/interceptors/auth.interceptor';
 import { I18nService } from '@shared/i18n/i18n.service';
+import { ThemeService } from '@core/services/theme.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +22,8 @@ export const appConfig: ApplicationConfig = {
     }),
     provideAppInitializer(() => {
       const i18n = inject(I18nService);
+      const theme = inject(ThemeService);
+      theme.init();
       return i18n.init();
     }),
   ],

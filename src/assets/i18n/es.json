@@ -186,6 +186,11 @@
   "settings.soundDesc": "Reproducir sonidos durante el entrenamiento",
   "settings.vibration": "Vibración",
   "settings.vibrationDesc": "Vibrar al finalizar el temporizador",
+  "settings.theme": "Tema",
+  "settings.themeDesc": "Selecciona tu apariencia preferida",
+  "settings.themeSystem": "Sistema",
+  "settings.themeLight": "Claro",
+  "settings.themeDark": "Oscuro",
   "settings.signOut": "Cerrar Sesión",
   "settings.unknown": "Desconocido",
 

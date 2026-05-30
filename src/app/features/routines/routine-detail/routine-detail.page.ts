@@ -51,7 +51,7 @@ import type { Routine } from '@shared/models';
         <!-- Header -->
         <div>
           <button (click)="goBack()" title="{{ 'routines.backTooltip' | translate }}" class="p-2 rounded-xl hover:bg-surface-hover transition-colors mb-3">
-            <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2"></svg>
+            <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2" aria-hidden="true"></svg>
           </button>
           <div class="flex items-start justify-between gap-3">
             <div class="flex-1 min-w-0">
@@ -72,7 +72,7 @@ import type { Routine } from '@shared/models';
                 }
                 @if (r.estimated_duration) {
                   <span class="text-xs text-on-surface-muted flex items-center gap-1">
-                    <svg lucideClock class="w-3 h-3" strokeWidth="2"></svg>
+                    <svg lucideClock class="w-3 h-3" strokeWidth="2" aria-hidden="true"></svg>
                     ~{{ r.estimated_duration }}min
                   </span>
                 }
@@ -81,7 +81,7 @@ import type { Routine } from '@shared/models';
 
             @if (r.routine_exercises?.length) {
               <button ui-button variant="primary" size="sm" class="shrink-0" title="{{ 'routines.startTooltip' | translate }}" (click)="startWorkout(r)">
-                <svg lucidePlay class="w-4 h-4" strokeWidth="2.5"></svg>
+                <svg lucidePlay class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
                 {{ 'routines.start' | translate }}
               </button>
             }
@@ -91,15 +91,15 @@ import type { Routine } from '@shared/models';
         <!-- Action Strip -->
         <div class="flex gap-2">
           <button ui-button variant="secondary" size="sm" class="flex-1" title="{{ 'routines.editTooltip' | translate }}" routerLink="/routines/{{ r.id }}/edit">
-            <svg lucidePencil class="w-4 h-4" strokeWidth="2"></svg>
+            <svg lucidePencil class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'routines.edit' | translate }}
           </button>
           <button ui-button variant="secondary" size="sm" class="flex-1" title="{{ 'routines.duplicateTooltip' | translate }}" (click)="duplicateRoutine(r.id)">
-            <svg lucideCopy class="w-4 h-4" strokeWidth="2"></svg>
+            <svg lucideCopy class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'routines.duplicate' | translate }}
           </button>
           <button ui-button variant="danger" size="sm" class="flex-1" title="{{ 'routines.deleteTooltip' | translate }}" (click)="showDeleteModal.set(true)">
-            <svg lucideTrash2 class="w-4 h-4" strokeWidth="2"></svg>
+            <svg lucideTrash2 class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'routines.delete' | translate }}
           </button>
         </div>
@@ -139,7 +139,7 @@ import type { Routine } from '@shared/models';
                       title="{{ 'routines.viewExercise' | translate }}"
                       class="shrink-0"
                     >
-                      <svg lucideFlame class="w-4 h-4" strokeWidth="2"></svg>
+                      <svg lucideFlame class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
                     </a>
                   </div>
                 </app-ui-card>
@@ -154,7 +154,7 @@ import type { Routine } from '@shared/models';
         <div class="fixed bottom-24 left-4 right-4 max-w-lg mx-auto z-50 animate-slide-up">
           <app-ui-card variant="elevated" [padding]="true">
             <div class="flex items-center gap-3">
-              <svg lucideCheck class="w-5 h-5 text-success" strokeWidth="2"></svg>
+              <svg lucideCheck class="w-5 h-5 text-success" strokeWidth="2" aria-hidden="true"></svg>
               <span class="text-sm">{{ 'routines.duplicated' | translate }}</span>
             </div>
           </app-ui-card>

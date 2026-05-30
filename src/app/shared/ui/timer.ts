@@ -34,25 +34,25 @@ import { LucidePlay, LucidePause, LucideRotateCcw } from '@lucide/angular';
       <div class="flex items-center gap-3">
         @if (state() === 'running') {
           <button ui-button variant="secondary" size="md" (clicked)="pause()">
-            <svg lucidePause class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.pause' | translate }}
+            <svg lucidePause class="w-[18px] h-[18px]" strokeWidth="2" aria-hidden="true"></svg> {{ 'timer.pause' | translate }}
           </button>
           <button ui-button variant="ghost" size="md" (clicked)="reset()">
-            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.reset' | translate }}
+            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2" aria-hidden="true"></svg> {{ 'timer.reset' | translate }}
           </button>
         } @else if (state() === 'paused') {
           <button ui-button variant="primary" size="md" (clicked)="resume()">
-            <svg lucidePlay class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.resume' | translate }}
+            <svg lucidePlay class="w-[18px] h-[18px]" strokeWidth="2" aria-hidden="true"></svg> {{ 'timer.resume' | translate }}
           </button>
           <button ui-button variant="ghost" size="md" (clicked)="reset()">
-            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.reset' | translate }}
+            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2" aria-hidden="true"></svg> {{ 'timer.reset' | translate }}
           </button>
         } @else if (state() === 'idle') {
           <button ui-button variant="primary" size="md" (clicked)="start()">
-            <svg lucidePlay class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.start' | translate }}
+            <svg lucidePlay class="w-[18px] h-[18px]" strokeWidth="2" aria-hidden="true"></svg> {{ 'timer.start' | translate }}
           </button>
         } @else {
           <button ui-button variant="primary" size="md" (clicked)="reset()">
-            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2"></svg> {{ 'timer.reset' | translate }}
+            <svg lucideRotateCcw class="w-[18px] h-[18px]" strokeWidth="2" aria-hidden="true"></svg> {{ 'timer.reset' | translate }}
           </button>
         }
       </div>

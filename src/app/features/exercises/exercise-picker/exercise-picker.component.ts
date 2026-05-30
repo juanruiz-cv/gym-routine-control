@@ -29,7 +29,7 @@ import type { Exercise } from '@shared/models';
         (valueChange)="searchQuery.set($event)"
         [hasIcon]="true"
       >
-        <svg lucideSearch class="w-4 h-4" strokeWidth="2" icon></svg>
+        <svg lucideSearch class="w-4 h-4" strokeWidth="2" icon aria-hidden="true"></svg>
       </app-ui-input>
 
       <!-- Muscle Group Filter -->
@@ -84,7 +84,7 @@ import type { Exercise } from '@shared/models';
               <app-ui-card variant="glass" [padding]="true">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-xl bg-surface-hover flex items-center justify-center shrink-0">
-                    <svg lucideDumbbell class="w-5 h-5 text-on-surface-muted" strokeWidth="1.5"></svg>
+                    <svg lucideDumbbell class="w-5 h-5 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
                   </div>
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium truncate">{{ ex.name }}</p>

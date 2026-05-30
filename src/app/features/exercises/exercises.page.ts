@@ -24,7 +24,7 @@ import { MUSCLE_GROUPS } from '@shared/models';
       <div class="flex items-center justify-between">
         <h1 class="text-xl font-bold">{{ 'exercises.title' | translate }}</h1>
         <a ui-button variant="primary" size="sm" routerLink="/exercises/new">
-          <svg lucidePlus class="w-4 h-4" strokeWidth="2.5"></svg>
+          <svg lucidePlus class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
           {{ 'exercises.new' | translate }}
         </a>
       </div>
@@ -36,7 +36,7 @@ import { MUSCLE_GROUPS } from '@shared/models';
         (valueChange)="searchQuery.set($event)"
         [hasIcon]="true"
       >
-        <svg lucideSearch class="w-4 h-4" strokeWidth="2" icon></svg>
+        <svg lucideSearch class="w-4 h-4" strokeWidth="2" icon aria-hidden="true"></svg>
       </app-ui-input>
 
       <!-- Muscle Group Filter -->
@@ -66,7 +66,7 @@ import { MUSCLE_GROUPS } from '@shared/models';
       @if (!loading() && filteredExercises().length === 0 && !searchQuery() && !selectedMuscle()) {
         <app-ui-empty-state title="{{ 'exercises.empty' | translate }}" message="{{ 'exercises.emptyDesc' | translate }}">
           <a ui-button variant="primary" routerLink="/exercises/new">
-            <svg lucidePlus class="w-4 h-4" strokeWidth="2.5"></svg>
+            <svg lucidePlus class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
             {{ 'exercises.create' | translate }}
           </a>
         </app-ui-empty-state>
@@ -84,7 +84,7 @@ import { MUSCLE_GROUPS } from '@shared/models';
             <app-ui-card variant="glass" [padding]="true">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-surface-hover flex items-center justify-center shrink-0">
-                  <svg lucideDumbbell class="w-5 h-5 text-on-surface-muted" strokeWidth="1.5"></svg>
+                  <svg lucideDumbbell class="w-5 h-5 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium truncate">{{ ex.name }}</p>

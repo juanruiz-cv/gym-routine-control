@@ -114,7 +114,7 @@ import { LucideTrophy } from '@lucide/angular';
               <app-ui-card variant="glass" [padding]="true">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-xl bg-warning/10 flex items-center justify-center shrink-0">
-                    <svg lucideTrophy class="w-5 h-5 text-warning" strokeWidth="1.5"></svg>
+                    <svg lucideTrophy class="w-5 h-5 text-warning" strokeWidth="1.5" aria-hidden="true"></svg>
                   </div>
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium truncate">{{ pr.exercise?.name ?? ('metrics.exercise' | translate) }}</p>

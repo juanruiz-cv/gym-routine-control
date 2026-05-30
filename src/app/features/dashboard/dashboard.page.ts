@@ -42,7 +42,7 @@ import type { WorkoutSession } from '@shared/models';
         <div class="grid grid-cols-2 gap-4">
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-brand mb-1">
-              <svg lucideDumbbell class="w-4 h-4" strokeWidth="2"></svg>
+              <svg lucideDumbbell class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
               <span class="text-xs font-medium text-on-surface-muted">{{ 'dashboard.workouts' | translate }}</span>
             </div>
             <p class="text-2xl font-bold">{{ s.completedWorkouts }}</p>
@@ -51,7 +51,7 @@ import type { WorkoutSession } from '@shared/models';
 
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-orange-400 mb-1">
-              <svg lucideFlame class="w-4 h-4" strokeWidth="2"></svg>
+              <svg lucideFlame class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
               <span class="text-xs font-medium text-on-surface-muted">{{ 'dashboard.streak' | translate }}</span>
             </div>
             <p class="text-2xl font-bold">{{ s.currentStreak }}</p>
@@ -60,7 +60,7 @@ import type { WorkoutSession } from '@shared/models';
 
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-info mb-1">
-              <svg lucideTrendingUp class="w-4 h-4" strokeWidth="2"></svg>
+              <svg lucideTrendingUp class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
               <span class="text-xs font-medium text-on-surface-muted">{{ 'dashboard.volume' | translate }}</span>
             </div>
             <p class="text-2xl font-bold">{{ formatVolume(s.totalVolume) }}</p>
@@ -69,7 +69,7 @@ import type { WorkoutSession } from '@shared/models';
 
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-success mb-1">
-              <svg lucideCalendar class="w-4 h-4" strokeWidth="2"></svg>
+              <svg lucideCalendar class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
               <span class="text-xs font-medium text-on-surface-muted">{{ 'dashboard.thisWeek' | translate }}</span>
             </div>
             <p class="text-2xl font-bold">{{ s.weeklyWorkouts }}</p>
@@ -83,15 +83,15 @@ import type { WorkoutSession } from '@shared/models';
         <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'dashboard.quickActions' | translate }}</h2>
         <div class="grid grid-cols-3 gap-4">
           <a ui-button variant="secondary" size="sm" class="flex-col gap-2 h-auto py-4" routerLink="/workout">
-            <svg lucidePlay class="w-6 h-6" strokeWidth="1.5"></svg>
+            <svg lucidePlay class="w-6 h-6" strokeWidth="1.5" aria-hidden="true"></svg>
             <span class="text-xs">{{ 'dashboard.startWorkout' | translate }}</span>
           </a>
           <a ui-button variant="secondary" size="sm" class="flex-col gap-2 h-auto py-4" routerLink="/routines">
-            <svg lucideListOrdered class="w-6 h-6" strokeWidth="1.5"></svg>
+            <svg lucideListOrdered class="w-6 h-6" strokeWidth="1.5" aria-hidden="true"></svg>
             <span class="text-xs">{{ 'nav.routines' | translate }}</span>
           </a>
           <a ui-button variant="secondary" size="sm" class="flex-col gap-2 h-auto py-4" routerLink="/exercises">
-            <svg lucideDumbbell class="w-6 h-6" strokeWidth="1.5"></svg>
+            <svg lucideDumbbell class="w-6 h-6" strokeWidth="1.5" aria-hidden="true"></svg>
             <span class="text-xs">{{ 'nav.exercises' | translate }}</span>
           </a>
         </div>
@@ -102,7 +102,7 @@ import type { WorkoutSession } from '@shared/models';
         <div class="flex items-center justify-between mb-3">
           <h2 class="text-sm font-semibold text-on-surface-secondary">{{ 'dashboard.recentActivity' | translate }}</h2>
           <a routerLink="/workout" class="text-xs text-brand font-medium flex items-center gap-1">
-            {{ 'dashboard.viewAll' | translate }} <svg lucideArrowRight class="w-3 h-3" strokeWidth="2"></svg>
+            {{ 'dashboard.viewAll' | translate }} <svg lucideArrowRight class="w-3 h-3" strokeWidth="2" aria-hidden="true"></svg>
           </a>
         </div>
 
@@ -124,7 +124,7 @@ import type { WorkoutSession } from '@shared/models';
               <app-ui-card variant="glass" [padding]="true">
                 <a routerLink="/workout/{{ session.id }}" class="flex items-center gap-3">
                   <div class="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center shrink-0">
-                    <svg lucideDumbbell class="w-5 h-5 text-brand" strokeWidth="1.5"></svg>
+                    <svg lucideDumbbell class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
                   </div>
                   <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium truncate">{{ session.routine?.name ?? ('dashboard.workout' | translate) }}</p>
@@ -133,7 +133,7 @@ import type { WorkoutSession } from '@shared/models';
                       @if (session.duration) {
                         <span>·</span>
                         <span class="flex items-center gap-1">
-                          <svg lucideClock class="w-3 h-3" strokeWidth="2"></svg>
+                          <svg lucideClock class="w-3 h-3" strokeWidth="2" aria-hidden="true"></svg>
                           {{ session.duration | duration }}
                         </span>
                       }

@@ -5,10 +5,11 @@ import { UiButton } from '@shared/ui/button';
 import { UiSkeletonCard, UiSelect, type SelectOption } from '@shared/ui';
 import { SupabaseService } from '@core/services/supabase.service';
 import { ProfileService } from '@core/services/profile.service';
+import { ThemeService, type ThemeMode } from '@core/services/theme.service';
 import { I18nService } from '@shared/i18n/i18n.service';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { LanguageSwitcherComponent } from '@shared/i18n/language-switcher.component';
-import { LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone } from '@lucide/angular';
+import { LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone, LucideMonitor, LucideSun, LucideMoon } from '@lucide/angular';
 import type { UserPreferences } from '@shared/models';
 
 @Component({
@@ -16,7 +17,7 @@ import type { UserPreferences } from '@shared/models';
   standalone: true,
   imports: [
     UiCard, UiButton, UiSkeletonCard, UiSelect, TranslatePipe, LanguageSwitcherComponent,
-    LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone,
+    LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone, LucideMonitor, LucideSun, LucideMoon,
   ],
   template: `
     <div class="p-4 space-y-5 max-w-lg mx-auto">
@@ -35,7 +36,7 @@ import type { UserPreferences } from '@shared/models';
           <app-ui-card variant="glass">
             <div class="flex items-center gap-3">
               <div class="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center">
-                <svg lucideUser class="w-6 h-6 text-brand" strokeWidth="1.5"></svg>
+                <svg lucideUser class="w-6 h-6 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
               </div>
               <div class="flex-1 min-w-0">
                 <p class="font-medium">{{ profileEmail() }}</p>
@@ -51,7 +52,7 @@ import type { UserPreferences } from '@shared/models';
           <app-ui-card variant="glass">
             <div class="flex flex-col gap-4">
               <div class="flex items-center gap-3">
-                <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5"></svg>
+                <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
                 <div class="flex-1">
                   <p class="text-sm font-medium">{{ 'settings.restTimer' | translate }}</p>
                   <p class="text-xs text-on-surface-muted">{{ 'settings.restTimerDesc' | translate }}</p>
@@ -67,7 +68,7 @@ import type { UserPreferences } from '@shared/models';
               <app-language-switcher />
 
               <div class="flex items-center gap-3">
-                <svg lucideVolume2 class="w-5 h-5 text-brand" strokeWidth="1.5"></svg>
+                <svg lucideVolume2 class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
                 <div class="flex-1">
                   <p class="text-sm font-medium">{{ 'settings.sound' | translate }}</p>
                   <p class="text-xs text-on-surface-muted">{{ 'settings.soundDesc' | translate }}</p>
@@ -89,7 +90,7 @@ import type { UserPreferences } from '@shared/models';
               </div>
 
               <div class="flex items-center gap-3">
-                <svg lucideSmartphone class="w-5 h-5 text-brand" strokeWidth="1.5"></svg>
+                <svg lucideSmartphone class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
                 <div class="flex-1">
                   <p class="text-sm font-medium">{{ 'settings.vibration' | translate }}</p>
                   <p class="text-xs text-on-surface-muted">{{ 'settings.vibrationDesc' | translate }}</p>
@@ -109,13 +110,57 @@ import type { UserPreferences } from '@shared/models';
                   ></div>
                 </button>
               </div>
+
+              <!-- Theme -->
+              <div class="flex items-center gap-3">
+                <svg lucideMonitor class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
+                <div class="flex-1">
+                  <p class="text-sm font-medium">{{ 'settings.theme' | translate }}</p>
+                  <p class="text-xs text-on-surface-muted">{{ 'settings.themeDesc' | translate }}</p>
+                </div>
+                <div class="flex bg-white/5 rounded-lg p-0.5 gap-0.5 shrink-0">
+                  <button
+                    (click)="setTheme('system')"
+                    class="px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1"
+                    [class.bg-brand]="themeMode() === 'system'"
+                    [class.text-white]="themeMode() === 'system'"
+                    [class.text-on-surface-secondary]="themeMode() !== 'system'"
+                    [attr.aria-label]="'settings.themeSystem' | translate"
+                  >
+                    <svg lucideMonitor class="w-3.5 h-3.5" strokeWidth="2" aria-hidden="true"></svg>
+                    <span class="hidden sm:inline">{{ 'settings.themeSystem' | translate }}</span>
+                  </button>
+                  <button
+                    (click)="setTheme('light')"
+                    class="px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1"
+                    [class.bg-brand]="themeMode() === 'light'"
+                    [class.text-white]="themeMode() === 'light'"
+                    [class.text-on-surface-secondary]="themeMode() !== 'light'"
+                    [attr.aria-label]="'settings.themeLight' | translate"
+                  >
+                    <svg lucideSun class="w-3.5 h-3.5" strokeWidth="2" aria-hidden="true"></svg>
+                    <span class="hidden sm:inline">{{ 'settings.themeLight' | translate }}</span>
+                  </button>
+                  <button
+                    (click)="setTheme('dark')"
+                    class="px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center gap-1"
+                    [class.bg-brand]="themeMode() === 'dark'"
+                    [class.text-white]="themeMode() === 'dark'"
+                    [class.text-on-surface-secondary]="themeMode() !== 'dark'"
+                    [attr.aria-label]="'settings.themeDark' | translate"
+                  >
+                    <svg lucideMoon class="w-3.5 h-3.5" strokeWidth="2" aria-hidden="true"></svg>
+                    <span class="hidden sm:inline">{{ 'settings.themeDark' | translate }}</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </app-ui-card>
         </div>
 
         <!-- Sign Out -->
         <button ui-button variant="danger" size="md" class="w-full" (click)="signOut()">
-          <svg lucideLogOut class="w-4 h-4" strokeWidth="2"></svg>
+          <svg lucideLogOut class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
           {{ 'settings.signOut' | translate }}
         </button>
       }
@@ -126,6 +171,7 @@ export class SettingsPage implements OnInit {
   private readonly _router = inject(Router);
   private readonly _supabase = inject(SupabaseService);
   private readonly _profile = inject(ProfileService);
+  private readonly _theme = inject(ThemeService);
   private readonly _i18n = inject(I18nService);
 
   readonly timerOptions: SelectOption[] = [
@@ -140,6 +186,7 @@ export class SettingsPage implements OnInit {
   readonly restTimer = signal('90');
   readonly soundEnabled = signal(true);
   readonly vibrationEnabled = signal(true);
+  readonly themeMode = this._theme.mode;
   readonly loading = signal(true);
 
   async ngOnInit(): Promise<void> {
@@ -148,12 +195,13 @@ export class SettingsPage implements OnInit {
 
     const userId = user?.id;
     if (userId) {
-      const prefs = await this._profile.getPreferences(userId);
-      if (prefs) {
-        this.restTimer.set(prefs.rest_timer?.toString() ?? '90');
-        this.soundEnabled.set(prefs.sound_enabled ?? true);
-        this.vibrationEnabled.set(prefs.vibration_enabled ?? true);
-      }
+    const prefs = await this._profile.getPreferences(userId);
+    if (prefs) {
+      this.restTimer.set(prefs.rest_timer?.toString() ?? '90');
+      this.soundEnabled.set(prefs.sound_enabled ?? true);
+      this.vibrationEnabled.set(prefs.vibration_enabled ?? true);
+      if (prefs.theme) this._theme.setMode(prefs.theme);
+    }
     }
     this.loading.set(false);
   }
@@ -163,12 +211,17 @@ export class SettingsPage implements OnInit {
     if (!user) return;
 
     await this._profile.updatePreferences(user.id, {
-      theme: 'dark',
+      theme: this.themeMode(),
       rest_timer: parseInt(this.restTimer()),
       sound_enabled: this.soundEnabled(),
       vibration_enabled: this.vibrationEnabled(),
       language: this._i18n.currentLang(),
     });
+  }
+
+  setTheme(mode: ThemeMode): void {
+    this._theme.setMode(mode);
+    this.savePreferences();
   }
 
   async signOut(): Promise<void> {

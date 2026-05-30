@@ -36,7 +36,7 @@ import type { WorkoutSession } from '@shared/models';
         <!-- Completion Header -->
         <div class="text-center py-6">
           <div class="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center mx-auto mb-3">
-            <svg lucideCheckCircle2 class="w-8 h-8 text-success" strokeWidth="1.5"></svg>
+            <svg lucideCheckCircle2 class="w-8 h-8 text-success" strokeWidth="1.5" aria-hidden="true"></svg>
           </div>
           <h1 class="text-xl font-bold">{{ 'workoutSummary.title' | translate }}</h1>
           <p class="text-sm text-on-surface-muted mt-1">{{ 'workoutSummary.subtitle' | translate }}</p>
@@ -46,7 +46,7 @@ import type { WorkoutSession } from '@shared/models';
         <div class="grid grid-cols-2 gap-3">
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-brand mb-1">
-              <svg lucideDumbbell class="w-4 h-4" strokeWidth="2"></svg>
+              <svg lucideDumbbell class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
               <span class="text-xs text-on-surface-muted">{{ 'workoutSummary.exercises' | translate }}</span>
             </div>
             <p class="text-xl font-bold">{{ exerciseCount() }}</p>
@@ -54,7 +54,7 @@ import type { WorkoutSession } from '@shared/models';
 
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-info mb-1">
-              <svg lucideClock class="w-4 h-4" strokeWidth="2"></svg>
+              <svg lucideClock class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
               <span class="text-xs text-on-surface-muted">{{ 'workoutSummary.duration' | translate }}</span>
             </div>
             <p class="text-xl font-bold">{{ s.duration | duration }}</p>
@@ -62,7 +62,7 @@ import type { WorkoutSession } from '@shared/models';
 
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-warning mb-1">
-              <svg lucideBarChart3 class="w-4 h-4" strokeWidth="2"></svg>
+              <svg lucideBarChart3 class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
               <span class="text-xs text-on-surface-muted">{{ 'workoutSummary.volume' | translate }}</span>
             </div>
             <p class="text-xl font-bold">{{ totalVolume() }} kg</p>
@@ -70,7 +70,7 @@ import type { WorkoutSession } from '@shared/models';
 
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-2 text-success mb-1">
-              <svg lucideFlame class="w-4 h-4" strokeWidth="2"></svg>
+              <svg lucideFlame class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
               <span class="text-xs text-on-surface-muted">{{ 'workoutSummary.sets' | translate }}</span>
             </div>
             <p class="text-xl font-bold">{{ completedSets() }}</p>
@@ -108,11 +108,11 @@ import type { WorkoutSession } from '@shared/models';
         <!-- Actions -->
         <div class="flex gap-3 pt-2">
           <a ui-button variant="secondary" size="md" class="flex-1" routerLink="/dashboard">
-            <svg lucideHome class="w-4 h-4" strokeWidth="2"></svg>
+            <svg lucideHome class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'workoutSummary.dashboard' | translate }}
           </a>
           <a ui-button variant="primary" size="md" class="flex-1" routerLink="/routines">
-            <svg lucideRotateCcw class="w-4 h-4" strokeWidth="2"></svg>
+            <svg lucideRotateCcw class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'workoutSummary.newWorkout' | translate }}
           </a>
         </div>

@@ -186,6 +186,11 @@
   "settings.soundDesc": "Play sounds during workout",
   "settings.vibration": "Vibration",
   "settings.vibrationDesc": "Vibrate on timer end",
+  "settings.theme": "Theme",
+  "settings.themeDesc": "Select your preferred appearance",
+  "settings.themeSystem": "System",
+  "settings.themeLight": "Light",
+  "settings.themeDark": "Dark",
   "settings.signOut": "Sign Out",
   "settings.unknown": "Unknown",
 
