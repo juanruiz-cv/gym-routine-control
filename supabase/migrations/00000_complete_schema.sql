@@ -179,7 +179,7 @@ begin
 end;
 $$ language plpgsql security definer;
 
-create or replace trigger trg_after_auth_signup
+create trigger trg_after_auth_signup
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
@@ -207,7 +207,8 @@ create policy "Users can view own profile"
 drop policy if exists "Users can update own profile" on public.profiles;
 create policy "Users can update own profile"
   on public.profiles for update
-  using (auth.uid() = id);
+  using (auth.uid() = id)
+  with check (auth.uid() = id);
 
 drop policy if exists "Users can insert own profile" on public.profiles;
 create policy "Users can insert own profile"
@@ -230,7 +231,8 @@ create policy "Users can create own routines"
 drop policy if exists "Users can update own routines" on public.routines;
 create policy "Users can update own routines"
   on public.routines for update
-  using (auth.uid() = user_id);
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 drop policy if exists "Users can soft-delete own routines" on public.routines;
 create policy "Users can soft-delete own routines"
@@ -253,7 +255,8 @@ create policy "Users can create exercises"
 drop policy if exists "Users can update own exercises" on public.exercises;
 create policy "Users can update own exercises"
   on public.exercises for update
-  using (auth.uid() = user_id);
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 drop policy if exists "Users can delete own exercises" on public.exercises;
 create policy "Users can delete own exercises"
@@ -293,7 +296,8 @@ create policy "Users can create sessions"
 drop policy if exists "Users can update own sessions" on public.workout_sessions;
 create policy "Users can update own sessions"
   on public.workout_sessions for update
-  using (auth.uid() = user_id);
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 drop policy if exists "Users can delete own sessions" on public.workout_sessions;
 create policy "Users can delete own sessions"

@@ -50,7 +50,7 @@ import type { Routine } from '@shared/models';
       @if (routine(); as r) {
         <!-- Header -->
         <div>
-          <button (click)="goBack()" class="p-2 rounded-xl hover:bg-surface-hover transition-colors mb-3">
+          <button (click)="goBack()" title="{{ 'routines.backTooltip' | translate }}" class="p-2 rounded-xl hover:bg-surface-hover transition-colors mb-3">
             <svg lucideArrowLeft class="w-5 h-5" strokeWidth="2"></svg>
           </button>
           <div class="flex items-start justify-between gap-3">
@@ -80,7 +80,7 @@ import type { Routine } from '@shared/models';
             </div>
 
             @if (r.routine_exercises?.length) {
-              <button ui-button variant="primary" size="sm" class="shrink-0" (click)="startWorkout(r)">
+              <button ui-button variant="primary" size="sm" class="shrink-0" title="{{ 'routines.startTooltip' | translate }}" (click)="startWorkout(r)">
                 <svg lucidePlay class="w-4 h-4" strokeWidth="2.5"></svg>
                 {{ 'routines.start' | translate }}
               </button>
@@ -90,15 +90,15 @@ import type { Routine } from '@shared/models';
 
         <!-- Action Strip -->
         <div class="flex gap-2">
-          <button ui-button variant="secondary" size="sm" class="flex-1" routerLink="/routines/{{ r.id }}/edit">
+          <button ui-button variant="secondary" size="sm" class="flex-1" title="{{ 'routines.editTooltip' | translate }}" routerLink="/routines/{{ r.id }}/edit">
             <svg lucidePencil class="w-4 h-4" strokeWidth="2"></svg>
             {{ 'routines.edit' | translate }}
           </button>
-          <button ui-button variant="secondary" size="sm" class="flex-1" (click)="duplicateRoutine(r.id)">
+          <button ui-button variant="secondary" size="sm" class="flex-1" title="{{ 'routines.duplicateTooltip' | translate }}" (click)="duplicateRoutine(r.id)">
             <svg lucideCopy class="w-4 h-4" strokeWidth="2"></svg>
             {{ 'routines.duplicate' | translate }}
           </button>
-          <button ui-button variant="danger" size="sm" class="flex-1" (click)="showDeleteModal.set(true)">
+          <button ui-button variant="danger" size="sm" class="flex-1" title="{{ 'routines.deleteTooltip' | translate }}" (click)="showDeleteModal.set(true)">
             <svg lucideTrash2 class="w-4 h-4" strokeWidth="2"></svg>
             {{ 'routines.delete' | translate }}
           </button>
@@ -136,6 +136,7 @@ import type { Routine } from '@shared/models';
                     <a
                       ui-button variant="ghost" size="sm"
                       routerLink="/exercises/{{ ex.exercise_id }}"
+                      title="{{ 'routines.viewExercise' | translate }}"
                       class="shrink-0"
                     >
                       <svg lucideFlame class="w-4 h-4" strokeWidth="2"></svg>

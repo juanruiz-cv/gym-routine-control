@@ -122,6 +122,12 @@
   "routines.saving": "Guardando...",
   "routines.update": "Actualizar",
   "routines.create_": "Crear",
+  "routines.startTooltip": "Iniciar entrenamiento",
+  "routines.editTooltip": "Editar esta rutina",
+  "routines.duplicateTooltip": "Duplicar esta rutina",
+  "routines.deleteTooltip": "Eliminar esta rutina",
+  "routines.backTooltip": "Volver a rutinas",
+  "routines.viewExercise": "Ver ejercicio",
 
   "exercises.title": "Ejercicios",
   "exercises.new": "Nuevo",

@@ -122,6 +122,12 @@
   "routines.saving": "Saving...",
   "routines.update": "Update",
   "routines.create_": "Create",
+  "routines.startTooltip": "Start workout",
+  "routines.editTooltip": "Edit this routine",
+  "routines.duplicateTooltip": "Duplicate this routine",
+  "routines.deleteTooltip": "Delete this routine",
+  "routines.backTooltip": "Back to routines",
+  "routines.viewExercise": "View exercise",
 
   "exercises.title": "Exercises",
   "exercises.new": "New",

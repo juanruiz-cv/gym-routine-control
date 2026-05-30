@@ -16,7 +16,7 @@ export class RoutineService extends DataService {
       const userId = await this.checkUserId();
       const { data, error } = await this.client
         .from('routines')
-        .select('*, routine_exercises(*, exercise(*))')
+        .select('*, routine_exercises(*, exercise:exercises(*))')
         .eq('user_id', userId)
         .is('deleted_at', null)
         .order('created_at', { ascending: false });
@@ -33,7 +33,7 @@ export class RoutineService extends DataService {
     const userId = await this.checkUserId();
     const { data, error } = await this.client
       .from('routines')
-      .select('*, routine_exercises(*, exercise(*))')
+      .select('*, routine_exercises(*, exercise:exercises(*))')
       .eq('id', id)
       .eq('user_id', userId)
       .single();

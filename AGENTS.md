@@ -28,6 +28,12 @@
 ## Database Tables
 `profiles`, `routines`, `routine_exercises`, `exercises`, `workout_sessions`, `workout_sets`, `personal_records`
 
+## Database Migration Notes
+- Migration was executed via Supabase Management API (OAuth `sbp_oauth_*` token)
+- **Fixed bugs in `00000_complete_schema.sql`**: `create or replace trigger` → `create trigger` (Postgres syntax)
+- **PowerShell bug**: `$$` in SQL is expanded by PowerShell as "last command". Use `@'...'@` (single-quoted here-string) and `$body$` dollar quoting instead when running via PowerShell
+- 7 tables, 22 RLS policies, 4 triggers, 20 seed exercises created successfully
+
 ## Rules
 - Use Signals first — never `mutate()`, use `set()` / `update()`
 - Avoid unnecessary RxJS

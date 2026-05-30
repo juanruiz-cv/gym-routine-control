@@ -118,7 +118,7 @@ export class MetricsService extends DataService {
 
     const { data } = await this.client
       .from('workout_sessions')
-      .select('*, sets:workout_sets(routine_exercise(exercise(muscle_group)))')
+      .select('*, sets:workout_sets(routine_exercises(exercise:exercises(muscle_group)))')
       .eq('user_id', userId)
       .eq('status', 'completed');
 
@@ -128,10 +128,10 @@ export class MetricsService extends DataService {
     let total = 0;
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-    type RawSet = { routine_exercise?: { exercise?: { muscle_group: string } } };
+    type RawSet = { routine_exercises?: { exercise?: { muscle_group: string } } };
     for (const session of data as unknown as { sets: RawSet[] | null }[]) {
       for (const set of (session.sets ?? []) as RawSet[]) {
-        const mg = set.routine_exercise?.exercise?.muscle_group;
+        const mg = set.routine_exercises?.exercise?.muscle_group;
         if (mg) {
           count.set(mg, (count.get(mg) ?? 0) + 1);
           total++;
@@ -177,7 +177,7 @@ export class MetricsService extends DataService {
     const userId = await this.checkUserId();
     const { data } = await this.client
       .from('personal_records')
-      .select('*, exercise(*)')
+      .select('*, exercise:exercises(*)')
       .eq('user_id', userId)
       .order('achieved_at', { ascending: false })
       .limit(20);
