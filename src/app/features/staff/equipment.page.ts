@@ -71,7 +71,7 @@ import type { EquipmentTypeEntity } from '@shared/models';
         </div>
       }
 
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 mt-2">
         @for (eq of filteredTypes(); track eq.id) {
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-3">
@@ -87,7 +87,7 @@ import type { EquipmentTypeEntity } from '@shared/models';
                   />
                 } @else {
                   <div class="flex items-center gap-2">
-                    <p class="text-sm font-medium">{{ eq.name }}</p>
+                    <p class="text-sm font-medium">{{ 'equipment.' + eq.name | translate }}</p>
                     <app-ui-badge [size]="'sm'" [variant]="eq.is_active ? 'brand' : 'default'">
                       {{ eq.is_active ? ('staff.active' | translate) : ('staff.inactive' | translate) }}
                     </app-ui-badge>

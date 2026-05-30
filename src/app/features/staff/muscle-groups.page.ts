@@ -74,7 +74,7 @@ import type { MuscleGroupEntity } from '@shared/models';
       }
 
       <!-- List -->
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 mt-2">
         @for (mg of filteredGroups(); track mg.id) {
           <app-ui-card variant="glass" [padding]="true">
             <div class="flex items-center gap-3">
@@ -90,7 +90,7 @@ import type { MuscleGroupEntity } from '@shared/models';
                   />
                 } @else {
                   <div class="flex items-center gap-2">
-                    <p class="text-sm font-medium">{{ mg.name }}</p>
+                    <p class="text-sm font-medium">{{ 'muscleGroup.' + mg.name | translate }}</p>
                     <app-ui-badge [size]="'sm'" [variant]="mg.is_active ? 'brand' : 'default'">
                       {{ mg.is_active ? ('staff.active' | translate) : ('staff.inactive' | translate) }}
                     </app-ui-badge>
