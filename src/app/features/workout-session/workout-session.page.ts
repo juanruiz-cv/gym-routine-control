@@ -156,13 +156,13 @@ import {
                   <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
                   <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
                   <input
-                    type="number"
-                    [value]="customRestTime()"
-                    (input)="onRestTimeChange(+$any($event.target).value)"
-                    class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                    min="10" step="5"
+                    type="text"
+                    [value]="restTimeDisplay()"
+                    (input)="onRestTimeChange($any($event.target).value)"
+                    (blur)="onRestTimeBlur()"
+                    class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand"
+                    placeholder="1:30"
                   />
-                  <span class="text-xs text-on-surface-muted">s</span>
                 </div>
                 <app-ui-timer
                   mode="countdown"
@@ -277,6 +277,13 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     return this.currentExerciseSets().length;
   });
 
+  readonly restTimeDisplay = computed(() => {
+    const total = this.customRestTime();
+    const m = Math.floor(total / 60);
+    const s = total % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  });
+
   async ngOnInit(): Promise<void> {
     const sessionId = this._route.snapshot.paramMap.get('sessionId');
     if (!sessionId) {
@@ -307,12 +314,17 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     setTimeout(() => this.showRestTimer.set(true), 50);
   }
 
-  onRestTimeChange(value: number): void {
-    if (!isNaN(value) && value >= 10) {
-      this.customRestTime.set(value);
+  onRestTimeChange(value: string): void {
+    const seconds = this._parseRestTime(value);
+    if (seconds && seconds >= 10) {
+      this.customRestTime.set(seconds);
       this.showRestTimer.set(false);
       setTimeout(() => this.showRestTimer.set(true), 50);
     }
+  }
+
+  onRestTimeBlur(): void {
+    /* force re-eval of restTimeDisplay, no-op */
   }
 
   onRestCompleted(): void {
@@ -435,5 +447,25 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     } catch {
       /* already released */
     }
+  }
+
+  private _parseRestTime(value: string): number | null {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+
+    const plain = Number(trimmed);
+    if (!isNaN(plain) && plain >= 10) return plain;
+
+    const parts = trimmed.split(':');
+    if (parts.length === 2) {
+      const min = Number(parts[0]);
+      const sec = Number(parts[1]);
+      if (!isNaN(min) && !isNaN(sec) && min >= 0 && sec >= 0 && sec < 60) {
+        const total = min * 60 + sec;
+        if (total >= 10) return total;
+      }
+    }
+
+    return null;
   }
 }
