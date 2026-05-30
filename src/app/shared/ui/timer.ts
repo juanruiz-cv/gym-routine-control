@@ -1,4 +1,4 @@
-import { Component, input, output, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, input, output, signal, computed, inject, OnInit, OnDestroy } from '@angular/core';
 import { UiButton } from './button';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { NotificationService } from '@core/services/notification.service';
@@ -87,7 +87,7 @@ type TimerMode = 'countdown' | 'countup';
     </div>
   `,
 })
-export class UiTimer implements OnInit {
+export class UiTimer implements OnInit, OnDestroy {
   private readonly _notification = inject(NotificationService);
   readonly duration = input(90);
   readonly autoStart = input(false);
@@ -133,6 +133,10 @@ export class UiTimer implements OnInit {
     if (this.autoStart()) {
       this.start();
     }
+  }
+
+  ngOnDestroy(): void {
+    this._clearInterval();
   }
 
   start(): void {
