@@ -1,11 +1,11 @@
-import { Injectable, signal, inject, isDevMode, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, inject, isDevMode, PLATFORM_ID, TransferState, makeStateKey } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { SupabaseService } from '@core/services/supabase.service';
 import type { UserPreferences } from '@shared/models';
 
 export type SupportedLang = 'es' | 'en';
 
-const FALLBACK_TRANSLATIONS: Record<string, string> = {};
+const I18N_KEY = makeStateKey<Record<string, string>>('i18n-translations');
 
 function resolveKey(obj: Record<string, unknown>, path: string): unknown {
   const keys = path.split('.');
@@ -31,9 +31,10 @@ function humanizeKey(key: string): string {
 export class I18nService {
   private readonly _supabase = inject(SupabaseService);
   private readonly _platformId = inject(PLATFORM_ID);
+  private readonly _transferState = inject(TransferState);
 
   readonly currentLang = signal<SupportedLang>('es');
-  readonly translations = signal<Record<string, string>>(FALLBACK_TRANSLATIONS);
+  readonly translations = signal<Record<string, string>>({});
   readonly ready = signal(false);
 
   private _loaded = false;
@@ -55,7 +56,9 @@ export class I18nService {
     if (t[key]) return t[key];
     const nested = resolveKey(t, key);
     if (typeof nested === 'string') return nested;
-    if (isDevMode() && this.ready()) console.warn(`[i18n] Missing translation key: ${key}`);
+    if (isDevMode() && this.ready() && !isPlatformServer(this._platformId)) {
+      console.warn(`[i18n] Missing translation key: ${key}`);
+    }
     return humanizeKey(key);
   }
 
@@ -72,10 +75,36 @@ export class I18nService {
 
   private async _fetchTranslations(lang: SupportedLang): Promise<void> {
     if (isPlatformServer(this._platformId)) {
-      this.translations.set({});
+      try {
+        const { readFileSync } = await import('node:fs');
+        const { join } = await import('node:path');
+        const paths = [
+          join(process.cwd(), 'dist', 'gym-routine-control', 'browser', 'assets', 'i18n', `${lang}.json`),
+          join(process.cwd(), 'src', 'assets', 'i18n', `${lang}.json`),
+        ];
+        for (const p of paths) {
+          try {
+            const content = readFileSync(p, 'utf-8');
+            const data = JSON.parse(content) as Record<string, string>;
+            this.translations.set(data);
+            this._transferState.set(I18N_KEY, data);
+            break;
+          } catch { continue; }
+        }
+      } catch {
+        if (isDevMode()) console.warn('[i18n] SSR: Failed to read translation files');
+      }
       this.ready.set(true);
       return;
     }
+
+    const cached = this._transferState.get(I18N_KEY, null);
+    if (cached) {
+      this.translations.set(cached);
+      this._transferState.remove(I18N_KEY);
+      return;
+    }
+
     try {
       const response = await fetch(`/assets/i18n/${lang}.json`);
       if (!response.ok) throw new Error(`Failed to load ${lang}.json`);
@@ -117,6 +146,7 @@ export class I18nService {
 
   private async _saveToProfile(lang: SupportedLang): Promise<void> {
     if (isPlatformServer(this._platformId)) return;
+    if (!this._supabase.client) return;
     const { data: { user } } = await this._supabase.client.auth.getUser();
     if (!user) return;
     const { data } = await this._supabase.client
@@ -133,6 +163,7 @@ export class I18nService {
 
   async loadFromProfile(): Promise<void> {
     if (isPlatformServer(this._platformId) || this._loaded) return;
+    if (!this._supabase.client) return;
     const { data: { user } } = await this._supabase.client.auth.getUser();
     if (!user) return;
     const { data } = await this._supabase.client

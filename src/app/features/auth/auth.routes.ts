@@ -22,6 +22,10 @@ export default [
     loadComponent: () => import('./update-password/update-password.page').then(m => m.UpdatePasswordPage),
   },
   {
+    path: 'verified',
+    loadComponent: () => import('./verified/verified.page'),
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',

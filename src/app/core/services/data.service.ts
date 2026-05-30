@@ -1,8 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
+  protected readonly _platformId = inject(PLATFORM_ID);
   protected readonly _supabase = inject(SupabaseService);
 
   protected get client() {
@@ -15,7 +17,8 @@ export class DataService {
 
   protected async checkUserId(): Promise<string> {
     const id = await this.userId;
-    if (!id) throw new Error('Not authenticated');
-    return id;
+    if (id) return id;
+    if (isPlatformServer(this._platformId)) return '';
+    throw new Error('Not authenticated');
   }
 }

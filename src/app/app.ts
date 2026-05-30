@@ -31,12 +31,7 @@ export class App implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    await this._i18n.init();
     await this._i18n.loadFromProfile();
-    this._seo.updateMetaTags({
-      title: this._i18n.t('app.ogTitle'),
-      description: this._i18n.t('app.description'),
-    });
   }
 
   protected activateUpdate(): void {

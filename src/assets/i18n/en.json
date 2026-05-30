@@ -52,6 +52,9 @@
   "auth.confirmPasswordPlaceholder": "Repeat your password",
   "auth.passwordUpdated": "Password updated! Redirecting to login...",
   "auth.passwordMismatch": "Passwords do not match",
+  "auth.emailVerified": "Email verified successfully",
+  "auth.emailVerifiedDesc": "Your account has been verified. You can now start using the application.",
+  "auth.goToDashboard": "Go to Dashboard",
 
   "dashboard.title": "Dashboard",
   "dashboard.greetingMorning": "Good morning",

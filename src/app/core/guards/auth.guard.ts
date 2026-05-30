@@ -1,25 +1,28 @@
-import { inject } from '@angular/core';
-import { Router, type CanActivateFn, type CanMatchFn } from '@angular/router';
+import { inject, Injector, PLATFORM_ID } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
+import { Router, type CanActivateFn } from '@angular/router';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AuthService } from '../auth/auth.service';
 import { filter, map, take, switchMap } from 'rxjs';
+import { of } from 'rxjs';
 
 function checkAuth(): ReturnType<CanActivateFn> {
+  const injector = inject(Injector);
+  const platformId = inject(PLATFORM_ID);
   const auth = inject(AuthService);
   const router = inject(Router);
 
-  return toObservable(auth.loading).pipe(
+  if (isPlatformServer(platformId)) return of(true);
+
+  return toObservable(auth.loading, { injector }).pipe(
     filter(v => !v),
     take(1),
-    switchMap(() => toObservable(auth.isAuthenticated).pipe(take(1))),
+    switchMap(() => toObservable(auth.isAuthenticated, { injector }).pipe(take(1))),
     map(isAuth => {
-      if (!isAuth) {
-        return router.createUrlTree(['/auth/login']);
-      }
+      if (!isAuth) return router.createUrlTree(['/auth/login']);
       return true;
     }),
   );
 }
 
 export const authGuard: CanActivateFn = () => checkAuth();
-export const authMatch: CanMatchFn = () => checkAuth();

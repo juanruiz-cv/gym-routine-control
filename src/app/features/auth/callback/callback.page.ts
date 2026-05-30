@@ -21,13 +21,15 @@ export class CallbackPage implements OnInit {
   async ngOnInit(): Promise<void> {
     const { data: { session } } = await this._supabase.session;
     if (session) {
-      await this._router.navigate(['/dashboard']);
+      const needsVerification = this._router.url.includes('type=signup') || this._router.url.includes('type=email_change');
+      await this._router.navigate(needsVerification ? ['/auth/verified'] : ['/dashboard']);
       return;
     }
 
     this._supabase.client.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
-        this._router.navigate(['/dashboard']);
+        const needsVerification = session.user.email_confirmed_at || this._router.url.includes('type=signup');
+        this._router.navigate(needsVerification ? ['/auth/verified'] : ['/dashboard']);
       } else if (event === 'SIGNED_OUT') {
         this._router.navigate(['/auth/login']);
       }
