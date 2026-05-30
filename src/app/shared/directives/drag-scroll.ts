@@ -1,4 +1,4 @@
-import { Directive, DestroyRef, inject, ElementRef, AfterViewInit } from '@angular/core';
+import { Directive, DestroyRef, inject, ElementRef, AfterViewInit, NgZone } from '@angular/core';
 
 @Directive({
   selector: '[appDragScroll]',
@@ -7,11 +7,14 @@ import { Directive, DestroyRef, inject, ElementRef, AfterViewInit } from '@angul
 export class DragScrollDirective implements AfterViewInit {
   private readonly _element = inject(ElementRef<HTMLElement>);
   private readonly _destroyRef = inject(DestroyRef);
+  private readonly _ngZone = inject(NgZone);
 
   private _isDragging = false;
-  private _hasMoved = false;
   private _startX = 0;
   private _scrollLeft = 0;
+
+  private _onPointerMove: ((e: PointerEvent) => void) | null = null;
+  private _onPointerUp: ((e: PointerEvent) => void) | null = null;
 
   ngAfterViewInit(): void {
     const el = this._element.nativeElement;
@@ -20,54 +23,51 @@ export class DragScrollDirective implements AfterViewInit {
     el.style.userSelect = 'none';
     el.style.webkitUserSelect = 'none';
 
-    const onPointerDown = (e: PointerEvent) => {
-      this._isDragging = false;
-      this._hasMoved = false;
-      this._startX = e.clientX;
-      this._scrollLeft = el.scrollLeft;
-    };
+    this._ngZone.runOutsideAngular(() => {
+      const onPointerDown = (e: PointerEvent) => {
+        this._isDragging = false;
+        this._startX = e.clientX;
+        this._scrollLeft = el.scrollLeft;
 
-    const onPointerMove = (e: PointerEvent) => {
-      const dx = Math.abs(e.clientX - this._startX);
-      if (!this._isDragging) {
-        if (dx < 5) return;
-        this._isDragging = true;
-        this._hasMoved = true;
-        el.setPointerCapture(e.pointerId);
-        el.style.cursor = 'grabbing';
-      }
-      e.preventDefault();
-      el.scrollLeft = this._scrollLeft - (e.clientX - this._startX);
-    };
+        const onPointerMove = (e: PointerEvent) => {
+          const dx = Math.abs(e.clientX - this._startX);
+          if (!this._isDragging) {
+            if (dx < 5) return;
+            this._isDragging = true;
+            el.style.cursor = 'grabbing';
+          }
+          e.preventDefault();
+          el.scrollLeft = this._scrollLeft - (e.clientX - this._startX);
+        };
 
-    const onPointerUp = () => {
-      if (!this._hasMoved) {
-        el.style.cursor = 'grab';
-        return;
-      }
-      this._isDragging = false;
-      this._hasMoved = false;
-      el.style.cursor = 'grab';
-    };
+        const onPointerUp = () => {
+          document.removeEventListener('pointermove', onPointerMove);
+          document.removeEventListener('pointerup', onPointerUp);
+          document.removeEventListener('pointercancel', onPointerUp);
+          this._isDragging = false;
+          el.style.cursor = 'grab';
+        };
 
-    const onPointerCancel = () => {
-      this._isDragging = false;
-      this._hasMoved = false;
-      el.style.cursor = 'grab';
-    };
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
+        document.addEventListener('pointercancel', onPointerUp);
 
-    el.addEventListener('pointerdown', onPointerDown);
-    el.addEventListener('pointermove', onPointerMove);
-    el.addEventListener('pointerup', onPointerUp);
-    el.addEventListener('pointerleave', onPointerUp);
-    el.addEventListener('pointercancel', onPointerCancel);
+        this._onPointerMove = onPointerMove;
+        this._onPointerUp = onPointerUp;
+      };
 
-    this._destroyRef.onDestroy(() => {
-      el.removeEventListener('pointerdown', onPointerDown);
-      el.removeEventListener('pointermove', onPointerMove);
-      el.removeEventListener('pointerup', onPointerUp);
-      el.removeEventListener('pointerleave', onPointerUp);
-      el.removeEventListener('pointercancel', onPointerCancel);
+      el.addEventListener('pointerdown', onPointerDown);
+
+      this._destroyRef.onDestroy(() => {
+        el.removeEventListener('pointerdown', onPointerDown);
+        if (this._onPointerMove) {
+          document.removeEventListener('pointermove', this._onPointerMove);
+        }
+        if (this._onPointerUp) {
+          document.removeEventListener('pointerup', this._onPointerUp);
+          document.removeEventListener('pointercancel', this._onPointerUp);
+        }
+      });
     });
   }
 }
