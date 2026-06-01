@@ -92,8 +92,8 @@ import {
             <!-- Sets List -->
             <div class="flex flex-col gap-2">
               @for (set of exSets; track set.id; let i = $index) {
-                <app-ui-card variant="glass" [padding]="true" [class.ring-1]="i === w.currentSetIndex && !set.is_completed"
-                  [class.ring-brand]="i === w.currentSetIndex && !set.is_completed">
+                <app-ui-card variant="glass" [padding]="true" [class.border-2]="i === w.currentSetIndex && !set.is_completed"
+                  [class.border-brand]="i === w.currentSetIndex && !set.is_completed">
                   <div class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center shrink-0 text-sm font-bold text-on-surface-muted">
                       {{ set.set_number }}
