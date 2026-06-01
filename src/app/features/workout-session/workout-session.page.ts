@@ -63,7 +63,7 @@ import {
           @let completedSets = completedExerciseSets();
           @let totalSets = totalExerciseSets();
 
-          <div class="flex-1 p-4 space-y-4 max-w-lg mx-auto w-full">
+          <div class="flex-1 p-4 space-y-4 max-w-lg lg:max-w-3xl mx-auto w-full">
             <!-- Global Timer -->
             <app-ui-card variant="glass" [padding]="true">
               <app-ui-timer

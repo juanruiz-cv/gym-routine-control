@@ -69,6 +69,8 @@ export interface Exercise {
   video_url: string | null;
   image_url: string | null;
   is_global: boolean;
+  primary_muscles: string[] | null;
+  secondary_muscles: string[] | null;
   created_by: string | null;
   updated_by: string | null;
   created_at: string;

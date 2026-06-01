@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
@@ -9,6 +9,8 @@ import { UiEmptyState } from '@shared/ui/empty-state';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { MetricsService } from '@core/services/metrics.service';
 import { ExerciseService } from '@core/services/exercise.service';
+import { MuscleMapComponent } from '@shared/components/muscle-map/muscle-map.component';
+import { MUSCLE_GROUP_TO_ANATOMY, type MuscleGroup } from '@shared/models/muscle-anatomy';
 import { LucideArrowLeft, LucidePencil, LucideTrash2, LucideTrophy } from '@lucide/angular';
 import { RelativeDatePipe } from '@shared/pipes/relative-date';
 import type { Exercise, PersonalRecord } from '@shared/models';
@@ -18,11 +20,11 @@ import type { Exercise, PersonalRecord } from '@shared/models';
   standalone: true,
   imports: [
     RouterLink, UiCard, UiButton, UiBadge, UiSkeletonCard, UiModal, UiEmptyState,
-    RelativeDatePipe, TranslatePipe,
+    RelativeDatePipe, TranslatePipe, MuscleMapComponent,
     LucideArrowLeft, LucidePencil, LucideTrash2, LucideTrophy,
   ],
   template: `
-    <div class="p-4 flex flex-col gap-4 max-w-lg mx-auto">
+    <div class="p-4 flex flex-col gap-4 max-w-lg mx-auto lg:max-w-4xl lg:px-6">
       <!-- Loading -->
       @if (loading()) {
         <div class="flex flex-col gap-4">
@@ -64,6 +66,20 @@ import type { Exercise, PersonalRecord } from '@shared/models';
             <svg lucideTrash2 class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
             {{ 'common.delete' | translate }}
           </button>
+        </div>
+
+        <!-- Muscles Worked -->
+        <div>
+          <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'exercises.musclesWorked' | translate }}</h2>
+          <app-ui-card variant="glass">
+            <div class="py-2">
+              <app-muscle-map
+                [mode]="'highlight'"
+                [primaryMuscles]="primaryMuscles()"
+                [secondaryMuscles]="secondaryMuscles()"
+              />
+            </div>
+          </app-ui-card>
         </div>
 
         <!-- Instructions -->
@@ -131,6 +147,20 @@ export class ExerciseDetailPage implements OnInit {
   readonly loading = signal(true);
   readonly loadingPRs = signal(true);
   readonly showDeleteModal = signal(false);
+
+  readonly primaryMuscles = computed<MuscleGroup[]>(() => {
+    const ex = this.exercise();
+    if (!ex) return [];
+    if (ex.primary_muscles?.length) return ex.primary_muscles as MuscleGroup[];
+    return MUSCLE_GROUP_TO_ANATOMY[ex.muscle_group] ?? [];
+  });
+
+  readonly secondaryMuscles = computed<MuscleGroup[]>(() => {
+    const ex = this.exercise();
+    if (!ex) return [];
+    if (ex.secondary_muscles?.length) return ex.secondary_muscles as MuscleGroup[];
+    return [];
+  });
 
   async ngOnInit(): Promise<void> {
     const id = this._route.snapshot.paramMap.get('id');

@@ -6,6 +6,8 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { MetricsService, type WeeklyActivity, type MuscleDistribution } from '@core/services/metrics.service';
 import type { PersonalRecord } from '@shared/models';
 import { RelativeDatePipe } from '@shared/pipes/relative-date';
+import { MuscleMapComponent } from '@shared/components/muscle-map/muscle-map.component';
+import { MUSCLE_GROUP_TO_ANATOMY } from '@shared/models/muscle-anatomy';
 import { LucideTrophy } from '@lucide/angular';
 
 @Component({
@@ -13,18 +15,18 @@ import { LucideTrophy } from '@lucide/angular';
   standalone: true,
   imports: [
     UiCard, UiSkeletonCard, UiSkeletonStatsGrid, UiEmptyState,
-    RelativeDatePipe, TranslatePipe,
+    RelativeDatePipe, TranslatePipe, MuscleMapComponent,
     LucideTrophy,
   ],
   template: `
-    <div class="p-4 flex flex-col gap-5 max-w-lg mx-auto">
+    <div class="p-4 flex flex-col gap-5 max-w-lg mx-auto md:max-w-4xl lg:max-w-none lg:mx-0 lg:px-6 lg:gap-6">
       <h1 class="text-xl font-bold">{{ 'metrics.title' | translate }}</h1>
 
       <!-- Stats Overview -->
       @if (loading()) {
         <app-ui-skeleton-stats-grid />
       } @else if (stats(); as s) {
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <app-ui-card variant="glass" [padding]="true">
             <div class="text-2xl font-bold text-brand">{{ s.completedWorkouts }}</div>
             <div class="text-xs text-on-surface-muted mt-1">{{ 'metrics.totalWorkouts' | translate }}</div>
@@ -44,63 +46,74 @@ import { LucideTrophy } from '@lucide/angular';
         </div>
       }
 
-      <!-- Weekly Activity -->
-      <div>
-        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'metrics.weeklyActivity' | translate }}</h2>
-        @if (loadingActivity()) {
-          <app-ui-skeleton-card height="120px" />
-        } @else if (weeklyActivity().length > 0) {
-          <app-ui-card variant="glass">
-            <div class="flex items-end gap-1.5 h-28">
-              @for (week of weeklyActivity(); track week.week) {
-                <div class="flex-1 flex flex-col items-center gap-1">
-                  <div
-                    class="w-full rounded-t-md transition-all duration-300"
-                    [style.height.%]="barHeight(week.sessions)"
-                    [class.bg-brand]="$last"
-                    [class.bg-white/20]="!$last"
-                  ></div>
-                  <span class="text-[10px] text-on-surface-muted truncate w-full text-center">{{ week.week }}</span>
-                </div>
-              }
-            </div>
-          </app-ui-card>
-        } @else {
-          <app-ui-empty-state variant="metrics" title="{{ 'metrics.noActivity' | translate }}" />
-        }
-      </div>
+      <!-- Charts Row -->
+      <div class="lg:flex lg:gap-6">
+        <!-- Weekly Activity -->
+        <div class="lg:flex-1">
+          <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'metrics.weeklyActivity' | translate }}</h2>
+          @if (loadingActivity()) {
+            <app-ui-skeleton-card height="120px" />
+          } @else if (weeklyActivity().length > 0) {
+            <app-ui-card variant="glass">
+              <div class="flex items-end gap-2 h-32 lg:h-40">
+                @for (week of weeklyActivity(); track week.week) {
+                  <div class="flex-1 flex flex-col items-center gap-1.5">
+                    <div class="flex-1 w-full flex items-end">
+                      <div
+                        class="w-full rounded-t-md transition-all duration-500 group relative"
+                        [style.height.%]="barHeight(week.sessions)"
+                        [class.bg-gradient-to-t]="$last"
+                        [class.from-brand]="$last"
+                        [class.to-brand/60]="$last"
+                        [class.bg-white/15]="!$last"
+                      >
+                        <span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-medium text-on-surface opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          {{ week.sessions }} sesiones
+                        </span>
+                      </div>
+                    </div>
+                    <span class="text-[10px] text-on-surface-muted truncate w-full text-center">{{ week.week }}</span>
+                  </div>
+                }
+              </div>
+            </app-ui-card>
+          } @else {
+            <app-ui-empty-state variant="metrics" title="{{ 'metrics.noActivity' | translate }}" />
+          }
+        </div>
 
-      <!-- Muscle Distribution -->
-      <div>
-        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'metrics.muscleDistribution' | translate }}</h2>
-        @if (loadingMuscles()) {
-          <app-ui-skeleton-card height="160px" />
-        } @else if (muscleDistribution().length > 0) {
-          <app-ui-card variant="glass">
-            <div class="space-y-3">
-              @for (m of muscleDistribution(); track m.muscle) {
-                <div>
-                  <div class="flex items-center justify-between text-xs mb-1">
-                    <span class="text-on-surface">{{ m.muscle }}</span>
-                    <span class="text-on-surface-muted">{{ m.percentage }}%</span>
+        <!-- Muscle Distribution -->
+        <div class="mt-5 lg:mt-0 lg:flex-1">
+          <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'metrics.muscleDistribution' | translate }}</h2>
+          @if (loadingMuscles()) {
+            <app-ui-skeleton-card height="160px" />
+          } @else if (muscleDistribution().length > 0) {
+            <app-ui-card variant="glass">
+              <div class="space-y-3">
+                @for (m of muscleDistribution(); track m.muscle) {
+                  <div>
+                    <div class="flex items-center justify-between text-xs mb-1">
+                      <span class="text-on-surface">{{ m.muscle }}</span>
+                      <span class="text-on-surface-muted">{{ m.percentage }}%</span>
+                    </div>
+                    <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+                      <div
+                        class="h-full rounded-full transition-all duration-500"
+                        [style.width.%]="m.percentage"
+                        [class.bg-brand]="$index === 0"
+                        [class.bg-brand/80]="$index === 1"
+                        [class.bg-brand/60]="$index === 2"
+                        [class.bg-white/20]="$index > 2"
+                      ></div>
+                    </div>
                   </div>
-                  <div class="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <div
-                      class="h-full rounded-full transition-all duration-500"
-                      [style.width.%]="m.percentage"
-                      [class.bg-brand]="$index === 0"
-                      [class.bg-brand/80]="$index === 1"
-                      [class.bg-brand/60]="$index === 2"
-                      [class.bg-white/20]="$index > 2"
-                    ></div>
-                  </div>
-                </div>
-              }
-            </div>
-          </app-ui-card>
-        } @else {
-          <app-ui-empty-state variant="metrics" title="{{ 'metrics.noMuscleData' | translate }}" />
-        }
+                }
+              </div>
+            </app-ui-card>
+          } @else {
+            <app-ui-empty-state variant="metrics" title="{{ 'metrics.noMuscleData' | translate }}" />
+          }
+        </div>
       </div>
 
       <!-- Personal Records -->
@@ -109,7 +122,7 @@ import { LucideTrophy } from '@lucide/angular';
         @if (loadingPRs()) {
           <app-ui-skeleton-card height="120px" />
         } @else if (personalRecords().length > 0) {
-          <div class="flex flex-col gap-2">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             @for (pr of personalRecords(); track pr.id) {
               <app-ui-card variant="glass" [padding]="true">
                 <div class="flex items-center gap-3">
@@ -132,6 +145,25 @@ import { LucideTrophy } from '@lucide/angular';
           </div>
         } @else {
           <app-ui-empty-state variant="metrics" title="{{ 'metrics.noRecords' | translate }}" message="{{ 'metrics.noRecordsDesc' | translate }}" />
+        }
+      </div>
+
+      <!-- Muscle Heatmap -->
+      <div>
+        <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'metrics.muscleHeatmap' | translate }}</h2>
+        @if (loadingMuscles()) {
+          <app-ui-skeleton-card height="300px" />
+        } @else if (muscleDistribution().length > 0) {
+          <app-ui-card variant="glass">
+            <div class="py-2">
+              <app-muscle-map
+                [mode]="'heatmap'"
+                [heatmapData]="heatmapData()"
+              />
+            </div>
+          </app-ui-card>
+        } @else {
+          <app-ui-empty-state variant="metrics" title="{{ 'metrics.noMuscleData' | translate }}" />
         }
       </div>
     </div>
@@ -206,4 +238,18 @@ export class MetricsPage implements OnInit {
     if (kg >= 1000) return `${(kg / 1000).toFixed(1)}k`;
     return kg.toLocaleString();
   }
+
+  readonly heatmapData = computed(() => {
+    const dist = this.muscleDistribution();
+    const result: Record<string, number> = {};
+    for (const item of dist) {
+      const anatomies = MUSCLE_GROUP_TO_ANATOMY[item.muscle] ?? [];
+      if (anatomies.length === 0) continue;
+      const pctPerMuscle = item.percentage / anatomies.length;
+      for (const a of anatomies) {
+        result[a] = (result[a] ?? 0) + pctPerMuscle;
+      }
+    }
+    return result;
+  });
 }

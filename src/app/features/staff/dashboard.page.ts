@@ -9,17 +9,17 @@ import { LucideUsers, LucideListOrdered, LucideBarChart3, LucideArrowRight, Luci
   standalone: true,
   imports: [RouterLink, TranslatePipe, LucideUsers, LucideListOrdered, LucideBarChart3, LucideArrowRight, LucideTarget, LucideCheckCircle, LucideRefreshCw, LucideDumbbell, LucideWrench],
   template: `
-    <div class="p-4 space-y-5 max-w-lg mx-auto">
+    <div class="p-4 space-y-5 max-w-lg mx-auto md:max-w-4xl lg:max-w-none lg:mx-0 lg:px-6">
       <h1 class="text-xl font-bold">{{ 'staff.title' | translate }}</h1>
 
       @if (metricsSvc.loading()) {
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
           @for (i of [1,2,3,4]; track i) {
             <div class="h-20 rounded-xl bg-surface-hover animate-pulse"></div>
           }
         </div>
       } @else {
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div class="p-3 rounded-xl bg-brand/10">
             <div class="flex items-center gap-2 mb-1">
               <svg lucideTarget class="w-4 h-4 text-brand" strokeWidth="2" aria-hidden="true"></svg>

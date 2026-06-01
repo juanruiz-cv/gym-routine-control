@@ -10,10 +10,10 @@ import { LucideUsers, LucideUserCog, LucideListOrdered, LucideDumbbell, LucideAc
   standalone: true,
   imports: [RouterLink, UiCard, TranslatePipe, LucideUsers, LucideUserCog, LucideListOrdered, LucideDumbbell, LucideActivity, LucideArrowRight],
   template: `
-    <div class="p-4 space-y-5 max-w-lg mx-auto">
+    <div class="p-4 space-y-5 max-w-lg mx-auto md:max-w-4xl lg:max-w-none lg:mx-0 lg:px-6">
       <h1 class="text-xl font-bold">{{ 'admin.title' | translate }}</h1>
 
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         <a routerLink="/admin/users" class="block">
           <app-ui-card>
             <div class="flex flex-col items-center gap-2 py-2">

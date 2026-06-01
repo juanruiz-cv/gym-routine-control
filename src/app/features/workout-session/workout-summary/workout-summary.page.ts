@@ -23,7 +23,7 @@ import type { WorkoutSession } from '@shared/models';
     LucideHome, LucideRotateCcw,
   ],
   template: `
-    <div class="p-4 space-y-4 max-w-lg mx-auto">
+    <div class="p-4 space-y-4 max-w-lg lg:max-w-3xl mx-auto">
       @if (loading()) {
         <div class="flex flex-col gap-4">
           @for (i of [1,2,3]; track i) {
