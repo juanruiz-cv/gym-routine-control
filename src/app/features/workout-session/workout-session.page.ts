@@ -302,12 +302,14 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     }
 
     this._requestWakeLock();
+    document.addEventListener('visibilitychange', this._onVisibilityChange);
     const initialEx = this.workout()?.session.routine?.routine_exercises?.[0];
     this.customRestTime.set(initialEx?.rest_time ?? 90);
   }
 
   ngOnDestroy(): void {
     this._releaseWakeLock();
+    document.removeEventListener('visibilitychange', this._onVisibilityChange);
   }
 
   skipRest(): void {
@@ -425,6 +427,12 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     await this._workout.cancelSession(w.session.id);
     await this._router.navigate(['/routines']);
   }
+
+  private _onVisibilityChange = (): void => {
+    if (document.visibilityState === 'visible' && !this._wakeLock) {
+      this._requestWakeLock();
+    }
+  };
 
   private async _requestWakeLock(): Promise<void> {
     try {
