@@ -44,7 +44,7 @@ type TimerMode = 'countdown' | 'countup';
         </div>
       }
 
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 flex-wrap justify-center">
         @if (state() === 'running') {
           <button ui-button variant="secondary" size="md" (clicked)="pause()">
             <svg lucidePause class="w-[18px] h-[18px]" strokeWidth="2" aria-hidden="true"></svg> {{ 'timer.pause' | translate }}
