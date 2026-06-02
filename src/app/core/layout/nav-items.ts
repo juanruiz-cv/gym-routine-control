@@ -12,6 +12,7 @@ export function getNavItems(role: string): NavItem[] {
   }
   items.push(
     { key: 'nav.routines', route: '/routines' },
+    { key: 'nav.history', route: '/history' },
     { key: 'nav.exercises', route: '/exercises' },
     { key: 'nav.metrics', route: '/metrics' },
   );

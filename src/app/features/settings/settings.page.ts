@@ -4,6 +4,7 @@ import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiSkeletonCard, UiSelect, type SelectOption } from '@shared/ui';
 import { SupabaseService } from '@core/services/supabase.service';
+import { AuthService } from '@core/auth/auth.service';
 import { ProfileService } from '@core/services/profile.service';
 import { ThemeService, type ThemeMode } from '@core/services/theme.service';
 import { I18nService } from '@shared/i18n/i18n.service';
@@ -11,7 +12,6 @@ import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { LanguageSwitcherComponent } from '@shared/i18n/language-switcher.component';
 import { LucideLogOut, LucideUser, LucideTimer, LucideVolume2, LucideSmartphone, LucideMonitor, LucideSun, LucideMoon, LucideShield } from '@lucide/angular';
 import { PermissionService } from '@core/services/permission.service';
-import type { UserPreferences } from '@shared/models';
 
 @Component({
   selector: 'app-settings-page',
@@ -175,6 +175,7 @@ import type { UserPreferences } from '@shared/models';
 export class SettingsPage implements OnInit {
   private readonly _router = inject(Router);
   private readonly _supabase = inject(SupabaseService);
+  private readonly _auth = inject(AuthService);
   private readonly _profile = inject(ProfileService);
   private readonly _theme = inject(ThemeService);
   private readonly _i18n = inject(I18nService);
@@ -231,7 +232,6 @@ export class SettingsPage implements OnInit {
   }
 
   async signOut(): Promise<void> {
-    await this._supabase.client.auth.signOut();
-    await this._router.navigate(['/auth/login']);
+    await this._auth.signOut();
   }
 }

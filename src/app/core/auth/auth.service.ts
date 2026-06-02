@@ -1,7 +1,11 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, signal, computed, inject, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import type { User, Session } from '@supabase/supabase-js';
 import { SupabaseService } from '../services/supabase.service';
+import { RoutineService } from '../services/routine.service';
+import { ExerciseService } from '../services/exercise.service';
+import { MetricsService } from '../services/metrics.service';
+import { WorkoutService } from '../services/workout.service';
 
 export interface AuthState {
   user: User | null;
@@ -13,6 +17,7 @@ export interface AuthState {
 export class AuthService {
   private readonly _supabase = inject(SupabaseService);
   private readonly _router = inject(Router);
+  private readonly _injector = inject(Injector);
 
   private readonly _state = signal<AuthState>({
     user: null,
@@ -78,6 +83,10 @@ export class AuthService {
   }
 
   async signOut(): Promise<void> {
+    this._injector.get(RoutineService).clear();
+    this._injector.get(ExerciseService).clear();
+    this._injector.get(MetricsService).clear();
+    this._injector.get(WorkoutService).clear();
     await this._supabase.client.auth.signOut();
     await this._router.navigate(['/auth/login']);
   }

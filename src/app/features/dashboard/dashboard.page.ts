@@ -122,7 +122,7 @@ interface TooltipParam { name?: string; value?: unknown; color?: string; seriesN
                   [class.text-on-surface-muted]="selectedPeriod() !== period"
                   [class.hover:bg-surface-hover]="selectedPeriod() !== period"
                   (click)="changePeriod(period)"
-                >{{ period }}W</button>
+                >{{ 'dashboard.' + period + 'w' | translate }}</button>
               }
             </div>
           </div>
@@ -178,6 +178,10 @@ interface TooltipParam { name?: string; value?: unknown; color?: string; seriesN
                             <svg lucideClock class="w-3 h-3" strokeWidth="2" aria-hidden="true"></svg>
                             {{ session.duration | duration }}
                           </span>
+                        }
+                        @if (session.sets?.length) {
+                          <span>·</span>
+                          <span>{{ sessionVolume(session) }} kg</span>
                         }
                       </div>
                     </div>
@@ -270,7 +274,7 @@ export class DashboardPage implements OnInit {
       },
       series: [
         {
-          name: 'Volumen',
+          name: this._i18n.t('dashboard.volumeSeries'),
           type: 'line',
           data: volumes,
           smooth: true,
@@ -292,7 +296,7 @@ export class DashboardPage implements OnInit {
           emphasis: { focus: 'series' },
         },
         {
-          name: 'Media 7d',
+          name: this._i18n.t('dashboard.avgSeries'),
           type: 'line',
           data: ma,
           smooth: true,
@@ -346,5 +350,9 @@ export class DashboardPage implements OnInit {
   formatVolume(kg: number): string {
     if (kg >= 1000) return `${(kg / 1000).toFixed(1)}k`;
     return kg.toLocaleString();
+  }
+
+  sessionVolume(session: WorkoutSession): number {
+    return (session.sets ?? []).reduce((sum, s) => sum + ((s.weight ?? 0) * (s.reps ?? 0)), 0);
   }
 }

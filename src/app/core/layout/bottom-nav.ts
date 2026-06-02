@@ -4,13 +4,13 @@ import { PermissionService } from '@core/services/permission.service';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { DragScrollDirective } from '@shared/directives/drag-scroll';
 import { getNavItems } from './nav-items';
-import { LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChart3, LucideSettings, LucideShield, LucideUserCog } from '@lucide/angular';
+import { LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChart3, LucideSettings, LucideShield, LucideUserCog, LucideHistory } from '@lucide/angular';
 
 @Component({
   selector: 'app-bottom-nav',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, TranslatePipe, DragScrollDirective,
-    LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChart3, LucideSettings, LucideShield, LucideUserCog],
+    LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChart3, LucideSettings, LucideShield, LucideUserCog, LucideHistory],
   template: `
     <nav class="fixed bottom-0 left-0 right-0 z-50 bg-surface-elevated border-t border-white/10 safe-area-bottom">
       <div
@@ -32,6 +32,7 @@ import { LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChar
             @switch (item.key) {
               @case ('nav.dashboard') { <svg lucideLayoutDashboard class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
               @case ('nav.routines') { <svg lucideListOrdered class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
+              @case ('nav.history') { <svg lucideHistory class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
               @case ('nav.exercises') { <svg lucideDumbbell class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
               @case ('nav.metrics') { <svg lucideBarChart3 class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }
               @case ('nav.admin') { <svg lucideShield class="w-[22px] h-[22px]" strokeWidth="1.5" aria-hidden="true"></svg> }

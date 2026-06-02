@@ -174,4 +174,9 @@ export class RoutineService extends DataService {
     if (!routine) return;
     await this.update(id, { is_favorite: !routine.is_favorite });
   }
+
+  clear(): void {
+    this._routines.set([]);
+    this._loading.set(false);
+  }
 }

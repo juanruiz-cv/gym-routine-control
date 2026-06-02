@@ -32,6 +32,12 @@ export const routes: Routes = [
     loadChildren: () => import('@features/exercises/exercises.routes'),
   },
   {
+    path: 'history',
+    canActivate: [authGuard],
+    loadComponent: () => import('@core/layout/main-layout').then(m => m.MainLayoutComponent),
+    loadChildren: () => import('@features/history/history.routes'),
+  },
+  {
     path: 'workout',
     canActivate: [authGuard],
     loadChildren: () => import('@features/workout-session/workout-session.routes'),

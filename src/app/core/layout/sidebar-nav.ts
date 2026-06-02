@@ -8,7 +8,7 @@ import { UiBadge } from '@shared/ui/badge';
 import { getNavItems } from './nav-items';
 import {
   LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChart3,
-  LucideSettings, LucideShield, LucideUserCog, LucideChevronLeft, LucideChevronRight,
+  LucideSettings, LucideShield, LucideUserCog, LucideChevronLeft, LucideChevronRight, LucideHistory,
 } from '@lucide/angular';
 
 @Component({
@@ -17,7 +17,7 @@ import {
   imports: [
     RouterLink, RouterLinkActive, TranslatePipe, UiAvatar, UiBadge,
     LucideLayoutDashboard, LucideDumbbell, LucideListOrdered, LucideBarChart3,
-    LucideSettings, LucideShield, LucideUserCog, LucideChevronLeft, LucideChevronRight,
+    LucideSettings, LucideShield, LucideUserCog, LucideChevronLeft, LucideChevronRight, LucideHistory,
   ],
   template: `
     <nav
@@ -52,6 +52,7 @@ import {
               @switch (item.key) {
                 @case ('nav.dashboard') { <svg lucideLayoutDashboard class="w-5 h-5" strokeWidth="1.5" aria-hidden="true"></svg> }
                 @case ('nav.routines') { <svg lucideListOrdered class="w-5 h-5" strokeWidth="1.5" aria-hidden="true"></svg> }
+                @case ('nav.history') { <svg lucideHistory class="w-5 h-5" strokeWidth="1.5" aria-hidden="true"></svg> }
                 @case ('nav.exercises') { <svg lucideDumbbell class="w-5 h-5" strokeWidth="1.5" aria-hidden="true"></svg> }
                 @case ('nav.metrics') { <svg lucideBarChart3 class="w-5 h-5" strokeWidth="1.5" aria-hidden="true"></svg> }
                 @case ('nav.admin') { <svg lucideShield class="w-5 h-5" strokeWidth="1.5" aria-hidden="true"></svg> }

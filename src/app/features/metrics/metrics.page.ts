@@ -68,7 +68,7 @@ import { LucideTrophy } from '@lucide/angular';
                         [class.bg-white/15]="!$last"
                       >
                         <span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-medium text-on-surface opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          {{ week.sessions }} sesiones
+                          {{ week.sessions }} {{ 'metrics.sessions' | translate }}
                         </span>
                       </div>
                     </div>

@@ -142,7 +142,7 @@ export class WorkoutService extends DataService {
     const userId = await this.checkUserId();
     const { data, error } = await this.client
       .from('workout_sessions')
-      .select('*, routine:routines(id, name), sets:workout_sets(count)')
+      .select('*, routine:routines(id, name), sets:workout_sets(id, weight, reps, is_completed, set_number, routine_exercise_id, routine_exercise:routine_exercises(exercise:exercises(name, muscle_group)))')
       .eq('user_id', userId)
       .eq('status', 'completed')
       .order('completed_at', { ascending: false })
@@ -150,6 +150,11 @@ export class WorkoutService extends DataService {
 
     if (error) throw error;
     return data ?? [];
+  }
+
+  clear(): void {
+    this._activeWorkout.set(null);
+    this._sessions.set([]);
   }
 
   private async _checkPersonalRecords(sessionId: string): Promise<void> {

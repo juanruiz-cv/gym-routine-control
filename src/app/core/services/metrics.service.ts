@@ -214,4 +214,9 @@ export class MetricsService extends DataService {
 
     return streak;
   }
+
+  clear(): void {
+    this._stats.set(null);
+    this._loading.set(false);
+  }
 }

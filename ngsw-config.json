@@ -21,10 +21,19 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": [
-          "/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)",
-          "/*.json"
-        ]
+        "files": ["/**/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)", "/*.json"]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "exercises-api",
+      "urls": ["*/rest/v1/exercises*"],
+      "cacheConfig": {
+        "strategy": "freshness",
+        "maxSize": 200,
+        "maxAge": "1d",
+        "timeout": "5s"
       }
     }
   ]

@@ -3,7 +3,7 @@ import { isPlatformServer } from '@angular/common';
 import { Router, type CanActivateFn } from '@angular/router';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AuthService } from '../auth/auth.service';
-import { filter, map, take, switchMap } from 'rxjs';
+import { filter, map, take, switchMap, timeout, catchError } from 'rxjs';
 import { of } from 'rxjs';
 
 function checkAuth(): ReturnType<CanActivateFn> {
@@ -16,12 +16,14 @@ function checkAuth(): ReturnType<CanActivateFn> {
 
   return toObservable(auth.loading, { injector }).pipe(
     filter(v => !v),
+    timeout(5000),
     take(1),
     switchMap(() => toObservable(auth.isAuthenticated, { injector }).pipe(take(1))),
     map(isAuth => {
       if (!isAuth) return router.createUrlTree(['/auth/login']);
       return true;
     }),
+    catchError(() => of(router.createUrlTree(['/auth/login']))),
   );
 }
 
