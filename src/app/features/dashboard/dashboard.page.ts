@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { SlicePipe } from '@angular/common';
+import { NgxEchartsDirective } from 'ngx-echarts';
+import type { EChartsCoreOption } from 'echarts/core';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
-import { UiSkeletonStatsGrid, UiSkeletonListItem } from '@shared/ui';
+import { UiSkeletonStatsGrid, UiSkeletonListItem, UiSkeletonCard } from '@shared/ui';
 import { UiBadge } from '@shared/ui/badge';
 import { UiEmptyState } from '@shared/ui/empty-state';
 import { I18nService } from '@shared/i18n/i18n.service';
@@ -15,12 +16,15 @@ import { RelativeDatePipe } from '@shared/pipes/relative-date';
 import { LucideDumbbell, LucideFlame, LucideCalendar, LucideArrowRight, LucideTrendingUp, LucidePlay, LucideClock, LucideListOrdered } from '@lucide/angular';
 import type { WorkoutSession } from '@shared/models';
 
+interface TooltipParam { name?: string; value?: unknown; color?: string; seriesName?: string }
+
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
   imports: [
-    RouterLink, SlicePipe,
-    UiCard, UiButton, UiSkeletonStatsGrid, UiSkeletonListItem, UiBadge, UiEmptyState,
+    RouterLink,
+    NgxEchartsDirective,
+    UiCard, UiButton, UiSkeletonStatsGrid, UiSkeletonListItem, UiSkeletonCard, UiBadge, UiEmptyState,
     DurationPipe, RelativeDatePipe, TranslatePipe,
     LucideDumbbell, LucideFlame, LucideCalendar, LucideArrowRight,
     LucideTrendingUp, LucidePlay, LucideClock, LucideListOrdered,
@@ -107,35 +111,31 @@ import type { WorkoutSession } from '@shared/models';
 
         <!-- Volume Chart -->
         <div class="flex-1 min-w-0 mt-6 lg:mt-0">
-          @if (volumeData().length > 0) {
-            <div>
-              <h2 class="text-sm font-semibold text-on-surface-secondary mb-3">{{ 'dashboard.volumeTrend' | translate }}</h2>
-              <app-ui-card variant="glass">
-                <div class="flex items-end gap-2 h-32 lg:h-48">
-                  @for (point of volumeData(); track point.date) {
-                    <div class="flex-1 flex flex-col items-center gap-1.5">
-                      <div class="flex-1 w-full flex items-end">
-                        <div
-                          class="w-full rounded-t-md transition-all duration-500 group relative"
-                          [style.height.%]="point.volume / maxVolume() * 100"
-                          [class.bg-gradient-to-t]="isCurrentWeek(point.date)"
-                          [class.from-brand]="isCurrentWeek(point.date)"
-                          [class.to-brand/60]="isCurrentWeek(point.date)"
-                          [class.bg-white/15]="!isCurrentWeek(point.date)"
-                        >
-                          <span class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-medium text-on-surface opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                            {{ formatVolume(point.volume) }}
-                          </span>
-                        </div>
-                      </div>
-                      <span class="text-[10px] text-on-surface-muted truncate w-full text-center">
-                        {{ point.date | slice:5:10 }}
-                      </span>
-                    </div>
-                  }
-                </div>
-              </app-ui-card>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-on-surface-secondary">{{ 'dashboard.volumeTrend' | translate }}</h2>
+            <div class="flex gap-1 bg-surface-card rounded-lg p-0.5">
+              @for (period of periods; track period) {
+                <button
+                  class="px-2.5 py-1 rounded-md text-xs font-medium transition-colors"
+                  [class.bg-brand]="selectedPeriod() === period"
+                  [class.text-on-surface]="selectedPeriod() === period"
+                  [class.text-on-surface-muted]="selectedPeriod() !== period"
+                  [class.hover:bg-surface-hover]="selectedPeriod() !== period"
+                  (click)="changePeriod(period)"
+                >{{ period }}W</button>
+              }
             </div>
+          </div>
+          @if (volumeData().length > 0) {
+            <app-ui-card variant="glass">
+              <div echarts [options]="chartOptions()" [autoResize]="true" class="w-full h-48 lg:h-64"></div>
+            </app-ui-card>
+          } @else if (volumeData().length === 0 && !loadingSessions()) {
+            <app-ui-card variant="glass" class="flex items-center justify-center h-48 lg:h-64">
+              <p class="text-sm text-on-surface-muted">{{ 'dashboard.noVolumeData' | translate }}</p>
+            </app-ui-card>
+          } @else {
+            <app-ui-skeleton-card height="192px" class="lg:h-64" />
           }
         </div>
 
@@ -210,11 +210,113 @@ export class DashboardPage implements OnInit {
   readonly loadingSessions = signal(true);
   readonly recentSessions = signal<WorkoutSession[]>([]);
   readonly volumeData = signal<VolumeDataPoint[]>([]);
+  readonly selectedPeriod = signal<4 | 8 | 12>(8);
+  readonly periods = [4, 8, 12] as const;
 
-  readonly maxVolume = computed(() => {
+  readonly chartOptions = computed<EChartsCoreOption>(() => {
     const data = this.volumeData();
-    return Math.max(...data.map(d => d.volume), 1);
+    if (!data.length) return {};
+
+    const dates = data.map(d => d.date.substring(5));
+    const volumes = data.map(d => d.volume);
+    const ma = this._movingAverage(volumes, 7);
+
+    return {
+      backgroundColor: 'transparent',
+      grid: {
+        left: 0,
+        right: 8,
+        top: 12,
+        bottom: 4,
+        containLabel: true,
+      },
+      xAxis: {
+        type: 'category',
+        data: dates,
+        axisLine: { show: false },
+        axisTick: { show: false },
+        axisLabel: {
+          color: '#9CA3AF',
+          fontSize: 10,
+          interval: this.selectedPeriod() === 4 ? 2 : (this.selectedPeriod() === 8 ? 4 : 6),
+        },
+      },
+      yAxis: {
+        type: 'value',
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.06)' } },
+        axisLabel: {
+          color: '#9CA3AF',
+          fontSize: 10,
+          formatter: (v: number) => v >= 1000 ? `${(v / 1000).toFixed(1)}k` : String(v),
+        },
+      },
+      tooltip: {
+        trigger: 'axis',
+        backgroundColor: 'rgba(24,24,32,0.96)',
+        borderColor: 'rgba(255,255,255,0.08)',
+        textStyle: { color: '#E5E7EB', fontSize: 12 },
+        formatter: (params: TooltipParam | TooltipParam[]) => {
+          const items = Array.isArray(params) ? params : [params];
+          const date = items[0]?.name;
+          let html = `<div style="font-weight:600;margin-bottom:4px">${date}</div>`;
+          for (const item of items) {
+            const val = item.value;
+            if (val == null) continue;
+            const marker = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${item.color};margin-right:6px"></span>`;
+            html += `<div>${marker}${item.seriesName}: ${Number(val).toLocaleString()} kg</div>`;
+          }
+          return html;
+        },
+      },
+      series: [
+        {
+          name: 'Volumen',
+          type: 'line',
+          data: volumes,
+          smooth: true,
+          areaStyle: {
+            color: {
+              type: 'linear',
+              x: 0, y: 0, x2: 0, y2: 1,
+              colorStops: [
+                { offset: 0, color: 'rgba(59,130,246,0.28)' },
+                { offset: 1, color: 'rgba(59,130,246,0.0)' },
+              ],
+            },
+          },
+          lineStyle: { color: '#3B82F6', width: 2.5 },
+          itemStyle: { color: '#3B82F6' },
+          symbol: 'circle',
+          symbolSize: 4,
+          showSymbol: false,
+          emphasis: { focus: 'series' },
+        },
+        {
+          name: 'Media 7d',
+          type: 'line',
+          data: ma,
+          smooth: true,
+          lineStyle: { color: '#F59E0B', width: 2, type: 'dashed', dashOffset: 4 },
+          itemStyle: { color: '#F59E0B' },
+          symbol: 'none',
+          emphasis: { focus: 'series' },
+        },
+      ],
+    };
   });
+
+  changePeriod(weeks: 4 | 8 | 12): void {
+    this.selectedPeriod.set(weeks);
+    this._loadVolumeData();
+  }
+
+  private _movingAverage(data: number[], window: number): (number | null)[] {
+    return data.map((_, i) => {
+      if (i < window - 1) return null;
+      const slice = data.slice(i - window + 1, i + 1);
+      return Math.round(slice.reduce((a, b) => a + b, 0) / window);
+    });
+  }
 
   async ngOnInit(): Promise<void> {
     await this._metrics.getDashboardStats();
@@ -234,7 +336,7 @@ export class DashboardPage implements OnInit {
 
   private async _loadVolumeData(): Promise<void> {
     try {
-      const data = await this._metrics.getVolumeHistory(8);
+      const data = await this._metrics.getVolumeHistory(this.selectedPeriod());
       this.volumeData.set(data);
     } catch {
       this.volumeData.set([]);
@@ -244,12 +346,5 @@ export class DashboardPage implements OnInit {
   formatVolume(kg: number): string {
     if (kg >= 1000) return `${(kg / 1000).toFixed(1)}k`;
     return kg.toLocaleString();
-  }
-
-  isCurrentWeek(date: string): boolean {
-    const now = new Date();
-    const d = new Date(date);
-    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
-    return d >= start;
   }
 }

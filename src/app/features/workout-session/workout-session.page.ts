@@ -48,7 +48,7 @@ import {
             <button
               ui-button variant="primary" size="sm"
               [title]="'workout.finish' | translate"
-              (click)="finishWorkout()"
+              (click)="confirmFinish.set(true)"
               [attr.aria-label]="'workout.finish' | translate"
             >
               <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
@@ -187,7 +187,7 @@ import {
                                     />
                                     <button
                                       ui-button variant="primary" size="sm"
-                                      [disabled]="!isCurrentSet(set, exSets) || set.weight == null || set.reps == null"
+                                      [disabled]="!canCompleteSet(set, exSets)"
                                       (click)="openConfirmSet(set.id, ex.id); soundClick()"
                                       [attr.aria-label]="'workout.completeSet' | translate"
                                     >
@@ -203,30 +203,33 @@ import {
                     }
 
                     <!-- Rest Timer between sets -->
-                    @if (completed > 0 && completed < total && restTimerActiveFor() === ex.id) {
-                      <app-ui-card variant="glass" class="mt-3">
-                        <div class="flex items-center gap-3 mb-3">
-                          <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
-                          <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
-                          <input
-                            type="text"
-                            [value]="restTimeDisplay()"
-                            (input)="onRestTimeChange($any($event.target).value, ex.id)"
-                            (blur)="onRestTimeBlur()"
-                            class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand"
-                            placeholder="1:30"
+                    @if (completed > 0 && completed < total) {
+                      @if (restTimerChanging() === ex.id) {
+                        <app-ui-skeleton-card height="200px" class="mt-3" />
+                      } @else if (restTimerActiveFor() === ex.id) {
+                        <app-ui-card variant="glass" class="mt-3">
+                          <div class="flex items-center gap-3 mb-3">
+                            <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
+                            <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
+                            <input
+                              type="text"
+                              [value]="restTimeDisplay()"
+                              (blur)="onRestTimeChange($any($event.target).value, ex.id)"
+                              class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand"
+                              placeholder="1:30"
+                            />
+                          </div>
+                          <app-ui-timer
+                            mode="countdown"
+                            [duration]="customRestTime()"
+                            [autoStart]="true"
+                            [allowSkip]="true"
+                            skipLabel="timer.skipRest"
+                            (timerStopped)="skipRestFor(ex.id)"
+                            (timerCompleted)="onRestCompleted()"
                           />
-                        </div>
-                        <app-ui-timer
-                          mode="countdown"
-                          [duration]="customRestTime()"
-                          [autoStart]="true"
-                          [allowSkip]="true"
-                          skipLabel="timer.skipRest"
-                          (timerStopped)="skipRestFor(ex.id)"
-                          (timerCompleted)="onRestCompleted()"
-                        />
-                      </app-ui-card>
+                        </app-ui-card>
+                      }
                     }
                   </div>
                 }
@@ -299,6 +302,24 @@ import {
           </div>
         </app-ui-modal>
       }
+
+      <!-- Finish Confirmation -->
+      <app-ui-modal [isOpen]="confirmFinish()" [title]="'workout.finishTitle' | translate" (closed)="confirmFinish.set(false)">
+        <p class="text-sm text-on-surface-muted mb-4">
+          @if (pendingSetsCount() > 0) {
+            {{ 'workout.finishPending' | translate:{ count: pendingSetsCount() } }}
+          } @else {
+            {{ 'workout.finishConfirm' | translate }}
+          }
+        </p>
+        <div class="flex gap-3">
+          <button ui-button variant="ghost" size="md" class="flex-1" (click)="confirmFinish.set(false)">{{ 'workout.cancel' | translate }}</button>
+          <button ui-button variant="primary" size="md" class="flex-1" (click)="confirmFinish.set(false); finishWorkout()">
+            <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
+            {{ 'workout.finish' | translate }}
+          </button>
+        </div>
+      </app-ui-modal>
     </div>
   `,
   styles: [`
@@ -327,8 +348,10 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
 
   readonly workout = this._workout.activeWorkout;
   readonly confirmCancel = signal(false);
+  readonly confirmFinish = signal(false);
   readonly expandedExerciseIds = signal<Set<string>>(new Set());
   readonly restTimerActiveFor = signal<string | null>(null);
+  readonly restTimerChanging = signal<string | null>(null);
   readonly customRestTime = signal(90);
   readonly setToConfirm = signal<{ setId: string; exId: string; weight: number; reps: number; setNumber: number; exName: string | undefined } | null>(null);
 
@@ -340,6 +363,12 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     const total = w.session.sets.length;
     const completed = w.session.sets.filter(s => s.is_completed).length;
     return total > 0 ? (completed / total) * 100 : 0;
+  });
+
+  readonly pendingSetsCount = computed(() => {
+    const w = this.workout();
+    if (!w?.session?.sets?.length) return 0;
+    return w.session.sets.filter(s => !s.is_completed).length;
   });
 
   readonly restTimeDisplay = computed(() => {
@@ -362,6 +391,10 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
   isCurrentSet(set: WorkoutSet, sets: WorkoutSet[]): boolean {
     const firstIncomplete = sets.find(s => !s.is_completed);
     return firstIncomplete?.id === set.id;
+  }
+
+  canCompleteSet(set: WorkoutSet, sets: WorkoutSet[]): boolean {
+    return this.isCurrentSet(set, sets) && set.weight != null && set.reps != null;
   }
 
   toggleExercise(id: string): void {
@@ -503,26 +536,34 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     this.customRestTime.set(
       w.session.routine?.routine_exercises?.find(e => e.id === exId)?.rest_time ?? 90
     );
+    this.restTimerChanging.set(exId);
     this.restTimerActiveFor.set(null);
-    setTimeout(() => this.restTimerActiveFor.set(exId), 50);
+    setTimeout(() => {
+      this.restTimerActiveFor.set(exId);
+      this.restTimerChanging.set(null);
+    }, 50);
   }
 
   skipRestFor(exId: string): void {
+    this.restTimerChanging.set(exId);
     this.restTimerActiveFor.set(null);
-    setTimeout(() => this.restTimerActiveFor.set(exId), 50);
+    setTimeout(() => {
+      this.restTimerActiveFor.set(exId);
+      this.restTimerChanging.set(null);
+    }, 50);
   }
 
   onRestTimeChange(value: string, exId: string): void {
     const seconds = this._parseRestTime(value);
     if (seconds && seconds >= 10) {
       this.customRestTime.set(seconds);
+      this.restTimerChanging.set(exId);
       this.restTimerActiveFor.set(null);
-      setTimeout(() => this.restTimerActiveFor.set(exId), 50);
+      setTimeout(() => {
+        this.restTimerActiveFor.set(exId);
+        this.restTimerChanging.set(null);
+      }, 50);
     }
-  }
-
-  onRestTimeBlur(): void {
-    /* force re-eval of restTimeDisplay, no-op */
   }
 
   onRestCompleted(): void {
