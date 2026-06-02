@@ -203,45 +203,46 @@ import {
                       </div>
                     }
 
-                    <!-- Rest Timer between sets -->
-                    @if (completed > 0 && completed < total) {
-                      @if (restTimerChanging() === ex.id) {
-                        <app-ui-skeleton-card height="200px" class="mt-3" />
-                      } @else if (restTimerActiveFor() === ex.id) {
-                        <app-ui-card variant="glass" class="mt-3">
-                          <div class="flex flex-col sm:flex-row items-center gap-4">
-                            <app-recovery-timer-avatar
-                              [remainingSeconds]="currentRestRemaining()"
-                              [totalSeconds]="customRestTime()"
-                            />
-                            <div class="flex-1 flex flex-col items-center">
-                              <div class="flex items-center gap-3 mb-3">
-                                <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
-                                <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
-                                <input
-                                  type="text"
-                                  [value]="restTimeDisplay()"
-                                  (blur)="onRestTimeChange($any($event.target).value, ex.id)"
-                                  class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand"
-                                  placeholder="1:30"
-                                />
-                              </div>
-                              <app-ui-timer
-                                mode="countdown"
-                                [duration]="customRestTime()"
-                                [autoStart]="true"
-                                [allowSkip]="true"
-                                skipLabel="timer.skipRest"
-                                (timerStopped)="skipRestFor(ex.id)"
-                                (timerCompleted)="onRestCompleted()"
-                                (timerTick)="currentRestRemaining.set($event)"
-                              />
-                            </div>
-                          </div>
-                        </app-ui-card>
-                      }
-                    }
                   </div>
+                }
+
+                <!-- Rest Timer -->
+                @if (completed > 0 && completed < total) {
+                  @if (restTimerChanging() === ex.id) {
+                    <app-ui-skeleton-card height="200px" class="mt-3" />
+                  } @else if (restTimerActiveFor() === ex.id) {
+                    <app-ui-card variant="glass" class="mt-3" [class.hidden]="!isExpanded(ex.id)">
+                      <div class="flex items-center justify-center gap-3 mb-3">
+                        <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
+                        <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
+                        <input
+                          type="text"
+                          [value]="restTimeDisplay()"
+                          (blur)="onRestTimeChange($any($event.target).value, ex.id)"
+                          class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand"
+                          placeholder="1:30"
+                        />
+                      </div>
+                      <div class="flex items-center gap-4">
+                        <app-recovery-timer-avatar
+                          [remainingSeconds]="currentRestRemaining()"
+                          [totalSeconds]="customRestTime()"
+                        />
+                        <div class="flex-1">
+                          <app-ui-timer
+                            mode="countdown"
+                            [duration]="customRestTime()"
+                            [autoStart]="true"
+                            [allowSkip]="true"
+                            skipLabel="timer.skipRest"
+                            (timerStopped)="skipRestFor(ex.id)"
+                            (timerCompleted)="onRestCompleted()"
+                            (timerTick)="currentRestRemaining.set($event)"
+                          />
+                        </div>
+                      </div>
+                    </app-ui-card>
+                  }
                 }
               </div>
             }

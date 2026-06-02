@@ -169,7 +169,7 @@ interface TooltipParam { name?: string; value?: unknown; color?: string; seriesN
                       <svg lucideDumbbell class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
                     </div>
                     <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium truncate">{{ session.routine?.name ?? ('dashboard.workout' | translate) }}</p>
+                      <p class="text-sm font-medium truncate">{{ session.routine?.name ?? session.routine_name ?? ('dashboard.workout' | translate) }}</p>
                       <div class="flex items-center gap-2 text-xs text-on-surface-muted">
                         <span>{{ session.completed_at | relativeDate }}</span>
                         @if (session.duration) {

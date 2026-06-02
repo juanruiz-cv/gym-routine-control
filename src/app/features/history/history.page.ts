@@ -83,7 +83,7 @@ interface ExerciseGroup {
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-2">
-                      <p class="text-sm font-medium truncate">{{ session.routine?.name ?? ('history.noName' | translate) }}</p>
+                      <p class="text-sm font-medium truncate">{{ session.routine?.name ?? session.routine_name ?? ('history.noName' | translate) }}</p>
                       <app-ui-badge variant="success" size="sm">{{ 'history.completed' | translate }}</app-ui-badge>
                     </div>
                     <div class="flex items-center flex-wrap gap-x-2 gap-y-0.5 mt-1 text-xs text-on-surface-muted">

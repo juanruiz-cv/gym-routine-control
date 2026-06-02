@@ -17,11 +17,18 @@ export class WorkoutService extends DataService {
   async startSession(routineId: string, routineExercises: { id: string; sets: number }[]): Promise<WorkoutSession> {
     const userId = await this.checkUserId();
 
+    const { data: routine } = await this.client
+      .from('routines')
+      .select('name')
+      .eq('id', routineId)
+      .single();
+
     const { data: session, error } = await this.client
       .from('workout_sessions')
       .insert({
         user_id: userId,
         routine_id: routineId,
+        routine_name: routine?.name ?? null,
         status: 'in_progress',
       })
       .select()

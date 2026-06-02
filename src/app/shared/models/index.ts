@@ -96,6 +96,7 @@ export interface WorkoutSession {
   id: string;
   user_id: string;
   routine_id: string | null;
+  routine_name: string | null;
   routine?: Routine;
   started_at: string;
   completed_at: string | null;
