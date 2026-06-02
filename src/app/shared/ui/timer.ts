@@ -190,9 +190,12 @@ export class UiTimer implements OnInit, OnDestroy {
             this._notification.playTimerEnd();
             this._notification.vibrate([200, 100, 200]);
             this.timerCompleted.emit();
+            this.timerTick.emit(0);
             return 0;
           }
-          return v - 1;
+          const next = v - 1;
+          this.timerTick.emit(next);
+          return next;
         } else {
           const next = v + 1;
           this.timerTick.emit(next);

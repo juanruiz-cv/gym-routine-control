@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none" role="img" aria-label="Personaje recargando">
+  <style>
+    .head { animation: normalBreath 3s ease-in-out infinite; transform-origin: 60px 42px; }
+    @keyframes normalBreath { 0%,100%{transform:scale(1)} 50%{transform:scale(1.02)} }
+    @media (prefers-reduced-motion: reduce) { .head{animation:none} }
+  </style>
+
+  <!-- Ground -->
+  <line x1="15" y1="120" x2="105" y2="120" stroke="#ffffff0d" stroke-width="3" stroke-linecap="round"/>
+  <!-- Shadow -->
+  <ellipse cx="60" cy="120" rx="16" ry="3" fill="#ffffff06"/>
+
+  <!-- Legs straight, standing -->
+  <path d="M60,90 L56,116 L52,120" stroke="#eab308" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M60,90 L64,116 L68,120" stroke="#eab308" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Feet -->
+  <circle cx="52" cy="120" r="5.5" fill="#eab308"/>
+  <circle cx="68" cy="120" r="5.5" fill="#eab308"/>
+
+  <!-- Torso upright -->
+  <line x1="60" y1="90" x2="60" y2="55" stroke="#eab308" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Arms relaxed at sides -->
+  <path d="M60,62 L52,82" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+  <path d="M60,62 L68,82" stroke="#eab308" stroke-width="4" stroke-linecap="round"/>
+  <!-- Hands -->
+  <circle cx="52" cy="82" r="4.5" fill="#eab308"/>
+  <circle cx="68" cy="82" r="4.5" fill="#eab308"/>
+
+  <!-- Head upright, normal -->
+  <g class="head">
+    <circle cx="60" cy="44" r="12" fill="#1c1c1e" stroke="#eab308" stroke-width="4.5"/>
+    <!-- Open eyes -->
+    <circle cx="54" cy="42" r="2.5" fill="#eab308"/>
+    <circle cx="66" cy="42" r="2.5" fill="#eab308"/>
+    <circle cx="54.5" cy="41.5" r="0.9" fill="#1c1c1e"/>
+    <circle cx="66.5" cy="41.5" r="0.9" fill="#1c1c1e"/>
+    <!-- Small smile -->
+    <path d="M56,49 Q60,51 64,49" stroke="#eab308" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </g>
+
+  <!-- Yellow glow -->
+  <circle cx="60" cy="75" r="42" fill="url(#reg)" opacity="0.08"/>
+  <defs><radialGradient id="reg"><stop offset="0%" stop-color="#eab308"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+</svg>

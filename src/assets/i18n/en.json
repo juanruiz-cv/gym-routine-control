@@ -294,6 +294,12 @@
   "timer.elapsed": "Elapsed",
   "timer.workoutRunning": "Workout in progress",
 
+  "recovery.exhausted": "Exhausted",
+  "recovery.recovering": "Recovering",
+  "recovery.regaining": "Recharging",
+  "recovery.ready": "Ready",
+  "recovery.go": "Go!",
+
   "modal.closeLabel": "Close modal",
   "modal.close": "Close",
 

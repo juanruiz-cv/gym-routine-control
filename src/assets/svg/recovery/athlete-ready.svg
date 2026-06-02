@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none" role="img" aria-label="Personaje listo">
+  <style>
+    .glow { animation: readyPulse 2.2s ease-in-out infinite; }
+    .bounce { animation: readyBounce 2.5s ease-in-out infinite; transform-origin: 60px 95px; }
+    @keyframes readyPulse { 0%,100%{opacity:.08} 50%{opacity:.2} }
+    @keyframes readyBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+    @media (prefers-reduced-motion: reduce) { .glow,.bounce{animation:none} }
+  </style>
+
+  <!-- Ground -->
+  <line x1="15" y1="120" x2="105" y2="120" stroke="#ffffff0d" stroke-width="3" stroke-linecap="round"/>
+  <!-- Shadow -->
+  <ellipse cx="60" cy="120" rx="18" ry="3" fill="#ffffff06"/>
+
+  <g class="bounce">
+    <!-- Legs in athletic stance -->
+    <path d="M60,90 L52,116 L46,120" stroke="#22c55e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60,90 L68,116 L74,120" stroke="#22c55e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Feet -->
+    <circle cx="46" cy="120" r="5.5" fill="#22c55e"/>
+    <circle cx="74" cy="120" r="5.5" fill="#22c55e"/>
+
+    <!-- Torso upright, confident -->
+    <line x1="60" y1="90" x2="60" y2="50" stroke="#22c55e" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- Arms bent in ready/guard position, fists -->
+    <path d="M60,60 L48,70 L42,66" stroke="#22c55e" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60,60 L72,70 L78,66" stroke="#22c55e" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Fists -->
+    <circle cx="42" cy="66" r="5" fill="#22c55e"/>
+    <circle cx="78" cy="66" r="5" fill="#22c55e"/>
+
+    <!-- Head confident -->
+    <circle cx="60" cy="40" r="12" fill="#1c1c1e" stroke="#22c55e" stroke-width="4.5"/>
+    <!-- Determined eyes -->
+    <line x1="52" y1="38" x2="56" y2="38" stroke="#22c55e" stroke-width="2.8" stroke-linecap="round"/>
+    <line x1="64" y1="38" x2="68" y2="38" stroke="#22c55e" stroke-width="2.8" stroke-linecap="round"/>
+    <!-- Angled eyebrows -->
+    <line x1="50" y1="33" x2="56" y2="35" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round"/>
+    <line x1="70" y1="33" x2="64" y2="35" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round"/>
+    <!-- Confident smirk -->
+    <path d="M56,45 L60,47 L64,45" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+
+  <!-- Green glow -->
+  <circle class="glow" cx="60" cy="75" r="48" fill="url(#rdy)"/>
+  <defs><radialGradient id="rdy"><stop offset="0%" stop-color="#22c55e"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+</svg>

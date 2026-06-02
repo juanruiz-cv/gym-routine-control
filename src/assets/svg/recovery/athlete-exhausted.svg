@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none" role="img" aria-label="Personaje agotado">
+  <style>
+    .body { animation: shake 0.6s ease-in-out infinite; transform-origin: 60px 75px; }
+    .head { animation: heavyBreath 0.85s ease-in-out infinite; transform-origin: 60px 70px; }
+    .sweat1 { animation: sweatFade 1.2s ease-in-out infinite; }
+    .sweat2 { animation: sweatFade 1.2s ease-in-out 0.4s infinite; }
+    .sweat3 { animation: sweatFade 1.2s ease-in-out 0.8s infinite; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(2px)} 75%{transform:translateX(-2px)} }
+    @keyframes heavyBreath { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+    @keyframes sweatFade { 0%,100%{opacity:0;transform:translateY(0)} 50%{opacity:1;transform:translateY(10px)} }
+    @media (prefers-reduced-motion: reduce) { .body,.head,.sweat1,.sweat2,.sweat3 { animation:none } }
+  </style>
+
+  <!-- Ground -->
+  <line x1="15" y1="120" x2="105" y2="120" stroke="#ffffff0d" stroke-width="3" stroke-linecap="round"/>
+
+  <g class="body">
+    <!-- Legs spread on ground -->
+    <path d="M60,102 L48,118 L42,120" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60,102 L72,118 L78,120" stroke="#ef4444" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Feet -->
+    <circle cx="42" cy="120" r="5.5" fill="#ef4444"/>
+    <circle cx="78" cy="120" r="5.5" fill="#ef4444"/>
+
+    <!-- Torso slumped forward -->
+    <path d="M60,102 Q56,92 60,80" stroke="#ef4444" stroke-width="5" stroke-linecap="round" fill="none"/>
+
+    <!-- Arms limp, hanging to ground -->
+    <path d="M59,84 Q48,88 46,108" stroke="#ef4444" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <path d="M61,84 Q72,88 74,108" stroke="#ef4444" stroke-width="4" stroke-linecap="round" fill="none"/>
+    <!-- Hands (limp) -->
+    <circle cx="46" cy="108" r="4.5" fill="#ef4444"/>
+    <circle cx="74" cy="108" r="4.5" fill="#ef4444"/>
+
+    <!-- Head drooping down -->
+    <g class="head">
+      <circle cx="60" cy="72" r="12" fill="#1c1c1e" stroke="#ef4444" stroke-width="4.5"/>
+      <!-- X_X eyes -->
+      <line x1="54" y1="70" x2="58" y2="74" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="58" y1="70" x2="54" y2="74" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="62" y1="70" x2="66" y2="74" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="66" y1="70" x2="62" y2="74" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Wavy mouth -->
+      <path d="M55,78 Q58,76 61,78 Q64,80 66,78" stroke="#ef4444" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </g>
+  </g>
+
+  <!-- Sweat drops -->
+  <path class="sweat1" d="M44,64 Q44,60 46,58 Q48,60 48,64 Q48,67 46,67 Q44,67 44,64Z" fill="#f97316" opacity="0.7"/>
+  <path class="sweat2" d="M76,62 Q76,58 78,56 Q80,58 80,62 Q80,65 78,65 Q76,65 76,62Z" fill="#ef4444" opacity="0.6"/>
+  <path class="sweat3" d="M52,54 Q52,51 53.5,49 Q55,51 55,54 Q55,56 53.5,56 Q52,56 52,54Z" fill="#f97316" opacity="0.5"/>
+
+  <!-- Red glow -->
+  <circle cx="60" cy="85" r="50" fill="url(#exh)" opacity="0.1"/>
+  <defs><radialGradient id="exh"><stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+</svg>

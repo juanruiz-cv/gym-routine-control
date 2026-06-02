@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" fill="none" role="img" aria-label="Personaje recuperando">
+  <style>
+    .body { animation: wobble 2.5s ease-in-out infinite; transform-origin: 60px 80px; }
+    .head { animation: slowBreath 2.5s ease-in-out infinite; transform-origin: 60px 55px; }
+    @keyframes wobble { 0%,100%{transform:rotate(0)} 30%{transform:rotate(2deg)} 70%{transform:rotate(-2deg)} }
+    @keyframes slowBreath { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
+    @media (prefers-reduced-motion: reduce) { .body,.head{animation:none} }
+  </style>
+
+  <!-- Ground -->
+  <line x1="15" y1="120" x2="105" y2="120" stroke="#ffffff0d" stroke-width="3" stroke-linecap="round"/>
+  <!-- Shadow -->
+  <ellipse cx="60" cy="120" rx="18" ry="3" fill="#ffffff06"/>
+
+  <g class="body">
+    <!-- Legs bent, sitting-kneel -->
+    <path d="M60,95 L52,115 L46,120" stroke="#f59e0b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60,95 L68,115 L74,120" stroke="#f59e0b" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Feet -->
+    <circle cx="46" cy="120" r="5.5" fill="#f59e0b"/>
+    <circle cx="74" cy="120" r="5.5" fill="#f59e0b"/>
+
+    <!-- Torso bent but straightening -->
+    <path d="M60,95 L60,68" stroke="#f59e0b" stroke-width="5" stroke-linecap="round"/>
+
+    <!-- Arms: hands on knees -->
+    <path d="M57,75 L48,90 L44,98" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M63,75 L72,90 L76,98" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Hands -->
+    <circle cx="44" cy="98" r="4.5" fill="#f59e0b"/>
+    <circle cx="76" cy="98" r="4.5" fill="#f59e0b"/>
+
+    <!-- Head tilting up -->
+    <g class="head">
+      <circle cx="60" cy="58" r="12" fill="#1c1c1e" stroke="#f59e0b" stroke-width="4.5"/>
+      <!-- Tired eyes, half open -->
+      <line x1="52" y1="56" x2="57" y2="56" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="63" y1="56" x2="68" y2="56" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Small mouth -->
+      <line x1="56" y1="63" x2="64" y2="63" stroke="#f59e0b" stroke-width="2" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- Amber glow -->
+  <circle cx="60" cy="85" r="45" fill="url(#rec)" opacity="0.1"/>
+  <defs><radialGradient id="rec"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs>
+</svg>

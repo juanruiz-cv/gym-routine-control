@@ -7,6 +7,7 @@ import { UiBadge } from '@shared/ui/badge';
 import { UiSkeletonCard, UiTimer } from '@shared/ui';
 import { UiModal } from '@shared/ui/modal';
 import { UiEmptyState } from '@shared/ui/empty-state';
+import { RecoveryTimerAvatarComponent } from '@shared/components/recovery-timer-avatar/recovery-timer-avatar.component';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { WorkoutService } from '@core/services/workout.service';
 import { NotificationService } from '@core/services/notification.service';
@@ -22,7 +23,7 @@ import {
   standalone: true,
   imports: [
     UiCard, UiButton, UiBadge, UiSkeletonCard, UiTimer, UiModal, UiEmptyState,
-    TranslatePipe, DragDropModule,
+    TranslatePipe, DragDropModule, RecoveryTimerAvatarComponent,
     LucideTimer, LucideCheck, LucideCheckCircle, LucideX, LucideChevronDown,
     LucideGripVertical,
   ],
@@ -208,26 +209,35 @@ import {
                         <app-ui-skeleton-card height="200px" class="mt-3" />
                       } @else if (restTimerActiveFor() === ex.id) {
                         <app-ui-card variant="glass" class="mt-3">
-                          <div class="flex items-center gap-3 mb-3">
-                            <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
-                            <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
-                            <input
-                              type="text"
-                              [value]="restTimeDisplay()"
-                              (blur)="onRestTimeChange($any($event.target).value, ex.id)"
-                              class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand"
-                              placeholder="1:30"
+                          <div class="flex flex-col sm:flex-row items-center gap-4">
+                            <app-recovery-timer-avatar
+                              [remainingSeconds]="currentRestRemaining()"
+                              [totalSeconds]="customRestTime()"
                             />
+                            <div class="flex-1 flex flex-col items-center">
+                              <div class="flex items-center gap-3 mb-3">
+                                <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
+                                <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
+                                <input
+                                  type="text"
+                                  [value]="restTimeDisplay()"
+                                  (blur)="onRestTimeChange($any($event.target).value, ex.id)"
+                                  class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand"
+                                  placeholder="1:30"
+                                />
+                              </div>
+                              <app-ui-timer
+                                mode="countdown"
+                                [duration]="customRestTime()"
+                                [autoStart]="true"
+                                [allowSkip]="true"
+                                skipLabel="timer.skipRest"
+                                (timerStopped)="skipRestFor(ex.id)"
+                                (timerCompleted)="onRestCompleted()"
+                                (timerTick)="currentRestRemaining.set($event)"
+                              />
+                            </div>
                           </div>
-                          <app-ui-timer
-                            mode="countdown"
-                            [duration]="customRestTime()"
-                            [autoStart]="true"
-                            [allowSkip]="true"
-                            skipLabel="timer.skipRest"
-                            (timerStopped)="skipRestFor(ex.id)"
-                            (timerCompleted)="onRestCompleted()"
-                          />
                         </app-ui-card>
                       }
                     }
@@ -353,6 +363,7 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
   readonly restTimerActiveFor = signal<string | null>(null);
   readonly restTimerChanging = signal<string | null>(null);
   readonly customRestTime = signal(90);
+  readonly currentRestRemaining = signal(90);
   readonly setToConfirm = signal<{ setId: string; exId: string; weight: number; reps: number; setNumber: number; exName: string | undefined } | null>(null);
 
   private _wakeLock: WakeLockSentinel | null = null;
