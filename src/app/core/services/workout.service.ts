@@ -4,8 +4,6 @@ import { DataService } from './data.service';
 
 export interface ActiveWorkout {
   session: WorkoutSession;
-  currentExerciseIndex: number;
-  currentSetIndex: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -50,11 +48,7 @@ export class WorkoutService extends DataService {
 
     const fullSession = await this.getSessionWithSets(session.id);
     if (fullSession) {
-      this._activeWorkout.set({
-        session: fullSession,
-        currentExerciseIndex: 0,
-        currentSetIndex: 0,
-      });
+      this._activeWorkout.set({ session: fullSession });
     }
 
     return session;
@@ -124,16 +118,6 @@ export class WorkoutService extends DataService {
     return data;
   }
 
-  navigateToExercise(exerciseIndex: number, setIndex: number): void {
-    const current = this._activeWorkout();
-    if (!current) return;
-    this._activeWorkout.set({
-      ...current,
-      currentExerciseIndex: exerciseIndex,
-      currentSetIndex: setIndex,
-    });
-  }
-
   async getUnfinishedSessions(): Promise<WorkoutSession[]> {
     const userId = await this.checkUserId();
     const { data, error } = await this.client
@@ -149,22 +133,9 @@ export class WorkoutService extends DataService {
 
   async resumeSession(sessionId: string): Promise<void> {
     const session = await this.getSessionWithSets(sessionId);
-    if (!session || !session.sets?.length) return;
+    if (!session?.sets?.length) return;
 
-    const sets = session.sets;
-    const firstIncomplete = sets.find(s => !s.is_completed);
-    const currentSetIndex = firstIncomplete ? sets.indexOf(firstIncomplete) : sets.length - 1;
-
-    const exerciseIds = [...new Set(sets.map(s => s.routine_exercise_id))];
-    const currentExerciseIndex = firstIncomplete
-      ? exerciseIds.indexOf(firstIncomplete.routine_exercise_id)
-      : 0;
-
-    this._activeWorkout.set({
-      session,
-      currentExerciseIndex: Math.max(0, currentExerciseIndex),
-      currentSetIndex,
-    });
+    this._activeWorkout.set({ session });
   }
 
   async getSessionHistory(limit = 20): Promise<WorkoutSession[]> {

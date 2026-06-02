@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal, computed, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { UiCard } from '@shared/ui/card';
 import { UiButton } from '@shared/ui/button';
 import { UiBadge } from '@shared/ui/badge';
@@ -9,9 +10,11 @@ import { UiEmptyState } from '@shared/ui/empty-state';
 import { TranslatePipe } from '@shared/i18n/translate.pipe';
 import { WorkoutService } from '@core/services/workout.service';
 import { NotificationService } from '@core/services/notification.service';
+import type { WorkoutSet } from '@shared/models';
 import {
   LucideCheck, LucideX,
-  LucideChevronLeft, LucideChevronRight, LucideTimer, LucideCheckCircle,
+  LucideTimer, LucideCheckCircle, LucideChevronDown,
+  LucideGripVertical,
 } from '@lucide/angular';
 
 @Component({
@@ -19,27 +22,37 @@ import {
   standalone: true,
   imports: [
     UiCard, UiButton, UiBadge, UiSkeletonCard, UiTimer, UiModal, UiEmptyState,
-    TranslatePipe,
-    LucideTimer, LucideCheck, LucideCheckCircle, LucideChevronLeft, LucideChevronRight,
-    LucideX,
+    TranslatePipe, DragDropModule,
+    LucideTimer, LucideCheck, LucideCheckCircle, LucideX, LucideChevronDown,
+    LucideGripVertical,
   ],
   template: `
     <div class="flex flex-col min-h-dvh">
       @if (workout(); as w) {
         @let session = w.session;
         @let routineExs = session.routine?.routine_exercises ?? [];
-        @let currentEx = routineExs[w.currentExerciseIndex];
 
         <!-- Header -->
         <div class="sticky top-0 z-10 bg-surface/80 backdrop-blur-xl">
           <div class="flex items-center justify-between px-4 py-2">
-            <button (click)="confirmCancel.set(true)" class="p-2 rounded-xl hover:bg-surface-hover transition-colors" [attr.aria-label]="'workout.cancel' | translate">
+            <button
+              (click)="confirmCancel.set(true)"
+              class="p-2 rounded-xl hover:bg-surface-hover transition-colors"
+              [attr.aria-label]="'workout.cancel' | translate"
+            >
               <svg lucideX class="w-5 h-5" strokeWidth="2" aria-hidden="true"></svg>
             </button>
             <div class="text-center">
               <p class="text-sm font-medium">{{ session.routine?.name ?? ('workout.title' | translate) }}</p>
             </div>
-            <div class="w-9"></div>
+            <button
+              ui-button variant="primary" size="sm"
+              [title]="'workout.finish' | translate"
+              (click)="finishWorkout()"
+              [attr.aria-label]="'workout.finish' | translate"
+            >
+              <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
+            </button>
           </div>
 
           <!-- Progress Bar -->
@@ -58,153 +71,175 @@ import {
           </div>
         </div>
 
-        @if (currentEx) {
-          @let exSets = currentExerciseSets();
-          @let completedSets = completedExerciseSets();
-          @let totalSets = totalExerciseSets();
-
-          <div class="flex-1 p-4 space-y-4 max-w-lg lg:max-w-3xl mx-auto w-full">
+        @if (routineExs.length > 0) {
+          <div class="flex-1 p-4 space-y-3 max-w-lg lg:max-w-3xl mx-auto w-full">
             <!-- Global Timer -->
-            <app-ui-card variant="glass" [padding]="true">
-              <app-ui-timer
-                mode="countup"
-                [autoStart]="true"
-                [allowStop]="true"
-                stopLabel="workout.finish"
-                (timerStopped)="confirmCancel.set(true)"
-              />
-            </app-ui-card>
-
-            <!-- Exercise Info -->
-            <div>
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xs text-on-surface-muted">
-                  {{ 'workout.exerciseOf' | translate:{ current: w.currentExerciseIndex + 1, total: routineExs.length } }}
-                </span>
-                <span class="text-xs text-on-surface-muted">{{ 'workout.setsProgress' | translate:{ current: completedSets, total: totalSets } }}</span>
-              </div>
-              <h1 class="text-xl font-bold">{{ currentEx.exercise?.name ?? ('workout.title' | translate) }}</h1>
-              @if (currentEx.exercise?.muscle_group) {
-                <app-ui-badge variant="brand" size="sm" class="mt-1">{{ 'muscleGroup.' + currentEx.exercise!.muscle_group | translate }}</app-ui-badge>
-              }
-            </div>
-
-            <!-- Sets List -->
-            <div class="flex flex-col gap-2">
-              @for (set of exSets; track set.id; let i = $index) {
-                <div [class.border-2]="i === w.currentSetIndex && !set.is_completed" [class.border-brand]="i === w.currentSetIndex && !set.is_completed" class="rounded-2xl">
-                <app-ui-card variant="glass" [padding]="true">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center shrink-0 text-sm font-bold text-on-surface-muted">
-                      {{ set.set_number }}
-                    </div>
-
-                    <div class="flex-1 flex items-center gap-2">
-                      @if (set.is_completed) {
-                        <div class="flex items-center gap-3 text-sm">
-                          <span class="text-on-surface font-medium">{{ set.weight ?? '—' }} kg</span>
-                          <span class="text-on-surface-muted">×</span>
-                          <span class="text-on-surface font-medium">{{ set.reps ?? '—' }}</span>
-                          <svg lucideCheckCircle class="w-5 h-5 text-success" strokeWidth="2" aria-hidden="true"></svg>
-                        </div>
-                      } @else {
-                        <div class="flex items-center gap-2">
-                          <label class="sr-only" [for]="'weight-' + set.id">{{ 'workout.weight' | translate }}</label>
-                          <input
-                            [id]="'weight-' + set.id"
-                            #weightInput
-                            type="number"
-                            [value]="set.weight ?? ''"
-                            (input)="updateWeight(set.id, +weightInput.value)"
-                            class="w-20 px-3 py-2 rounded-lg bg-surface-input border border-white/10 text-sm text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                            [placeholder]="'workout.lbs' | translate"
-                            step="0.5"
-                            min="0"
-                          />
-                          <span class="text-on-surface-muted">×</span>
-                          <label class="sr-only" [for]="'reps-' + set.id">{{ 'routines.reps' | translate }}</label>
-                          <input
-                            [id]="'reps-' + set.id"
-                            #repsInput
-                            type="number"
-                            [value]="set.reps ?? ''"
-                            (input)="updateReps(set.id, +repsInput.value)"
-                            class="w-16 px-3 py-2 rounded-lg bg-surface-input border border-white/10 text-sm text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
-                            [placeholder]="'routines.reps' | translate"
-                            min="1"
-                          />
-                          <button
-                            ui-button variant="primary" size="sm"
-                            [disabled]="i !== w.currentSetIndex"
-                            (click)="completeSet(set.id); soundClick()"
-                            [attr.aria-label]="'workout.completeSet' | translate"
-                          >
-                            <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
-                          </button>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                </app-ui-card>
-                </div>
-              }
-            </div>
-
-            <!-- Rest Timer -->
-            @if (completedSets > 0 && completedSets < totalSets && showRestTimer()) {
-              <app-ui-card variant="glass">
-                <div class="flex items-center gap-3 mb-3">
-                  <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
-                  <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
-                  <input
-                    type="text"
-                    [value]="restTimeDisplay()"
-                    (input)="onRestTimeChange($any($event.target).value)"
-                    (blur)="onRestTimeBlur()"
-                    class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand"
-                    placeholder="1:30"
-                  />
-                </div>
+            <div class="mb-3">
+              <app-ui-card variant="glass" [padding]="true">
                 <app-ui-timer
-                  mode="countdown"
-                  [duration]="customRestTime()"
+                  mode="countup"
                   [autoStart]="true"
-                  [allowSkip]="true"
-                  skipLabel="timer.skipRest"
-                  (timerStopped)="skipRest()"
-                  (timerCompleted)="onRestCompleted()"
+                  [allowStop]="true"
+                  stopLabel="workout.finish"
+                  (timerStopped)="confirmCancel.set(true)"
                 />
               </app-ui-card>
-            }
+            </div>
 
-            <!-- Navigation -->
-            <div class="flex gap-3 mt-4">
-              <button
-                ui-button variant="secondary" size="md" class="flex-1"
-                [disabled]="w.currentExerciseIndex === 0"
-                (click)="prevExercise()"
+            <!-- Exercise Accordion -->
+            <div cdkDropList class="space-y-3" (cdkDropListDropped)="onExerciseDrop($event)">
+            @for (ex of routineExs; track ex.id) {
+              @let exSets = getExerciseSets(ex.id);
+              @let completed = countCompleted(exSets);
+              @let total = exSets.length;
+
+              <div
+                cdkDrag
+                class="rounded-2xl border border-border glass overflow-hidden"
               >
-                <svg lucideChevronLeft class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
-                {{ 'workout.previous' | translate }}
-              </button>
+                <!-- Header -->
+                <div class="flex items-center p-4 gap-3">
+                  <button cdkDragHandle
+                    class="cursor-grab active:cursor-grabbing shrink-0 p-1 -m-1 rounded hover:bg-surface-hover transition-colors"
+                    [attr.aria-label]="'workout.reorder' | translate"
+                  >
+                    <svg lucideGripVertical class="w-4 h-4 text-on-surface-muted" strokeWidth="1.5" aria-hidden="true"></svg>
+                  </button>
+                  <button
+                    class="flex-1 flex items-center gap-3 text-left min-w-0"
+                    (click)="toggleExercise(ex.id)"
+                    [attr.aria-expanded]="isExpanded(ex.id)"
+                    [attr.aria-label]="ex.exercise?.name"
+                  >
+                    <svg lucideChevronDown
+                      [class.rotate-180]="!isExpanded(ex.id)"
+                      class="w-5 h-5 text-on-surface-muted transition-transform duration-200 shrink-0"
+                      strokeWidth="2"
+                      aria-hidden="true">
+                    </svg>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="text-base font-semibold text-on-surface truncate">{{ ex.exercise?.name ?? ('workout.title' | translate) }}</h3>
+                      @if (ex.exercise?.muscle_group) {
+                        <app-ui-badge variant="brand" size="sm" class="mt-0.5">
+                          {{ 'muscleGroup.' + ex.exercise!.muscle_group | translate }}
+                        </app-ui-badge>
+                      }
+                    </div>
+                    <span
+                      class="text-sm tabular-nums shrink-0"
+                      [class.text-brand]="completed === total && total > 0"
+                      [class.text-on-surface-muted]="completed !== total"
+                    >
+                      {{ completed }}/{{ total }}
+                    </span>
+                  </button>
+                </div>
 
-              @if (w.currentExerciseIndex < routineExs.length - 1) {
-                <button
-                  ui-button variant="primary" size="md" class="flex-1"
-                  (click)="nextExercise()"
-                >
-                  {{ 'workout.next' | translate }}
-                  <svg lucideChevronRight class="w-4 h-4" strokeWidth="2" aria-hidden="true"></svg>
-                </button>
-              } @else {
-                <button
-                  ui-button variant="primary" size="md" class="flex-1"
-                  (click)="finishWorkout()"
-                >
-                  <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
-                  {{ 'workout.finish' | translate }}
-                </button>
-              }
+                <!-- Body -->
+                @if (isExpanded(ex.id)) {
+                  <div class="px-4 pb-4 space-y-2 border-t border-border">
+                    @for (set of exSets; track set.id) {
+                      <div class="pt-3 first:pt-3">
+                        <div
+                          [class.border-2]="isCurrentSet(set, exSets)"
+                          [class.border-brand]="isCurrentSet(set, exSets)"
+                          class="rounded-2xl"
+                        >
+                          <app-ui-card variant="glass" [padding]="true">
+                            <div class="flex items-center gap-3">
+                              <div class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center shrink-0 text-sm font-bold text-on-surface-muted">
+                                {{ set.set_number }}
+                              </div>
+
+                              <div class="flex-1 flex items-center gap-2">
+                                @if (set.is_completed) {
+                                  <div class="flex items-center gap-3 text-sm">
+                                    <span class="text-on-surface font-medium">{{ set.weight ?? '—' }} kg</span>
+                                    <span class="text-on-surface-muted">&times;</span>
+                                    <span class="text-on-surface font-medium">{{ set.reps ?? '—' }}</span>
+                                    <svg lucideCheckCircle class="w-5 h-5 text-success" strokeWidth="2" aria-hidden="true"></svg>
+                                  </div>
+                                } @else {
+                                  <div class="flex items-center gap-2">
+                                    <label class="sr-only" [for]="'weight-' + set.id">{{ 'workout.weight' | translate }}</label>
+                                    <input
+                                      [id]="'weight-' + set.id"
+                                      #weightInput
+                                      type="number"
+                                      [value]="set.weight ?? ''"
+                                      (input)="updateWeight(set.id, +weightInput.value)"
+                                      class="w-20 px-3 py-2 rounded-lg bg-surface-input border border-white/10 text-sm text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                                      [placeholder]="'workout.lbs' | translate"
+                                      step="0.5"
+                                      min="0"
+                                    />
+                                    <span class="text-on-surface-muted">&times;</span>
+                                    <label class="sr-only" [for]="'reps-' + set.id">{{ 'routines.reps' | translate }}</label>
+                                    <input
+                                      [id]="'reps-' + set.id"
+                                      #repsInput
+                                      type="number"
+                                      [value]="set.reps ?? ''"
+                                      (input)="updateReps(set.id, +repsInput.value)"
+                                      class="w-16 px-3 py-2 rounded-lg bg-surface-input border border-white/10 text-sm text-center text-on-surface focus:outline-none focus:ring-1 focus:ring-brand"
+                                      [placeholder]="'routines.reps' | translate"
+                                      min="1"
+                                    />
+                                    <button
+                                      ui-button variant="primary" size="sm"
+                                      [disabled]="!isCurrentSet(set, exSets) || set.weight == null || set.reps == null"
+                                      (click)="openConfirmSet(set.id, ex.id); soundClick()"
+                                      [attr.aria-label]="'workout.completeSet' | translate"
+                                    >
+                                      <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
+                                    </button>
+                                  </div>
+                                }
+                              </div>
+                            </div>
+                          </app-ui-card>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Rest Timer between sets -->
+                    @if (completed > 0 && completed < total && restTimerActiveFor() === ex.id) {
+                      <app-ui-card variant="glass" class="mt-3">
+                        <div class="flex items-center gap-3 mb-3">
+                          <svg lucideTimer class="w-5 h-5 text-brand" strokeWidth="1.5" aria-hidden="true"></svg>
+                          <span class="text-sm font-medium">{{ 'workout.restTimer' | translate }}</span>
+                          <input
+                            type="text"
+                            [value]="restTimeDisplay()"
+                            (input)="onRestTimeChange($any($event.target).value, ex.id)"
+                            (blur)="onRestTimeBlur()"
+                            class="w-16 px-2 py-1 rounded-lg bg-surface-input border border-white/10 text-xs text-center text-on-surface placeholder:text-on-surface-muted/50 focus:outline-none focus:ring-1 focus:ring-brand"
+                            placeholder="1:30"
+                          />
+                        </div>
+                        <app-ui-timer
+                          mode="countdown"
+                          [duration]="customRestTime()"
+                          [autoStart]="true"
+                          [allowSkip]="true"
+                          skipLabel="timer.skipRest"
+                          (timerStopped)="skipRestFor(ex.id)"
+                          (timerCompleted)="onRestCompleted()"
+                        />
+                      </app-ui-card>
+                    }
+                  </div>
+                }
+              </div>
+            }
+            </div>
+
+            <!-- Bottom Finish -->
+            <div class="flex gap-3 pt-2 pb-4">
+              <button ui-button variant="primary" size="md" class="flex-1" (click)="finishWorkout()">
+                <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
+                {{ 'workout.finish' | translate }}
+              </button>
             </div>
           </div>
         } @else {
@@ -238,8 +273,51 @@ import {
           <button ui-button variant="danger" size="md" class="flex-1" (click)="cancelWorkout()">{{ 'workout.cancel' | translate }}</button>
         </div>
       </app-ui-modal>
+
+      <!-- Complete Set Confirmation -->
+      @if (setToConfirm(); as pending) {
+        <app-ui-modal [isOpen]="true" [title]="'workout.completeSet' | translate" (closed)="setToConfirm.set(null)">
+          <div class="mb-4 space-y-2">
+            @if (pending.exName) {
+              <p class="text-on-surface font-medium text-sm">{{ pending.exName }}</p>
+            }
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-lg bg-surface-hover flex items-center justify-center shrink-0 text-sm font-bold text-on-surface-muted">
+                {{ pending.setNumber }}
+              </span>
+              <span class="text-base font-semibold text-on-surface">
+                {{ pending.weight }} kg &times; {{ pending.reps }}
+              </span>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button ui-button variant="ghost" size="md" class="flex-1" (click)="setToConfirm.set(null)">{{ 'workout.cancel' | translate }}</button>
+            <button ui-button variant="primary" size="md" class="flex-1" (click)="confirmAndComplete()">
+              <svg lucideCheck class="w-4 h-4" strokeWidth="2.5" aria-hidden="true"></svg>
+              {{ 'workout.completeSet' | translate }}
+            </button>
+          </div>
+        </app-ui-modal>
+      }
     </div>
   `,
+  styles: [`
+    .cdk-drag-preview {
+      box-sizing: border-box;
+      border-radius: 1rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      opacity: 0.9;
+    }
+    .cdk-drag-placeholder {
+      opacity: 0.3;
+    }
+    .cdk-drag-animating {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+    .cdk-drop-list-dragging .cdk-drag:not(.cdk-drag-placeholder) {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+  `],
 })
 export class WorkoutSessionPage implements OnInit, OnDestroy {
   private readonly _router = inject(Router);
@@ -249,8 +327,10 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
 
   readonly workout = this._workout.activeWorkout;
   readonly confirmCancel = signal(false);
-  readonly showRestTimer = signal(true);
+  readonly expandedExerciseIds = signal<Set<string>>(new Set());
+  readonly restTimerActiveFor = signal<string | null>(null);
   readonly customRestTime = signal(90);
+  readonly setToConfirm = signal<{ setId: string; exId: string; weight: number; reps: number; setNumber: number; exName: string | undefined } | null>(null);
 
   private _wakeLock: WakeLockSentinel | null = null;
 
@@ -262,28 +342,43 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     return total > 0 ? (completed / total) * 100 : 0;
   });
 
-  readonly currentExerciseSets = computed(() => {
-    const w = this.workout();
-    if (!w) return [];
-    const currentEx = w.session.routine?.routine_exercises?.[w.currentExerciseIndex];
-    if (!currentEx) return [];
-    return (w.session.sets ?? []).filter(s => s.routine_exercise_id === currentEx.id);
-  });
-
-  readonly completedExerciseSets = computed(() => {
-    return this.currentExerciseSets().filter(s => s.is_completed).length;
-  });
-
-  readonly totalExerciseSets = computed(() => {
-    return this.currentExerciseSets().length;
-  });
-
   readonly restTimeDisplay = computed(() => {
     const total = this.customRestTime();
     const m = Math.floor(total / 60);
     const s = total % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
   });
+
+  getExerciseSets(exId: string): WorkoutSet[] {
+    const w = this.workout();
+    if (!w) return [];
+    return (w.session.sets ?? []).filter(s => s.routine_exercise_id === exId);
+  }
+
+  countCompleted(sets: WorkoutSet[]): number {
+    return sets.filter(s => s.is_completed).length;
+  }
+
+  isCurrentSet(set: WorkoutSet, sets: WorkoutSet[]): boolean {
+    const firstIncomplete = sets.find(s => !s.is_completed);
+    return firstIncomplete?.id === set.id;
+  }
+
+  toggleExercise(id: string): void {
+    this.expandedExerciseIds.update(set => {
+      const next = new Set(set);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
+
+  isExpanded(id: string): boolean {
+    return this.expandedExerciseIds().has(id);
+  }
 
   async ngOnInit(): Promise<void> {
     const sessionId = this._route.snapshot.paramMap.get('sessionId');
@@ -303,36 +398,20 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
 
     this._requestWakeLock();
     document.addEventListener('visibilitychange', this._onVisibilityChange);
-    const initialEx = this.workout()?.session.routine?.routine_exercises?.[0];
-    this.customRestTime.set(initialEx?.rest_time ?? 90);
+
+    const exs = this.workout()?.session.routine?.routine_exercises ?? [];
+    if (exs.length > 0) {
+      const allSets = this.workout()?.session.sets ?? [];
+      const activeEx = exs.find(ex =>
+        allSets.filter(s => s.routine_exercise_id === ex.id).some(s => !s.is_completed)
+      );
+      this.expandedExerciseIds.set(activeEx ? new Set([activeEx.id]) : new Set([exs[0].id]));
+    }
   }
 
   ngOnDestroy(): void {
     this._releaseWakeLock();
     document.removeEventListener('visibilitychange', this._onVisibilityChange);
-  }
-
-  skipRest(): void {
-    this.showRestTimer.set(false);
-    setTimeout(() => this.showRestTimer.set(true), 50);
-  }
-
-  onRestTimeChange(value: string): void {
-    const seconds = this._parseRestTime(value);
-    if (seconds && seconds >= 10) {
-      this.customRestTime.set(seconds);
-      this.showRestTimer.set(false);
-      setTimeout(() => this.showRestTimer.set(true), 50);
-    }
-  }
-
-  onRestTimeBlur(): void {
-    /* force re-eval of restTimeDisplay, no-op */
-  }
-
-  onRestCompleted(): void {
-    this._notification.playTimerEnd();
-    this._notification.vibrate([200, 100, 200]);
   }
 
   updateWeight(setId: string, weight: number): void {
@@ -357,58 +436,103 @@ export class WorkoutSessionPage implements OnInit, OnDestroy {
     }
   }
 
-  async completeSet(setId: string): Promise<void> {
+  openConfirmSet(setId: string, exId: string): void {
+    const w = this.workout();
+    if (!w) return;
+    const set = w.session.sets?.find(s => s.id === setId);
+    if (!set || set.weight == null || set.reps == null) return;
+    const ex = w.session.routine?.routine_exercises?.find(e => e.id === exId);
+    this.setToConfirm.set({
+      setId,
+      exId,
+      weight: set.weight,
+      reps: set.reps,
+      setNumber: set.set_number,
+      exName: ex?.exercise?.name,
+    });
+  }
+
+  confirmAndComplete(): void {
+    const pending = this.setToConfirm();
+    if (!pending) return;
+    this.setToConfirm.set(null);
+    this.completeSet(pending.setId, pending.exId);
+  }
+
+  onExerciseDrop(event: CdkDragDrop<unknown>): void {
+    if (event.previousIndex === event.currentIndex) return;
+
+    const w = this.workout();
+    if (!w?.session.routine?.routine_exercises) return;
+
+    const arr = [...w.session.routine.routine_exercises];
+    const [moved] = arr.splice(event.previousIndex, 1);
+    arr.splice(event.currentIndex, 0, moved);
+    arr.forEach((ex, i) => { ex.sort_order = i; });
+    w.session.routine.routine_exercises = arr;
+  }
+
+  async completeSet(setId: string, exId: string): Promise<void> {
     const w = this.workout();
     if (!w) return;
 
     const set = w.session.sets?.find(s => s.id === setId);
     if (!set) return;
 
+    const completedWeight = set.weight;
+    const completedReps = set.reps;
+
     await this._workout.completeSet(setId, {
       weight: set.weight ?? undefined,
       reps: set.reps ?? undefined,
     });
 
-    this.showRestTimer.set(false);
-    setTimeout(() => this.showRestTimer.set(true), 50);
+    if (completedWeight != null && completedReps != null) {
+      const current = this.workout();
+      if (current) {
+        const exSets = (current.session.sets ?? []).filter(s => s.routine_exercise_id === exId);
+        const nextSet = exSets.find(s => !s.is_completed);
+        if (nextSet) {
+          current.session.sets = current.session.sets?.map(s =>
+            s.id === nextSet.id ? { ...s, weight: completedWeight, reps: completedReps } : s
+          );
+        }
+      }
+    }
+
+    this.customRestTime.set(
+      w.session.routine?.routine_exercises?.find(e => e.id === exId)?.rest_time ?? 90
+    );
+    this.restTimerActiveFor.set(null);
+    setTimeout(() => this.restTimerActiveFor.set(exId), 50);
+  }
+
+  skipRestFor(exId: string): void {
+    this.restTimerActiveFor.set(null);
+    setTimeout(() => this.restTimerActiveFor.set(exId), 50);
+  }
+
+  onRestTimeChange(value: string, exId: string): void {
+    const seconds = this._parseRestTime(value);
+    if (seconds && seconds >= 10) {
+      this.customRestTime.set(seconds);
+      this.restTimerActiveFor.set(null);
+      setTimeout(() => this.restTimerActiveFor.set(exId), 50);
+    }
+  }
+
+  onRestTimeBlur(): void {
+    /* force re-eval of restTimeDisplay, no-op */
+  }
+
+  onRestCompleted(): void {
+    this._notification.playTimerEnd();
+    this._notification.vibrate([200, 100, 200]);
   }
 
   soundClick(): void {
     this._notification.playTick();
     this._notification.vibrate(50);
-  }
-
-  nextExercise(): void {
-    const w = this.workout();
-    if (!w) return;
-    const max = (w.session.routine?.routine_exercises?.length ?? 1) - 1;
-    if (w.currentExerciseIndex < max) {
-      const newIndex = w.currentExerciseIndex + 1;
-      const newEx = w.session.routine?.routine_exercises?.[newIndex];
-      this.customRestTime.set(newEx?.rest_time ?? 90);
-      const sets = w.session.sets ?? [];
-      const nextExId = newEx?.id;
-      const nextSetIndex = nextExId ? sets.findIndex(s => s.routine_exercise_id === nextExId && !s.is_completed) : 0;
-      this._updateWorkoutPosition(newIndex, Math.max(0, nextSetIndex));
-    }
-  }
-
-  prevExercise(): void {
-    const w = this.workout();
-    if (!w) return;
-    if (w.currentExerciseIndex > 0) {
-      const newIndex = w.currentExerciseIndex - 1;
-      const newEx = w.session.routine?.routine_exercises?.[newIndex];
-      this.customRestTime.set(newEx?.rest_time ?? 90);
-      const sets = w.session.sets ?? [];
-      const prevExId = newEx?.id;
-      const prevSetIndex = prevExId ? sets.findIndex(s => s.routine_exercise_id === prevExId && !s.is_completed) : 0;
-      this._updateWorkoutPosition(newIndex, Math.max(0, prevSetIndex));
-    }
-  }
-
-  private _updateWorkoutPosition(exerciseIndex: number, setIndex: number): void {
-    this._workout.navigateToExercise(exerciseIndex, setIndex);
   }
 
   async finishWorkout(): Promise<void> {
